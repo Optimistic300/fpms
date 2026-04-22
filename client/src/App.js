@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import LogActivity from './pages/LogActivity';
 import Report from './pages/Report';
+import MyActivities from './pages/MyActivities';
 
 function ProtectedRoute({ children }) {
     const token = localStorage.getItem('token');
@@ -22,6 +23,9 @@ export default function App() {
                 } />
                 <Route path="/report" element={
                     <ProtectedRoute><Report /></ProtectedRoute>
+                } />
+                <Route path="/activities" element={
+                    <ProtectedRoute><MyActivities /></ProtectedRoute>
                 } />
             </Routes>
         </BrowserRouter>
