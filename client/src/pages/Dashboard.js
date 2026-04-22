@@ -50,6 +50,12 @@ export default function Dashboard() {
                         + Log Activity
                     </button>
                     <button
+                        onClick={() => navigate('/report')}
+                        className="bg-white text-green-700 px-4 py-1 rounded text-sm font-medium hover:bg-gray-100"
+                    >
+                        Reports
+                    </button>
+                    <button
                         onClick={logout}
                         className="text-sm underline hover:text-gray-200"
                     >
