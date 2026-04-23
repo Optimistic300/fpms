@@ -1,15 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
+import Navbar from '../components/Navbar';
+
+const ACTIVITY_TYPES = [
+    'Field sampling',
+    'Lab analysis',
+    'Data collection',
+    'Community engagement',
+    'Reporting',
+    'Training',
+    'Other',
+];
 
 export default function LogActivity() {
     const [projects, setProjects] = useState([]);
     const [projectId, setProjectId] = useState('');
+    const [activityType, setActivityType] = useState(ACTIVITY_TYPES[0]);
     const [description, setDescription] = useState('');
     const [notes, setNotes] = useState('');
-    const [activityDate, setActivityDate] = useState(
-        new Date().toISOString().split('T')[0]
-    );
+    const [activityDate, setActivityDate] = useState(new Date().toISOString().split('T')[0]);
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -24,113 +34,121 @@ export default function LogActivity() {
         e.preventDefault();
         setError('');
         setSuccess('');
-
         try {
             await api.post('/activities', {
                 projectId: Number(projectId),
+                activityType,
                 description,
                 notes,
-                activityDate
+                activityDate,
             });
-
             setSuccess('Activity logged successfully!');
             setDescription('');
             setNotes('');
             setProjectId('');
+            setActivityType(ACTIVITY_TYPES[0]);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to log activity');
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="bg-green-700 text-white px-6 py-4 flex justify-between items-center">
-                <h1 className="text-xl font-bold">Log Activity</h1>
-                <button
-                    onClick={() => navigate('/dashboard')}
-                    className="text-sm underline hover:text-gray-200"
-                >
-                    Back to Dashboard
-                </button>
-            </nav>
+        <div className="app-shell">
+            <Navbar />
+            <main>
+                <div className="page">
+                    <div className="page-inner">
+                        <div className="page-header">
+                            <div className="t-title">Log New Activity</div>
+                            <div className="t-small">Record your field or lab work against a project</div>
+                        </div>
 
-            <div className="max-w-lg mx-auto mt-8 bg-white p-6 rounded shadow">
-                {success && (
-                    <div className="bg-green-100 text-green-700 p-3 rounded mb-4">
-                        {success}
-                    </div>
-                )}
-                {error && (
-                    <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-                        {error}
-                    </div>
-                )}
+                        <div className="form-card">
+                            {success && <div className="alert alert-success">{success}</div>}
+                            {error   && <div className="alert alert-error">{error}</div>}
 
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Project</label>
-                        <select
-                            value={projectId}
-                            onChange={(e) => setProjectId(e.target.value)}
-                            className="w-full border rounded px-3 py-2"
-                            required
-                        >
-                            <option value="">Select a project</option>
-                            {projects.map(p => (
-                                <option key={p.id} value={p.id}>{p.title}</option>
-                            ))}
-                        </select>
-                    </div>
+                            <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <label className="form-label">Project</label>
+                                    <select
+                                        className="form-select"
+                                        value={projectId}
+                                        onChange={e => setProjectId(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">Select a project…</option>
+                                        {projects.map(p => (
+                                            <option key={p.id} value={p.id}>{p.title}</option>
+                                        ))}
+                                    </select>
+                                </div>
 
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Date</label>
-                        <input
-                            type="date"
-                            value={activityDate}
-                            onChange={(e) => setActivityDate(e.target.value)}
-                            className="w-full border rounded px-3 py-2"
-                            required
-                        />
-                    </div>
+                                <div className="form-row">
+                                    <div className="form-group">
+                                        <label className="form-label">Date</label>
+                                        <input
+                                            type="date"
+                                            className="form-input"
+                                            value={activityDate}
+                                            onChange={e => setActivityDate(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">Activity type</label>
+                                        <select
+                                            className="form-select"
+                                            value={activityType}
+                                            onChange={e => setActivityType(e.target.value)}
+                                        >
+                                            {ACTIVITY_TYPES.map(t => (
+                                                <option key={t}>{t}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
 
-                    <div className="mb-4">
-                        <label className="block text-sm font-medium mb-1">Activity Description</label>
-                        <textarea
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            className="w-full border rounded px-3 py-2 h-24"
-                            placeholder="What did you do?"
-                            required
-                        />
-                    </div>
+                                <div className="form-group">
+                                    <label className="form-label">Activity description</label>
+                                    <textarea
+                                        className="form-textarea"
+                                        value={description}
+                                        onChange={e => setDescription(e.target.value)}
+                                        placeholder="Describe what was done in detail…"
+                                        required
+                                    />
+                                </div>
 
-                    <div className="mb-6">
-                        <label className="block text-sm font-medium mb-1">Notes (optional)</label>
-                        <textarea
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            className="w-full border rounded px-3 py-2 h-16"
-                            placeholder="Any additional details..."
-                        />
-                    </div>
+                                <div className="form-group">
+                                    <label className="form-label">
+                                        Notes <span className="form-label-opt">(optional)</span>
+                                    </label>
+                                    <textarea
+                                        className="form-textarea"
+                                        style={{ minHeight: '70px' }}
+                                        value={notes}
+                                        onChange={e => setNotes(e.target.value)}
+                                        placeholder="Additional context, observations, or follow-up actions…"
+                                    />
+                                </div>
 
-                    <div className="flex gap-3">
-                        <button
-                            type="button"
-                            onClick={() => navigate('/dashboard')}
-                            className="flex-1 border border-gray-300 py-2 rounded hover:bg-gray-50"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="flex-1 bg-green-700 text-white py-2 rounded hover:bg-green-800"
-                        >
-                            Save Activity
-                        </button>
+                                <div className="btn-group btn-group-between">
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline"
+                                        onClick={() => navigate('/dashboard')}
+                                    >
+                                        ← Cancel
+                                    </button>
+                                    <button type="submit" className="btn btn-primary">
+                                        Save Activity ✓
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </main>
         </div>
     );
 }

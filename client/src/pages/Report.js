@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
+import Navbar from '../components/Navbar';
+
+const fmtDate = (d) => {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+};
 
 export default function Report() {
     const [projects, setProjects] = useState([]);
@@ -9,6 +15,7 @@ export default function Report() {
     const [end, setEnd] = useState(new Date().toISOString().split('T')[0]);
     const [activities, setActivities] = useState([]);
     const [fetched, setFetched] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,14 +26,13 @@ export default function Report() {
 
     const handleFetch = async (e) => {
         e.preventDefault();
+        setError('');
         try {
-            const response = await api.get('/activities/report', {
-                params: { projectId, start, end }
-            });
+            const response = await api.get('/activities/report', { params: { projectId, start, end } });
             setActivities(response.data);
             setFetched(true);
-        } catch (err) {
-            alert('Failed to fetch report');
+        } catch {
+            setError('Failed to fetch report');
         }
     };
 
@@ -35,7 +41,6 @@ export default function Report() {
         const rows = activities.map(a =>
             `${a.activityDate},"${a.description}","${a.notes || ''}","${a.userName}"`
         ).join('\n');
-
         const blob = new Blob([headers + rows], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -46,110 +51,127 @@ export default function Report() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="bg-green-700 text-white px-6 py-4 flex justify-between items-center">
-                <h1 className="text-xl font-bold">Generate Report</h1>
-                <button
-                    onClick={() => navigate('/dashboard')}
-                    className="text-sm underline hover:text-gray-200"
-                >
-                    Back to Dashboard
-                </button>
-            </nav>
-
-            <div className="max-w-3xl mx-auto mt-8">
-                <div className="bg-white p-6 rounded shadow mb-6">
-                    <form onSubmit={handleFetch} className="flex gap-4 items-end flex-wrap">
-                        <div className="flex-1 min-w-[150px]">
-                            <label className="block text-sm font-medium mb-1">Project</label>
-                            <select
-                                value={projectId}
-                                onChange={(e) => setProjectId(e.target.value)}
-                                className="w-full border rounded px-3 py-2"
-                                required
-                            >
-                                <option value="">Select</option>
-                                {projects.map(p => (
-                                    <option key={p.id} value={p.id}>{p.title}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">From</label>
-                            <input
-                                type="date"
-                                value={start}
-                                onChange={(e) => setStart(e.target.value)}
-                                className="border rounded px-3 py-2"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium mb-1">To</label>
-                            <input
-                                type="date"
-                                value={end}
-                                onChange={(e) => setEnd(e.target.value)}
-                                className="border rounded px-3 py-2"
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="bg-green-700 text-white px-6 py-2 rounded hover:bg-green-800"
-                        >
-                            Fetch
-                        </button>
-                    </form>
-                </div>
-
-                {fetched && (
-                    <div className="bg-white rounded shadow">
-                        <div className="flex justify-between items-center p-4 border-b">
-                            <p className="text-sm text-gray-500">
-                                {activities.length} activities found
-                            </p>
-                            {activities.length > 0 && (
-                                <button
-                                    onClick={exportCSV}
-                                    className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700"
-                                >
-                                    Export CSV
-                                </button>
-                            )}
+        <div className="app-shell">
+            <Navbar />
+            <main>
+                <div className="page">
+                    <div className="page-inner">
+                        <div className="page-header">
+                            <div className="t-title">Activity Reports</div>
+                            <div className="t-small">Filter and export logged activities by project or date range</div>
                         </div>
 
-                        <table className="w-full">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="text-left p-3 text-sm font-medium text-gray-600">Date</th>
-                                    <th className="text-left p-3 text-sm font-medium text-gray-600">Activity</th>
-                                    <th className="text-left p-3 text-sm font-medium text-gray-600">Notes</th>
-                                    <th className="text-left p-3 text-sm font-medium text-gray-600">Logged By</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {activities.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="4" className="p-6 text-center text-gray-400">
-                                            No activities in this range
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    activities.map(a => (
-                                        <tr key={a.id} className="border-t">
-                                            <td className="p-3 text-sm">{a.activityDate}</td>
-                                            <td className="p-3 text-sm">{a.description}</td>
-                                            <td className="p-3 text-sm text-gray-500">{a.notes || '—'}</td>
-                                            <td className="p-3 text-sm">{a.userName}</td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
+                        {error && <div className="alert alert-error">{error}</div>}
+
+                        <form onSubmit={handleFetch}>
+                            <div className="filter-bar">
+                                <div className="form-group">
+                                    <label className="form-label">Project</label>
+                                    <select
+                                        className="form-select"
+                                        value={projectId}
+                                        onChange={e => setProjectId(e.target.value)}
+                                        required
+                                    >
+                                        <option value="">Select project…</option>
+                                        {projects.map(p => (
+                                            <option key={p.id} value={p.id}>{p.title}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">From</label>
+                                    <input
+                                        type="date"
+                                        className="form-input"
+                                        value={start}
+                                        onChange={e => setStart(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">To</label>
+                                    <input
+                                        type="date"
+                                        className="form-input"
+                                        value={end}
+                                        onChange={e => setEnd(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0' }}>
+                                    <button type="submit" className="btn btn-primary btn-sm">
+                                        Fetch Results
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        {fetched && (
+                            <>
+                                <div className="found-bar">
+                                    <div className="found-text">
+                                        <span className="found-count">{activities.length}</span> activities found
+                                    </div>
+                                    {activities.length > 0 && (
+                                        <button className="export-btn" onClick={exportCSV}>
+                                            ⬇ Export CSV
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="card">
+                                    <div className="table-wrap">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Activity</th>
+                                                    <th>Notes</th>
+                                                    <th>Logged By</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {activities.length === 0 ? (
+                                                    <tr>
+                                                        <td colSpan="4">
+                                                            <div className="empty-state">
+                                                                <div className="empty-icon">📋</div>
+                                                                <div className="empty-title">No activities in this range</div>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ) : (
+                                                    activities.map(a => (
+                                                        <tr key={a.id}>
+                                                            <td className="td-mono" style={{ whiteSpace: 'nowrap' }}>
+                                                                {fmtDate(a.activityDate)}
+                                                            </td>
+                                                            <td className="td-primary" style={{ fontWeight: 400 }}>
+                                                                {a.description}
+                                                            </td>
+                                                            <td className="td-secondary">{a.notes || '—'}</td>
+                                                            <td className="td-secondary">{a.userName}</td>
+                                                        </tr>
+                                                    ))
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+
+                        {!fetched && (
+                            <div className="empty-state">
+                                <div className="empty-icon">📋</div>
+                                <div className="empty-title">No results yet</div>
+                                <div className="empty-sub">Select filters above and click <strong>Fetch Results</strong></div>
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
+                </div>
+            </main>
         </div>
     );
 }
