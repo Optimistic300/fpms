@@ -567,3 +567,65 @@ tbody tr:hover .row-actions { opacity: 1; }
   min-height: 100vh; display: flex; align-items: center; justify-content: center;
   font-family: var(--font-body); font-size: var(--text-sm); color: var(--slate-400);
 }
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+
+/* Nav desktop action group */
+.nav-desktop-actions { display: flex; align-items: center; gap: 4px; }
+
+/* Hamburger — hidden on desktop */
+.nav-hamburger {
+  display: none;
+  background: none; border: none;
+  color: rgba(255,255,255,0.8); cursor: pointer;
+  font-size: 20px; padding: 4px 8px; line-height: 1;
+  margin-left: var(--space-3);
+  transition: color var(--t-fast);
+}
+.nav-hamburger:hover { color: #fff; }
+
+/* Mobile dropdown menu */
+.nav-mobile-menu {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 99;
+  background: var(--forest-800);
+  border-top: 1px solid var(--forest-700);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-md);
+}
+
+.nav-mobile-menu .nav-link { padding: 10px 12px; text-align: left; }
+
+.nav-cta-mobile {
+  margin-top: var(--space-2); margin-left: 0 !important;
+  width: 100%; justify-content: center;
+  border-radius: var(--radius-md);
+}
+
+/* Tablet / mobile — hide desktop nav, show hamburger */
+@media (max-width: 768px) {
+  .nav-desktop-actions { display: none; }
+  .nav-username         { display: none; }
+  .nav-hamburger        { display: block; }
+}
+
+/* Small screens */
+@media (max-width: 640px) {
+  .page       { padding: var(--space-5) var(--space-4); }
+  .form-card  { padding: var(--space-6) var(--space-5); }
+  .login-card { padding: var(--space-8) var(--space-5); }
+  .filter-bar { padding: var(--space-4); }
+
+  .form-row { flex-direction: column; gap: 0; }
+
+  .card-header { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .search-input { width: 100%; }
+
+  .btn-group { flex-direction: column-reverse; }
+  .btn-group .btn { width: 100%; justify-content: center; }
+  .btn-group-between { flex-direction: row; }
+  .btn-group-between .btn { width: auto; }
+
+  .found-bar { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .export-btn { width: 100%; justify-content: center; }
+}
