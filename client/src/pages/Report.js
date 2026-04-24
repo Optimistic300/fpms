@@ -121,42 +121,78 @@ export default function Report() {
                                 </div>
 
                                 <div className="card">
-                                    <div className="table-wrap">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>Date</th>
-                                                    <th>Activity</th>
-                                                    <th>Notes</th>
-                                                    <th>Logged By</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {activities.length === 0 ? (
+                                    {/* Desktop table */}
+                                    <div className="desktop-table">
+                                        <div className="table-wrap">
+                                            <table>
+                                                <thead>
                                                     <tr>
-                                                        <td colSpan="4">
-                                                            <div className="empty-state">
-                                                                <div className="empty-icon">📋</div>
-                                                                <div className="empty-title">No activities in this range</div>
-                                                            </div>
-                                                        </td>
+                                                        <th>Date</th>
+                                                        <th>Activity</th>
+                                                        <th>Notes</th>
+                                                        <th>Logged By</th>
                                                     </tr>
-                                                ) : (
-                                                    activities.map(a => (
-                                                        <tr key={a.id}>
-                                                            <td className="td-mono" style={{ whiteSpace: 'nowrap' }}>
-                                                                {fmtDate(a.activityDate)}
+                                                </thead>
+                                                <tbody>
+                                                    {activities.length === 0 ? (
+                                                        <tr>
+                                                            <td colSpan="4">
+                                                                <div className="empty-state">
+                                                                    <div className="empty-icon">📋</div>
+                                                                    <div className="empty-title">No activities in this range</div>
+                                                                </div>
                                                             </td>
-                                                            <td className="td-primary" style={{ fontWeight: 400 }}>
-                                                                {a.description}
-                                                            </td>
-                                                            <td className="td-secondary">{a.notes || '—'}</td>
-                                                            <td className="td-secondary">{a.userName}</td>
                                                         </tr>
-                                                    ))
-                                                )}
-                                            </tbody>
-                                        </table>
+                                                    ) : (
+                                                        activities.map(a => (
+                                                            <tr key={a.id}>
+                                                                <td className="td-mono" style={{ whiteSpace: 'nowrap' }}>
+                                                                    {fmtDate(a.activityDate)}
+                                                                </td>
+                                                                <td className="td-primary" style={{ fontWeight: 400 }}>
+                                                                    {a.description}
+                                                                </td>
+                                                                <td className="td-secondary">{a.notes || '—'}</td>
+                                                                <td className="td-secondary">{a.userName}</td>
+                                                            </tr>
+                                                        ))
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    {/* Mobile card rows */}
+                                    <div className="mobile-rows">
+                                        {activities.length === 0 ? (
+                                            <div className="empty-state">
+                                                <div className="empty-icon">📋</div>
+                                                <div className="empty-title">No activities in this range</div>
+                                            </div>
+                                        ) : (
+                                            activities.map(a => (
+                                                <div className="mobile-row" key={a.id}>
+                                                    <div className="mobile-row-top">
+                                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                                            <div className="mobile-row-name" style={{ fontSize: '14px', fontWeight: 400 }}>
+                                                                {a.description}
+                                                            </div>
+                                                        </div>
+                                                        <span className="td-mono" style={{ fontSize: '11px', flexShrink: 0 }}>
+                                                            {fmtDate(a.activityDate)}
+                                                        </span>
+                                                    </div>
+                                                    <div className="mobile-row-meta">
+                                                        <span className="td-secondary" style={{ fontSize: '11px' }}>
+                                                            {a.notes || '—'}
+                                                        </span>
+                                                        <span className="td-secondary" style={{ fontSize: '11px', marginLeft: 'auto' }}>
+                                                            {a.userName}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
                             </>

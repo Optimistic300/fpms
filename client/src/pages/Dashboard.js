@@ -91,58 +91,103 @@ export default function Dashboard() {
                                     onChange={e => setSearch(e.target.value)}
                                 />
                             </div>
-                            <div className="table-wrap">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Project</th>
-                                            <th>Lead</th>
-                                            <th>Status</th>
-                                            <th>Activities</th>
-                                            <th>Last Update</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filtered.length === 0 ? (
+
+                            {/* Desktop table */}
+                            <div className="desktop-table">
+                                <div className="table-wrap">
+                                    <table>
+                                        <thead>
                                             <tr>
-                                                <td colSpan="5">
-                                                    <div className="empty-state">
-                                                        <div className="empty-icon">🌿</div>
-                                                        <div className="empty-title">
-                                                            {search ? 'No projects match your search' : 'No projects yet'}
+                                                <th>Project</th>
+                                                <th>Lead</th>
+                                                <th>Status</th>
+                                                <th>Activities</th>
+                                                <th>Last Update</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {filtered.length === 0 ? (
+                                                <tr>
+                                                    <td colSpan="5">
+                                                        <div className="empty-state">
+                                                            <div className="empty-icon">🌿</div>
+                                                            <div className="empty-title">
+                                                                {search ? 'No projects match your search' : 'No projects yet'}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ) : (
+                                                filtered.map(p => {
+                                                    const badge = STATUS_BADGE[p.status] || STATUS_BADGE.ACTIVE;
+                                                    const [name, sub] = p.title.includes(' — ')
+                                                        ? p.title.split(' — ')
+                                                        : [p.title, null];
+                                                    return (
+                                                        <tr key={p.id}>
+                                                            <td>
+                                                                <div className="td-primary">{name}</div>
+                                                                {sub && <div className="td-secondary">{sub}</div>}
+                                                            </td>
+                                                            <td className="td-secondary">{p.leadName}</td>
+                                                            <td>
+                                                                <span className={`badge ${badge.cls}`}>
+                                                                    <span className="badge-dot" />
+                                                                    {badge.label}
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <span className="acts-num">{p.activityCount ?? 0}</span>
+                                                            </td>
+                                                            <td className="td-mono">{fmtDate(p.lastActivityDate)}</td>
+                                                        </tr>
+                                                    );
+                                                })
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* Mobile card rows */}
+                            <div className="mobile-rows">
+                                {filtered.length === 0 ? (
+                                    <div className="empty-state">
+                                        <div className="empty-icon">🌿</div>
+                                        <div className="empty-title">
+                                            {search ? 'No projects match your search' : 'No projects yet'}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    filtered.map(p => {
+                                        const badge = STATUS_BADGE[p.status] || STATUS_BADGE.ACTIVE;
+                                        const [name, sub] = p.title.includes(' — ')
+                                            ? p.title.split(' — ')
+                                            : [p.title, null];
+                                        return (
+                                            <div className="mobile-row" key={p.id}>
+                                                <div className="mobile-row-top">
+                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                        <div className="mobile-row-name">{name}</div>
+                                                        <div className="mobile-row-sub">
+                                                            {sub ? `${sub} · ` : ''}{p.leadName}
                                                         </div>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                            filtered.map(p => {
-                                                const badge = STATUS_BADGE[p.status] || STATUS_BADGE.ACTIVE;
-                                                const [name, sub] = p.title.includes(' — ')
-                                                    ? p.title.split(' — ')
-                                                    : [p.title, null];
-                                                return (
-                                                    <tr key={p.id}>
-                                                        <td>
-                                                            <div className="td-primary">{name}</div>
-                                                            {sub && <div className="td-secondary">{sub}</div>}
-                                                        </td>
-                                                        <td className="td-secondary">{p.leadName}</td>
-                                                        <td>
-                                                            <span className={`badge ${badge.cls}`}>
-                                                                <span className="badge-dot" />
-                                                                {badge.label}
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <span className="acts-num">{p.activityCount ?? 0}</span>
-                                                        </td>
-                                                        <td className="td-mono">{fmtDate(p.lastActivityDate)}</td>
-                                                    </tr>
-                                                );
-                                            })
-                                        )}
-                                    </tbody>
-                                </table>
+                                                    <span className={`badge ${badge.cls}`} style={{ flexShrink: 0 }}>
+                                                        <span className="badge-dot" />
+                                                        {badge.label}
+                                                    </span>
+                                                </div>
+                                                <div className="mobile-row-meta">
+                                                    <span className="acts-num">{p.activityCount ?? 0} activities</span>
+                                                    <span className="td-mono" style={{ fontSize: '11px' }}>
+                                                        {fmtDate(p.lastActivityDate)}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                )}
                             </div>
                         </div>
                     </div>
