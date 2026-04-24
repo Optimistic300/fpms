@@ -1,59 +1,34 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
+import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
-
-const fmtDate = (d) => {
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-};
+import { fmtDate } from '../utils/format';
+import { exportCSV } from '../utils/csv';
+import { useProjects, useReport } from '../hooks/queries';
 
 export default function Report() {
-    const [projects, setProjects] = useState([]);
     const [projectId, setProjectId] = useState('');
     const [start, setStart] = useState('');
     const [end, setEnd] = useState(new Date().toISOString().split('T')[0]);
-    const [activities, setActivities] = useState([]);
-    const [fetched, setFetched] = useState(false);
-    const [error, setError] = useState('');
-    const navigate = useNavigate();
+    const [reportParams, setReportParams] = useState(null);
+
+    const { data: projects = [] } = useProjects();
+    const { data: activities = [], isPending: reportLoading, isError } = useReport(reportParams);
+
+    const fetched = reportParams !== null;
 
     useEffect(() => {
-        api.get('/projects')
-            .then(res => setProjects(res.data))
-            .catch(() => navigate('/'));
-    }, [navigate]);
+        if (isError) toast.error('Failed to fetch report');
+    }, [isError]);
 
-    const handleFetch = async (e) => {
+    const handleFetch = (e) => {
         e.preventDefault();
-        setError('');
-        try {
-            const response = await api.get('/activities/report', { params: { projectId, start, end } });
-            setActivities(response.data);
-            setFetched(true);
-        } catch {
-            setError('Failed to fetch report');
-        }
-    };
-
-    const exportCSV = () => {
-        const headers = 'Date,Activity,Notes,Logged By\n';
-        const rows = activities.map(a =>
-            `${a.activityDate},"${a.description}","${a.notes || ''}","${a.userName}"`
-        ).join('\n');
-        const blob = new Blob([headers + rows], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `fpms_report_${start}_to_${end}.csv`;
-        link.click();
-        URL.revokeObjectURL(url);
+        setReportParams({ projectId, start, end });
     };
 
     return (
         <div className="app-shell">
             <Navbar />
-            <main>
+            <main id="main-content">
                 <div className="page">
                     <div className="page-inner">
                         <div className="page-header">
@@ -61,13 +36,12 @@ export default function Report() {
                             <div className="t-small">Filter and export logged activities by project or date range</div>
                         </div>
 
-                        {error && <div className="alert alert-error">{error}</div>}
-
                         <form onSubmit={handleFetch}>
                             <div className="filter-bar">
                                 <div className="form-group">
-                                    <label className="form-label">Project</label>
+                                    <label className="form-label" htmlFor="rep-project">Project</label>
                                     <select
+                                        id="rep-project"
                                         className="form-select"
                                         value={projectId}
                                         onChange={e => setProjectId(e.target.value)}
@@ -80,8 +54,9 @@ export default function Report() {
                                     </select>
                                 </div>
                                 <div className="form-group">
-                                    <label className="form-label">From</label>
+                                    <label className="form-label" htmlFor="rep-start">From</label>
                                     <input
+                                        id="rep-start"
                                         type="date"
                                         className="form-input"
                                         value={start}
@@ -90,8 +65,9 @@ export default function Report() {
                                     />
                                 </div>
                                 <div className="form-group">
-                                    <label className="form-label">To</label>
+                                    <label className="form-label" htmlFor="rep-end">To</label>
                                     <input
+                                        id="rep-end"
                                         type="date"
                                         className="form-input"
                                         value={end}
@@ -99,23 +75,26 @@ export default function Report() {
                                         required
                                     />
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '0' }}>
-                                    <button type="submit" className="btn btn-primary btn-sm">
-                                        Fetch Results
+                                <div className="filter-btn-wrap">
+                                    <button type="submit" className="btn btn-primary btn-sm" disabled={reportLoading}>
+                                        {reportLoading ? 'Loading…' : 'Fetch Results'}
                                     </button>
                                 </div>
                             </div>
                         </form>
 
-                        {fetched && (
+                        {fetched && !reportLoading && (
                             <>
                                 <div className="found-bar">
                                     <div className="found-text">
                                         <span className="found-count">{activities.length}</span> activities found
                                     </div>
                                     {activities.length > 0 && (
-                                        <button className="export-btn" onClick={exportCSV}>
-                                            ⬇ Export CSV
+                                        <button
+                                            className="export-btn"
+                                            onClick={() => exportCSV(activities, start, end)}
+                                        >
+                                            <span aria-hidden="true">⬇</span> Export CSV
                                         </button>
                                     )}
                                 </div>
@@ -125,12 +104,13 @@ export default function Report() {
                                     <div className="desktop-table">
                                         <div className="table-wrap">
                                             <table>
+                                                <caption className="sr-only">Report results</caption>
                                                 <thead>
                                                     <tr>
-                                                        <th>Date</th>
-                                                        <th>Activity</th>
-                                                        <th>Notes</th>
-                                                        <th>Logged By</th>
+                                                        <th scope="col">Date</th>
+                                                        <th scope="col">Activity</th>
+                                                        <th scope="col">Notes</th>
+                                                        <th scope="col">Logged By</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -138,7 +118,7 @@ export default function Report() {
                                                         <tr>
                                                             <td colSpan="4">
                                                                 <div className="empty-state">
-                                                                    <div className="empty-icon">📋</div>
+                                                                    <div className="empty-icon" aria-hidden="true">📋</div>
                                                                     <div className="empty-title">No activities in this range</div>
                                                                 </div>
                                                             </td>
@@ -146,10 +126,10 @@ export default function Report() {
                                                     ) : (
                                                         activities.map(a => (
                                                             <tr key={a.id}>
-                                                                <td className="td-mono" style={{ whiteSpace: 'nowrap' }}>
+                                                                <td className="td-mono u-nowrap">
                                                                     {fmtDate(a.activityDate)}
                                                                 </td>
-                                                                <td className="td-primary" style={{ fontWeight: 400 }}>
+                                                                <td className="td-primary u-fw-400">
                                                                     {a.description}
                                                                 </td>
                                                                 <td className="td-secondary">{a.notes || '—'}</td>
@@ -166,27 +146,27 @@ export default function Report() {
                                     <div className="mobile-rows">
                                         {activities.length === 0 ? (
                                             <div className="empty-state">
-                                                <div className="empty-icon">📋</div>
+                                                <div className="empty-icon" aria-hidden="true">📋</div>
                                                 <div className="empty-title">No activities in this range</div>
                                             </div>
                                         ) : (
                                             activities.map(a => (
                                                 <div className="mobile-row" key={a.id}>
                                                     <div className="mobile-row-top">
-                                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                                            <div className="mobile-row-name" style={{ fontSize: '14px', fontWeight: 400 }}>
+                                                        <div className="u-flex-1 u-min-w-0">
+                                                            <div className="mobile-row-name u-fs-14 u-fw-400">
                                                                 {a.description}
                                                             </div>
                                                         </div>
-                                                        <span className="td-mono" style={{ fontSize: '11px', flexShrink: 0 }}>
+                                                        <span className="td-mono u-fs-11 u-shrink-0">
                                                             {fmtDate(a.activityDate)}
                                                         </span>
                                                     </div>
                                                     <div className="mobile-row-meta">
-                                                        <span className="td-secondary" style={{ fontSize: '11px' }}>
+                                                        <span className="td-secondary u-fs-11">
                                                             {a.notes || '—'}
                                                         </span>
-                                                        <span className="td-secondary" style={{ fontSize: '11px', marginLeft: 'auto' }}>
+                                                        <span className="td-secondary u-fs-11 u-ml-auto">
                                                             {a.userName}
                                                         </span>
                                                     </div>
@@ -200,7 +180,7 @@ export default function Report() {
 
                         {!fetched && (
                             <div className="empty-state">
-                                <div className="empty-icon">📋</div>
+                                <div className="empty-icon" aria-hidden="true">📋</div>
                                 <div className="empty-title">No results yet</div>
                                 <div className="empty-sub">Select filters above and click <strong>Fetch Results</strong></div>
                             </div>

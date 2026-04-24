@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
     const [isRegister, setIsRegister] = useState(false);
     const [fullName, setFullName] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
         setLoading(true);
 
         try {
@@ -24,27 +25,23 @@ export default function Login() {
 
             const response = await api.post(endpoint, payload);
 
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify({
-                fullName: response.data.fullName,
-                email: response.data.email,
-                role: response.data.role,
-            }));
-
+            login(response.data);
             navigate('/dashboard');
         } catch (err) {
-            setError(err.response?.data?.message || 'Something went wrong');
+            toast.error(err.response?.data?.message || 'Something went wrong');
         } finally {
             setLoading(false);
         }
     };
 
-    const toggle = () => { setIsRegister(v => !v); setError(''); };
+    const toggle = () => { setIsRegister(v => !v); };
 
     return (
         <div id="page-login">
             <div className="login-card">
-                <div className="login-badge">🌿 CSIR · FORIG</div>
+                <div className="login-badge">
+                    <span aria-hidden="true">🌿</span> CSIR · FORIG
+                </div>
 
                 <div className="login-heading">
                     {isRegister ? 'Create account.' : 'Welcome back.'}
@@ -53,13 +50,12 @@ export default function Login() {
                     {isRegister ? 'Join your workspace' : 'Sign in to your workspace'}
                 </div>
 
-                {error && <div className="alert alert-error">{error}</div>}
-
                 <form onSubmit={handleSubmit}>
                     {isRegister && (
                         <div className="form-group">
-                            <label className="form-label">Full Name</label>
+                            <label className="form-label" htmlFor="reg-fullname">Full Name</label>
                             <input
+                                id="reg-fullname"
                                 type="text"
                                 value={fullName}
                                 onChange={e => setFullName(e.target.value)}
@@ -71,8 +67,9 @@ export default function Login() {
                     )}
 
                     <div className="form-group">
-                        <label className="form-label">Email address</label>
+                        <label className="form-label" htmlFor="login-email">Email address</label>
                         <input
+                            id="login-email"
                             type="email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
@@ -83,8 +80,9 @@ export default function Login() {
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label">Password</label>
+                        <label className="form-label" htmlFor="login-password">Password</label>
                         <input
+                            id="login-password"
                             type="password"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
@@ -97,8 +95,7 @@ export default function Login() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="btn btn-primary btn-full"
-                        style={{ marginTop: '4px' }}
+                        className="btn btn-primary btn-full u-mt-1"
                     >
                         {loading ? 'Please wait…' : isRegister ? 'Create Account' : 'Sign in to FPMS'}
                     </button>

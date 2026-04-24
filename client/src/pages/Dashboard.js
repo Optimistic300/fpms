@@ -1,38 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
+import { useState } from 'react';
 import Navbar from '../components/Navbar';
-
-const STATUS_BADGE = {
-    ACTIVE:    { cls: 'badge-active', label: 'Active'    },
-    ON_HOLD:   { cls: 'badge-hold',   label: 'On Hold'   },
-    COMPLETED: { cls: 'badge-done',   label: 'Completed' },
-};
-
-const fmtDate = (d) => {
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-};
+import { STATUS_BADGE } from '../constants';
+import { fmtDateShort } from '../utils/format';
+import { useProjects } from '../hooks/queries';
 
 export default function Dashboard() {
-    const [projects, setProjects] = useState([]);
     const [search, setSearch] = useState('');
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+    const { data: projects = [], isPending } = useProjects();
 
-    useEffect(() => {
-        api.get('/projects')
-            .then(res => setProjects(res.data))
-            .catch(err => {
-                if (err.response?.status === 401) {
-                    localStorage.clear();
-                    navigate('/');
-                }
-            })
-            .finally(() => setLoading(false));
-    }, [navigate]);
-
-    if (loading) return <div className="loading-screen">Loading…</div>;
+    if (isPending) return <div className="loading-screen">Loading…</div>;
 
     const activeCount    = projects.filter(p => p.status === 'ACTIVE').length;
     const holdCount      = projects.filter(p => p.status === 'ON_HOLD').length;
@@ -47,7 +23,7 @@ export default function Dashboard() {
     return (
         <div className="app-shell">
             <Navbar />
-            <main>
+            <main id="main-content">
                 <div className="page">
                     <div className="page-inner">
                         <div className="page-header">
@@ -60,24 +36,18 @@ export default function Dashboard() {
                                 count={activeCount}
                                 label="Active Projects"
                                 fillPct={activeCount / total * 100}
-                                dotColor="var(--forest-600)"
-                                fillColor="var(--forest-600)"
                             />
                             <StatCard
                                 count={holdCount}
                                 label="On Hold"
                                 variant="warn"
                                 fillPct={holdCount / total * 100}
-                                dotColor="var(--amber-500)"
-                                fillColor="var(--amber-500)"
                             />
                             <StatCard
                                 count={completedCount}
                                 label="Completed"
                                 variant="info"
                                 fillPct={completedCount / total * 100}
-                                dotColor="var(--blue-600)"
-                                fillColor="var(--blue-600)"
                             />
                         </div>
 
@@ -89,6 +59,7 @@ export default function Dashboard() {
                                     placeholder="Search projects…"
                                     value={search}
                                     onChange={e => setSearch(e.target.value)}
+                                    aria-label="Search projects"
                                 />
                             </div>
 
@@ -96,13 +67,14 @@ export default function Dashboard() {
                             <div className="desktop-table">
                                 <div className="table-wrap">
                                     <table>
+                                        <caption className="sr-only">All projects</caption>
                                         <thead>
                                             <tr>
-                                                <th>Project</th>
-                                                <th>Lead</th>
-                                                <th>Status</th>
-                                                <th>Activities</th>
-                                                <th>Last Update</th>
+                                                <th scope="col">Project</th>
+                                                <th scope="col">Lead</th>
+                                                <th scope="col">Status</th>
+                                                <th scope="col">Activities</th>
+                                                <th scope="col">Last Update</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -110,7 +82,7 @@ export default function Dashboard() {
                                                 <tr>
                                                     <td colSpan="5">
                                                         <div className="empty-state">
-                                                            <div className="empty-icon">🌿</div>
+                                                            <div className="empty-icon" aria-hidden="true">🌿</div>
                                                             <div className="empty-title">
                                                                 {search ? 'No projects match your search' : 'No projects yet'}
                                                             </div>
@@ -132,14 +104,14 @@ export default function Dashboard() {
                                                             <td className="td-secondary">{p.leadName}</td>
                                                             <td>
                                                                 <span className={`badge ${badge.cls}`}>
-                                                                    <span className="badge-dot" />
+                                                                    <span className="badge-dot" aria-hidden="true" />
                                                                     {badge.label}
                                                                 </span>
                                                             </td>
                                                             <td>
                                                                 <span className="acts-num">{p.activityCount ?? 0}</span>
                                                             </td>
-                                                            <td className="td-mono">{fmtDate(p.lastActivityDate)}</td>
+                                                            <td className="td-mono">{fmtDateShort(p.lastActivityDate)}</td>
                                                         </tr>
                                                     );
                                                 })
@@ -153,7 +125,7 @@ export default function Dashboard() {
                             <div className="mobile-rows">
                                 {filtered.length === 0 ? (
                                     <div className="empty-state">
-                                        <div className="empty-icon">🌿</div>
+                                        <div className="empty-icon" aria-hidden="true">🌿</div>
                                         <div className="empty-title">
                                             {search ? 'No projects match your search' : 'No projects yet'}
                                         </div>
@@ -167,21 +139,21 @@ export default function Dashboard() {
                                         return (
                                             <div className="mobile-row" key={p.id}>
                                                 <div className="mobile-row-top">
-                                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <div className="u-flex-1 u-min-w-0">
                                                         <div className="mobile-row-name">{name}</div>
                                                         <div className="mobile-row-sub">
                                                             {sub ? `${sub} · ` : ''}{p.leadName}
                                                         </div>
                                                     </div>
-                                                    <span className={`badge ${badge.cls}`} style={{ flexShrink: 0 }}>
-                                                        <span className="badge-dot" />
+                                                    <span className={`badge ${badge.cls} u-shrink-0`}>
+                                                        <span className="badge-dot" aria-hidden="true" />
                                                         {badge.label}
                                                     </span>
                                                 </div>
                                                 <div className="mobile-row-meta">
                                                     <span className="acts-num">{p.activityCount ?? 0} activities</span>
-                                                    <span className="td-mono" style={{ fontSize: '11px' }}>
-                                                        {fmtDate(p.lastActivityDate)}
+                                                    <span className="td-mono u-fs-11">
+                                                        {fmtDateShort(p.lastActivityDate)}
                                                     </span>
                                                 </div>
                                             </div>
@@ -197,16 +169,16 @@ export default function Dashboard() {
     );
 }
 
-function StatCard({ count, label, variant, fillPct, dotColor, fillColor }) {
+function StatCard({ count, label, variant, fillPct }) {
     return (
         <div className={`stat-card${variant ? ' ' + variant : ''}`}>
             <div className="stat-num">{count}</div>
             <div className="stat-label">
-                <span className="stat-dot" style={{ background: dotColor }} />
+                <span className="stat-dot" aria-hidden="true" />
                 {label}
             </div>
-            <div className="stat-bar">
-                <div className="stat-fill" style={{ width: `${fillPct}%`, background: fillColor }} />
+            <div className="stat-bar" aria-hidden="true">
+                <div className="stat-fill" style={{ '--fill': `${fillPct}%` }} />
             </div>
         </div>
     );

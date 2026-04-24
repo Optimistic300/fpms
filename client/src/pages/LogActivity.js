@@ -1,61 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
+import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
-
-const ACTIVITY_TYPES = [
-    'Field sampling',
-    'Lab analysis',
-    'Data collection',
-    'Community engagement',
-    'Reporting',
-    'Training',
-    'Other',
-];
+import { ACTIVITY_TYPES } from '../constants';
+import { useProjects, useLogActivity } from '../hooks/queries';
 
 export default function LogActivity() {
-    const [projects, setProjects] = useState([]);
     const [projectId, setProjectId] = useState('');
     const [activityType, setActivityType] = useState(ACTIVITY_TYPES[0]);
     const [description, setDescription] = useState('');
     const [notes, setNotes] = useState('');
     const [activityDate, setActivityDate] = useState(new Date().toISOString().split('T')[0]);
-    const [success, setSuccess] = useState('');
-    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        api.get('/projects')
-            .then(res => setProjects(res.data))
-            .catch(() => navigate('/'));
-    }, [navigate]);
+    const { data: projects = [] } = useProjects();
+    const { mutate: logActivity, isPending } = useLogActivity();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        setError('');
-        setSuccess('');
-        try {
-            await api.post('/activities', {
-                projectId: Number(projectId),
-                activityType,
-                description,
-                notes,
-                activityDate,
-            });
-            setSuccess('Activity logged successfully!');
-            setDescription('');
-            setNotes('');
-            setProjectId('');
-            setActivityType(ACTIVITY_TYPES[0]);
-        } catch (err) {
-            setError(err.response?.data?.message || 'Failed to log activity');
-        }
+        logActivity(
+            { projectId: Number(projectId), activityType, description, notes, activityDate },
+            {
+                onSuccess: () => {
+                    toast.success('Activity logged successfully!');
+                    setDescription('');
+                    setNotes('');
+                    setProjectId('');
+                    setActivityType(ACTIVITY_TYPES[0]);
+                },
+                onError: (err) => {
+                    toast.error(err?.response?.data?.message || 'Failed to log activity');
+                },
+            }
+        );
     };
 
     return (
         <div className="app-shell">
             <Navbar />
-            <main>
+            <main id="main-content">
                 <div className="page">
                     <div className="page-inner">
                         <div className="page-header">
@@ -64,13 +47,11 @@ export default function LogActivity() {
                         </div>
 
                         <div className="form-card">
-                            {success && <div className="alert alert-success">{success}</div>}
-                            {error   && <div className="alert alert-error">{error}</div>}
-
                             <form onSubmit={handleSubmit}>
                                 <div className="form-group">
-                                    <label className="form-label">Project</label>
+                                    <label className="form-label" htmlFor="la-project">Project</label>
                                     <select
+                                        id="la-project"
                                         className="form-select"
                                         value={projectId}
                                         onChange={e => setProjectId(e.target.value)}
@@ -85,8 +66,9 @@ export default function LogActivity() {
 
                                 <div className="form-row">
                                     <div className="form-group">
-                                        <label className="form-label">Date</label>
+                                        <label className="form-label" htmlFor="la-date">Date</label>
                                         <input
+                                            id="la-date"
                                             type="date"
                                             className="form-input"
                                             value={activityDate}
@@ -95,8 +77,9 @@ export default function LogActivity() {
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label className="form-label">Activity type</label>
+                                        <label className="form-label" htmlFor="la-type">Activity type</label>
                                         <select
+                                            id="la-type"
                                             className="form-select"
                                             value={activityType}
                                             onChange={e => setActivityType(e.target.value)}
@@ -109,8 +92,9 @@ export default function LogActivity() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">Activity description</label>
+                                    <label className="form-label" htmlFor="la-desc">Activity description</label>
                                     <textarea
+                                        id="la-desc"
                                         className="form-textarea"
                                         value={description}
                                         onChange={e => setDescription(e.target.value)}
@@ -120,12 +104,12 @@ export default function LogActivity() {
                                 </div>
 
                                 <div className="form-group">
-                                    <label className="form-label">
+                                    <label className="form-label" htmlFor="la-notes">
                                         Notes <span className="form-label-opt">(optional)</span>
                                     </label>
                                     <textarea
-                                        className="form-textarea"
-                                        style={{ minHeight: '70px' }}
+                                        id="la-notes"
+                                        className="form-textarea form-textarea-sm"
                                         value={notes}
                                         onChange={e => setNotes(e.target.value)}
                                         placeholder="Additional context, observations, or follow-up actions…"
@@ -138,10 +122,10 @@ export default function LogActivity() {
                                         className="btn btn-outline"
                                         onClick={() => navigate('/dashboard')}
                                     >
-                                        ← Cancel
+                                        <span aria-hidden="true">←</span> Cancel
                                     </button>
-                                    <button type="submit" className="btn btn-primary">
-                                        Save Activity ✓
+                                    <button type="submit" className="btn btn-primary" disabled={isPending}>
+                                        {isPending ? 'Saving…' : <>Save Activity <span aria-hidden="true">✓</span></>}
                                     </button>
                                 </div>
                             </form>

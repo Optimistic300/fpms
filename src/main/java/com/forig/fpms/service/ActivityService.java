@@ -26,6 +26,7 @@ public class ActivityService {
         Activity activity = Activity.builder()
                 .user(user)
                 .project(project)
+                .activityType(request.getActivityType())
                 .description(request.getDescription())
                 .notes(request.getNotes())
                 .activityDate(request.getActivityDate())
@@ -60,6 +61,7 @@ public class ActivityService {
     private ActivityResponse toResponse(Activity activity) {
         return ActivityResponse.builder()
                 .id(activity.getId())
+                .activityType(activity.getActivityType())
                 .description(activity.getDescription())
                 .notes(activity.getNotes())
                 .activityDate(activity.getActivityDate())

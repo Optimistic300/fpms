@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class ActivityResponse {
 
     private Long id;
+    private String activityType;
     private String description;
     private String notes;
     private LocalDate activityDate;

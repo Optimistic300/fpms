@@ -26,6 +26,9 @@ public class Activity {
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
+    @Column(name = "activity_type")
+    private String activityType;
+
     @Column(nullable = false)
     private String description;
 

@@ -1,30 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import api from '../utils/api';
 import Navbar from '../components/Navbar';
-
-const fmtDate = (d) => {
-    if (!d) return '—';
-    return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-};
+import { fmtDate } from '../utils/format';
+import { useMyActivities } from '../hooks/queries';
 
 export default function MyActivities() {
-    const [activities, setActivities] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+    const { data: activities = [], isPending } = useMyActivities();
 
-    useEffect(() => {
-        api.get('/activities/mine')
-            .then(res => { setActivities(res.data); setLoading(false); })
-            .catch(() => navigate('/'));
-    }, [navigate]);
-
-    if (loading) return <div className="loading-screen">Loading…</div>;
+    if (isPending) return <div className="loading-screen">Loading…</div>;
 
     return (
         <div className="app-shell">
             <Navbar />
-            <main>
+            <main id="main-content">
                 <div className="page">
                     <div className="page-inner">
                         <div className="page-header">
@@ -36,7 +22,7 @@ export default function MyActivities() {
                             <div className="card-header">
                                 <span className="card-title">Activity log</span>
                                 <span className="t-small">
-                                    <strong style={{ color: 'var(--slate-900)', fontFamily: 'var(--font-display)' }}>
+                                    <strong className="u-c-slate900 u-ff-display">
                                         {activities.length}
                                     </strong>
                                     {' '}entries
@@ -47,12 +33,13 @@ export default function MyActivities() {
                             <div className="desktop-table">
                                 <div className="table-wrap">
                                     <table>
+                                        <caption className="sr-only">Activity log</caption>
                                         <thead>
                                             <tr>
-                                                <th>Date</th>
-                                                <th>Project</th>
-                                                <th>Activity</th>
-                                                <th>Notes</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Project</th>
+                                                <th scope="col">Activity</th>
+                                                <th scope="col">Notes</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -60,7 +47,7 @@ export default function MyActivities() {
                                                 <tr>
                                                     <td colSpan="4">
                                                         <div className="empty-state">
-                                                            <div className="empty-icon">📋</div>
+                                                            <div className="empty-icon" aria-hidden="true">📋</div>
                                                             <div className="empty-title">No activities yet</div>
                                                             <div className="empty-sub">Start by logging your first activity</div>
                                                         </div>
@@ -69,7 +56,7 @@ export default function MyActivities() {
                                             ) : (
                                                 activities.map(a => (
                                                     <tr key={a.id}>
-                                                        <td className="td-mono" style={{ whiteSpace: 'nowrap' }}>
+                                                        <td className="td-mono u-nowrap">
                                                             {fmtDate(a.activityDate)}
                                                         </td>
                                                         <td>
@@ -77,7 +64,7 @@ export default function MyActivities() {
                                                                 {(a.projectTitle || '').split(' ').slice(0, 2).join(' ')}
                                                             </span>
                                                         </td>
-                                                        <td className="td-primary" style={{ fontWeight: 400, maxWidth: '280px' }}>
+                                                        <td className="td-primary u-fw-400 u-max-w-280">
                                                             {a.description}
                                                         </td>
                                                         <td className="td-secondary">{a.notes || '—'}</td>
@@ -93,7 +80,7 @@ export default function MyActivities() {
                             <div className="mobile-rows">
                                 {activities.length === 0 ? (
                                     <div className="empty-state">
-                                        <div className="empty-icon">📋</div>
+                                        <div className="empty-icon" aria-hidden="true">📋</div>
                                         <div className="empty-title">No activities yet</div>
                                         <div className="empty-sub">Start by logging your first activity</div>
                                     </div>
@@ -101,17 +88,19 @@ export default function MyActivities() {
                                     activities.map(a => (
                                         <div className="mobile-row" key={a.id}>
                                             <div className="mobile-row-top">
-                                                <div style={{ flex: 1, minWidth: 0 }}>
-                                                    <div className="mobile-row-name" style={{ fontSize: '14px', fontWeight: 400 }}>
+                                                <div className="u-flex-1 u-min-w-0">
+                                                    <div className="mobile-row-name u-fs-14 u-fw-400">
                                                         {a.description}
                                                     </div>
                                                 </div>
-                                                <span className="chip">{(a.projectTitle || '').split(' ').slice(0, 2).join(' ')}</span>
+                                                <span className="chip">
+                                                    {(a.projectTitle || '').split(' ').slice(0, 2).join(' ')}
+                                                </span>
                                             </div>
                                             <div className="mobile-row-meta">
-                                                <span className="td-mono" style={{ fontSize: '11px' }}>{fmtDate(a.activityDate)}</span>
+                                                <span className="td-mono u-fs-11">{fmtDate(a.activityDate)}</span>
                                                 {a.notes && (
-                                                    <span className="td-secondary" style={{ fontSize: '11px' }}>{a.notes}</span>
+                                                    <span className="td-secondary u-fs-11">{a.notes}</span>
                                                 )}
                                             </div>
                                         </div>

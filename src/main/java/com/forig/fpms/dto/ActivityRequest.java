@@ -12,6 +12,8 @@ public class ActivityRequest {
     @NotNull(message = "Project ID is required")
     private Long projectId;
 
+    private String activityType;
+
     @NotBlank(message = "Description is required")
     private String description;
 
