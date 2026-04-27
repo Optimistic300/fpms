@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Leaf } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
@@ -40,7 +41,7 @@ export default function Login() {
         <div id="page-login">
             <div className="login-card">
                 <div className="login-badge">
-                    <span aria-hidden="true">🌿</span> CSIR · FORIG
+                    <Leaf size={12} aria-hidden="true" /> CSIR · FORIG
                 </div>
 
                 <div className="login-heading">

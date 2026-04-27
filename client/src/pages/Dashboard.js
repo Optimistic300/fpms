@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Leaf } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { STATUS_BADGE } from '../constants';
 import { fmtDateShort } from '../utils/format';
@@ -82,7 +83,7 @@ export default function Dashboard() {
                                                 <tr>
                                                     <td colSpan="5">
                                                         <div className="empty-state">
-                                                            <div className="empty-icon" aria-hidden="true">🌿</div>
+                                                            <Leaf size={32} className="empty-icon" aria-hidden="true" />
                                                             <div className="empty-title">
                                                                 {search ? 'No projects match your search' : 'No projects yet'}
                                                             </div>

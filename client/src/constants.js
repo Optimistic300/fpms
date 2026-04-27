@@ -1,3 +1,5 @@
+import { LayoutDashboard, ClipboardList, FolderOpen } from 'lucide-react';
+
 export const STATUS_BADGE = {
     ACTIVE:    { cls: 'badge-active', label: 'Active'    },
     ON_HOLD:   { cls: 'badge-hold',   label: 'On Hold'   },
@@ -15,7 +17,7 @@ export const ACTIVITY_TYPES = [
 ];
 
 export const NAV_ITEMS = [
-    { path: '/dashboard',  label: 'Dashboard',    icon: '📊' },
-    { path: '/report',     label: 'Reports',       icon: '📋' },
-    { path: '/activities', label: 'My Activities', icon: '🗂'  },
+    { path: '/dashboard',  label: 'Dashboard',    Icon: LayoutDashboard },
+    { path: '/report',     label: 'Reports',       Icon: ClipboardList   },
+    { path: '/activities', label: 'My Activities', Icon: FolderOpen      },
 ];

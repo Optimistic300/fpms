@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 import { ACTIVITY_TYPES } from '../constants';
@@ -122,10 +123,10 @@ export default function LogActivity() {
                                         className="btn btn-outline"
                                         onClick={() => navigate('/dashboard')}
                                     >
-                                        <span aria-hidden="true">←</span> Cancel
+                                        <ArrowLeft size={15} aria-hidden="true" /> Cancel
                                     </button>
                                     <button type="submit" className="btn btn-primary" disabled={isPending}>
-                                        {isPending ? 'Saving…' : <>Save Activity <span aria-hidden="true">✓</span></>}
+                                        {isPending ? 'Saving…' : <><Check size={15} aria-hidden="true" /> Save Activity</>}
                                     </button>
                                 </div>
                             </form>

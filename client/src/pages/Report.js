@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Download, ClipboardList } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 import { fmtDate } from '../utils/format';
@@ -94,7 +95,7 @@ export default function Report() {
                                             className="export-btn"
                                             onClick={() => exportCSV(activities, start, end)}
                                         >
-                                            <span aria-hidden="true">⬇</span> Export CSV
+                                            <Download size={13} aria-hidden="true" /> Export CSV
                                         </button>
                                     )}
                                 </div>
@@ -118,7 +119,7 @@ export default function Report() {
                                                         <tr>
                                                             <td colSpan="4">
                                                                 <div className="empty-state">
-                                                                    <div className="empty-icon" aria-hidden="true">📋</div>
+                                                                    <ClipboardList size={32} className="empty-icon" aria-hidden="true" />
                                                                     <div className="empty-title">No activities in this range</div>
                                                                 </div>
                                                             </td>
@@ -146,7 +147,7 @@ export default function Report() {
                                     <div className="mobile-rows">
                                         {activities.length === 0 ? (
                                             <div className="empty-state">
-                                                <div className="empty-icon" aria-hidden="true">📋</div>
+                                                <ClipboardList size={32} className="empty-icon" aria-hidden="true" />
                                                 <div className="empty-title">No activities in this range</div>
                                             </div>
                                         ) : (
@@ -180,7 +181,7 @@ export default function Report() {
 
                         {!fetched && (
                             <div className="empty-state">
-                                <div className="empty-icon" aria-hidden="true">📋</div>
+                                <ClipboardList size={32} className="empty-icon" aria-hidden="true" />
                                 <div className="empty-title">No results yet</div>
                                 <div className="empty-sub">Select filters above and click <strong>Fetch Results</strong></div>
                             </div>

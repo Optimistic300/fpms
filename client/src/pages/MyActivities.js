@@ -1,3 +1,4 @@
+import { ClipboardList } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { fmtDate } from '../utils/format';
 import { useMyActivities } from '../hooks/queries';
@@ -47,7 +48,7 @@ export default function MyActivities() {
                                                 <tr>
                                                     <td colSpan="4">
                                                         <div className="empty-state">
-                                                            <div className="empty-icon" aria-hidden="true">📋</div>
+                                                            <ClipboardList size={32} className="empty-icon" aria-hidden="true" />
                                                             <div className="empty-title">No activities yet</div>
                                                             <div className="empty-sub">Start by logging your first activity</div>
                                                         </div>
@@ -80,7 +81,7 @@ export default function MyActivities() {
                             <div className="mobile-rows">
                                 {activities.length === 0 ? (
                                     <div className="empty-state">
-                                        <div className="empty-icon" aria-hidden="true">📋</div>
+                                        <ClipboardList size={32} className="empty-icon" aria-hidden="true" />
                                         <div className="empty-title">No activities yet</div>
                                         <div className="empty-sub">Start by logging your first activity</div>
                                     </div>

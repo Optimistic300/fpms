@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X, Plus, LogOut, Leaf, LayoutDashboard, ClipboardList, FolderOpen } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { NAV_ITEMS } from '../constants';
+
+const BOTTOM_TABS = [
+    { path: '/dashboard',  label: 'Dashboard',    Icon: LayoutDashboard },
+    { path: '/report',     label: 'Reports',       Icon: ClipboardList   },
+    { path: '/log',        label: 'Log Activity',  Icon: Plus, cta: true },
+    { path: '/activities', label: 'My Activities', Icon: FolderOpen      },
+];
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -56,17 +64,17 @@ export default function Navbar() {
                         onClick={() => setDrawerOpen(false)}
                         aria-label="Close menu"
                     >
-                        <span aria-hidden="true">✕</span>
+                        <X size={15} aria-hidden="true" />
                     </button>
                 </div>
 
-                {NAV_ITEMS.map(({ path, label, icon }) => (
+                {NAV_ITEMS.map(({ path, label, Icon }) => (
                     <button
                         key={path}
                         className={`drawer-link${isActive(path) ? ' active' : ''}`}
                         onClick={() => go(path)}
                     >
-                        <span className="drawer-icon" aria-hidden="true">{icon}</span>
+                        <Icon size={18} className="drawer-icon" aria-hidden="true" />
                         {label}
                     </button>
                 ))}
@@ -74,14 +82,14 @@ export default function Navbar() {
                 <div className="drawer-divider" />
 
                 <button className="drawer-cta" onClick={() => go('/log')}>
-                    <span className="drawer-icon" aria-hidden="true">＋</span>
+                    <Plus size={18} className="drawer-icon" aria-hidden="true" />
                     Log New Activity
                 </button>
 
                 <div className="drawer-divider" />
 
                 <button className="drawer-logout" onClick={handleLogout}>
-                    <span className="drawer-icon" aria-hidden="true">⇥</span>
+                    <LogOut size={16} className="drawer-icon" aria-hidden="true" />
                     Sign out
                 </button>
             </div>
@@ -90,7 +98,9 @@ export default function Navbar() {
             <nav>
                 <div className="nav-inner">
                     <button className="nav-brand" onClick={() => go('/dashboard')}>
-                        <div className="nav-logo" aria-hidden="true">🌿</div>
+                        <div className="nav-logo" aria-hidden="true">
+                            <Leaf size={18} />
+                        </div>
                         <div className="nav-wordmark">
                             <span className="nav-wordmark-top">FPMS</span>
                             <span className="nav-wordmark-sub">FORIG Progress Monitoring</span>
@@ -111,7 +121,7 @@ export default function Navbar() {
                                 ))}
                             </div>
                             <button className="nav-cta" onClick={() => go('/log')}>
-                                + Log Activity
+                                <Plus size={14} aria-hidden="true" /> Log Activity
                             </button>
                         </div>
 
@@ -123,7 +133,7 @@ export default function Navbar() {
                                 onClick={handleLogout}
                                 aria-label="Sign out"
                             >
-                                <span aria-hidden="true">⇥</span>
+                                <LogOut size={16} aria-hidden="true" />
                             </button>
                         </div>
 
@@ -134,7 +144,7 @@ export default function Navbar() {
                             aria-expanded={drawerOpen}
                             aria-controls="nav-drawer"
                         >
-                            <span aria-hidden="true">☰</span>
+                            <Menu size={22} aria-hidden="true" />
                         </button>
                     </div>
                 </div>
@@ -142,34 +152,16 @@ export default function Navbar() {
 
             {/* ── Bottom tab bar (mobile) ── */}
             <div className="bottom-bar" role="navigation" aria-label="Main navigation">
-                <button
-                    className={`bottom-tab${isActive('/dashboard') ? ' active' : ''}`}
-                    onClick={() => go('/dashboard')}
-                >
-                    <span className="bt-icon" aria-hidden="true">📊</span>
-                    <span className="bt-label">Dashboard</span>
-                </button>
-
-                <button
-                    className={`bottom-tab${isActive('/report') ? ' active' : ''}`}
-                    onClick={() => go('/report')}
-                >
-                    <span className="bt-icon" aria-hidden="true">📋</span>
-                    <span className="bt-label">Reports</span>
-                </button>
-
-                <button className="bottom-tab bottom-tab-cta" onClick={() => go('/log')}>
-                    <span className="bt-icon" aria-hidden="true">＋</span>
-                    <span className="bt-label">Log Activity</span>
-                </button>
-
-                <button
-                    className={`bottom-tab${isActive('/activities') ? ' active' : ''}`}
-                    onClick={() => go('/activities')}
-                >
-                    <span className="bt-icon" aria-hidden="true">🗂</span>
-                    <span className="bt-label">My Activities</span>
-                </button>
+                {BOTTOM_TABS.map(({ path, label, Icon, cta }) => (
+                    <button
+                        key={path}
+                        className={`bottom-tab${cta ? ' bottom-tab-cta' : ''}${isActive(path) ? ' active' : ''}`}
+                        onClick={() => go(path)}
+                    >
+                        <Icon size={20} className="bt-icon" aria-hidden="true" />
+                        <span className="bt-label">{label}</span>
+                    </button>
+                ))}
             </div>
         </>
     );
