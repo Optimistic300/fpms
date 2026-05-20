@@ -5,6 +5,8 @@ import Dashboard from './pages/Dashboard';
 import LogActivity from './pages/LogActivity';
 import Report from './pages/Report';
 import MyActivities from './pages/MyActivities';
+import Inbox from './pages/Inbox';
+import Library from './pages/Library';
 import { useAuth } from './context/AuthContext';
 import { isTokenValid } from './utils/api';
 
@@ -50,6 +52,12 @@ export default function App() {
                 } />
                 <Route path="/activities" element={
                     <ProtectedRoute><MyActivities /></ProtectedRoute>
+                } />
+                <Route path="/inbox" element={
+                    <ProtectedRoute><Inbox /></ProtectedRoute>
+                } />
+                <Route path="/library" element={
+                    <ProtectedRoute><Library /></ProtectedRoute>
                 } />
             </Routes>
         </BrowserRouter>

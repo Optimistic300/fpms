@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Plus, LogOut, Leaf, LayoutDashboard, ClipboardList, FolderOpen } from 'lucide-react';
+import { Menu, X, Plus, LogOut, Leaf, LayoutDashboard, ClipboardList, FolderOpen, BookOpen, Inbox } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useInboxCount } from '../hooks/queries';
 import { NAV_ITEMS } from '../constants';
 
 const BOTTOM_TABS = [
     { path: '/dashboard',  label: 'Dashboard',    Icon: LayoutDashboard },
-    { path: '/report',     label: 'Reports',       Icon: ClipboardList   },
-    { path: '/log',        label: 'Log Activity',  Icon: Plus, cta: true },
-    { path: '/activities', label: 'My Activities', Icon: FolderOpen      },
+    { path: '/report',     label: 'Reports',      Icon: ClipboardList   },
+    { path: '/log',        label: 'Log Activity', Icon: Plus, cta: true },
+    { path: '/library',    label: 'Library',      Icon: BookOpen        },
+    { path: '/inbox',      label: 'Inbox',        Icon: Inbox           },
 ];
 
 export default function Navbar() {
@@ -16,6 +18,7 @@ export default function Navbar() {
     const location = useLocation();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const { user, logout } = useAuth();
+    const { data: unreadCount = 0 } = useInboxCount();
 
     const initials = (user?.fullName || 'U')
         .split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase();
@@ -76,10 +79,20 @@ export default function Navbar() {
                     >
                         <Icon size={18} className="drawer-icon" aria-hidden="true" />
                         {label}
+                        {path === '/inbox' && unreadCount > 0 && (
+                            <span className="nav-badge" aria-label={`${unreadCount} unread`}>
+                                {unreadCount}
+                            </span>
+                        )}
                     </button>
                 ))}
 
                 <div className="drawer-divider" />
+
+                <button className="drawer-cta drawer-cta-outline" onClick={() => go('/dashboard?new=1')}>
+                    <Plus size={18} className="drawer-icon" aria-hidden="true" />
+                    New Project
+                </button>
 
                 <button className="drawer-cta" onClick={() => go('/log')}>
                     <Plus size={18} className="drawer-icon" aria-hidden="true" />
@@ -102,8 +115,8 @@ export default function Navbar() {
                             <Leaf size={18} />
                         </div>
                         <div className="nav-wordmark">
-                            <span className="nav-wordmark-top">FPMS</span>
-                            <span className="nav-wordmark-sub">FORIG Progress Monitoring</span>
+                            <span className="nav-wordmark-top">CSIR-FORIG</span>
+                            <span className="nav-wordmark-sub">Progress Monitoring System</span>
                         </div>
                     </button>
 
@@ -117,9 +130,17 @@ export default function Navbar() {
                                         onClick={() => go(path)}
                                     >
                                         {label}
+                                        {path === '/inbox' && unreadCount > 0 && (
+                                            <span className="nav-badge" aria-label={`${unreadCount} unread`}>
+                                                {unreadCount}
+                                            </span>
+                                        )}
                                     </button>
                                 ))}
                             </div>
+                            <button className="nav-cta nav-cta-outline" onClick={() => go('/dashboard?new=1')}>
+                                <Plus size={14} aria-hidden="true" /> New Project
+                            </button>
                             <button className="nav-cta" onClick={() => go('/log')}>
                                 <Plus size={14} aria-hidden="true" /> Log Activity
                             </button>
@@ -158,7 +179,12 @@ export default function Navbar() {
                         className={`bottom-tab${cta ? ' bottom-tab-cta' : ''}${isActive(path) ? ' active' : ''}`}
                         onClick={() => go(path)}
                     >
-                        <Icon size={20} className="bt-icon" aria-hidden="true" />
+                        <span style={{ position: 'relative', display: 'inline-flex' }}>
+                            <Icon size={20} className="bt-icon" aria-hidden="true" />
+                            {path === '/inbox' && unreadCount > 0 && (
+                                <span className="bt-badge" aria-hidden="true">{unreadCount}</span>
+                            )}
+                        </span>
                         <span className="bt-label">{label}</span>
                     </button>
                 ))}

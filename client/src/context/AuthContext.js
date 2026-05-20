@@ -16,7 +16,7 @@ export function AuthProvider({ children }) {
     });
 
     const login = useCallback((data) => {
-        const u = { fullName: data.fullName, email: data.email, role: data.role };
+        const u = { id: data.id, fullName: data.fullName, email: data.email, role: data.role };
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(u));
         setToken(data.token);

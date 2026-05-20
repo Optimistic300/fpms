@@ -39,6 +39,22 @@ public class ActivityController {
         return ResponseEntity.ok(activityService.getByProject(projectId));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ActivityResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody ActivityRequest request,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(activityService.update(id, request, user));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        activityService.delete(id, user);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/report")
     public ResponseEntity<List<ActivityResponse>> report(
             @RequestParam Long projectId,

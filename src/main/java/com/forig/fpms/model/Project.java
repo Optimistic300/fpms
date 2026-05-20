@@ -26,6 +26,21 @@ public class Project {
     @Column(nullable = false, length = 20)
     private String status;
 
+    @Column(name = "funding_type", nullable = false, length = 20)
+    private String fundingType;
+
+    @Column(name = "research_area", length = 255)
+    private String researchArea;
+
+    @Column(name = "funding_source", length = 255)
+    private String fundingSource;
+
+    @Column(columnDefinition = "TEXT")
+    private String objectives;
+
+    @Column(name = "key_findings", columnDefinition = "TEXT")
+    private String keyFindings;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lead_id", nullable = false)
     private User lead;

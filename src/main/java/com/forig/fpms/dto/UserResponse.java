@@ -2,17 +2,10 @@ package com.forig.fpms.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class AuthResponse {
-
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor @Builder
+public class UserResponse {
     private Long id;
-    private String token;
     private String fullName;
-    private String email;
     private String role;
     private String designation;
     private String divisionName;

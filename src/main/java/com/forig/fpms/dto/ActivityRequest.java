@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Getter @Setter
 public class ActivityRequest {
 
-    @NotNull(message = "Project ID is required")
     private Long projectId;
 
     private String activityType;

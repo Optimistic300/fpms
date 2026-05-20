@@ -24,7 +24,9 @@ api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
-        config.headers['Content-Type'] = 'application/json;charset=UTF-8';
+        if (!(config.data instanceof FormData)) {
+            config.headers['Content-Type'] = 'application/json;charset=UTF-8';
+        }
     }
     return config;
 });

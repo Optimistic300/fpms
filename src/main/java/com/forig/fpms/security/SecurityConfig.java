@@ -38,7 +38,7 @@ public class SecurityConfig {
                             response.getWriter().write("{\"error\": \"Unauthorized\"}");
                         }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/error").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/divisions", "/error").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

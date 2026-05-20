@@ -1,19 +1,35 @@
 import { useState, useEffect } from 'react';
-import { Download, ClipboardList } from 'lucide-react';
+import { Download, ClipboardList, Paperclip } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../utils/api';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { fmtDate } from '../utils/format';
 import { exportCSV } from '../utils/csv';
 import { useProjects, useReport } from '../hooks/queries';
 
+async function downloadFile(docId, fileName) {
+    try {
+        const response = await api.get(`/documents/download/${docId}`, { responseType: 'blob' });
+        const url = URL.createObjectURL(response.data);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        link.click();
+        URL.revokeObjectURL(url);
+    } catch {
+        toast.error('Failed to download file');
+    }
+}
+
 export default function Report() {
-    const [projectId, setProjectId] = useState('');
-    const [start, setStart] = useState('');
-    const [end, setEnd] = useState(new Date().toISOString().split('T')[0]);
+    const [projectId, setProjectId]     = useState('');
+    const [start, setStart]             = useState('');
+    const [end, setEnd]                 = useState(new Date().toISOString().split('T')[0]);
     const [reportParams, setReportParams] = useState(null);
 
     const { data: projects = [] } = useProjects();
-    const { data: activities = [], isPending: reportLoading, isError } = useReport(reportParams);
+    const { data: activities = [], isFetching: reportLoading, isError } = useReport(reportParams);
 
     const fetched = reportParams !== null;
 
@@ -112,12 +128,13 @@ export default function Report() {
                                                         <th scope="col">Activity</th>
                                                         <th scope="col">Notes</th>
                                                         <th scope="col">Logged By</th>
+                                                        <th scope="col">Documents</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {activities.length === 0 ? (
                                                         <tr>
-                                                            <td colSpan="4">
+                                                            <td colSpan="5">
                                                                 <div className="empty-state">
                                                                     <ClipboardList size={32} className="empty-icon" aria-hidden="true" />
                                                                     <div className="empty-title">No activities in this range</div>
@@ -135,6 +152,9 @@ export default function Report() {
                                                                 </td>
                                                                 <td className="td-secondary">{a.notes || '—'}</td>
                                                                 <td className="td-secondary">{a.userName}</td>
+                                                                <td>
+                                                                    <ReportDocLinks docs={a.documents} />
+                                                                </td>
                                                             </tr>
                                                         ))
                                                     )}
@@ -171,6 +191,11 @@ export default function Report() {
                                                             {a.userName}
                                                         </span>
                                                     </div>
+                                                    {a.documents?.length > 0 && (
+                                                        <div className="doc-links">
+                                                            <ReportDocLinks docs={a.documents} />
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ))
                                         )}
@@ -189,6 +214,26 @@ export default function Report() {
                     </div>
                 </div>
             </main>
+            <Footer />
+        </div>
+    );
+}
+
+function ReportDocLinks({ docs }) {
+    if (!docs || docs.length === 0) return <span className="td-secondary">—</span>;
+    return (
+        <div className="doc-links">
+            {docs.map(doc => (
+                <button
+                    key={doc.id}
+                    className="doc-link"
+                    onClick={() => downloadFile(doc.id, doc.fileName)}
+                    title={doc.fileName}
+                >
+                    <Paperclip size={11} aria-hidden="true" />
+                    <span className="doc-link-name">{doc.fileName}</span>
+                </button>
+            ))}
         </div>
     );
 }

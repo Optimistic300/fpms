@@ -20,4 +20,6 @@ public class RegisterRequest {
     private String password;
 
     private Long divisionId;
+
+    private String designation;
 }

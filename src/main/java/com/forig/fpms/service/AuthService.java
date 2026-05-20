@@ -30,6 +30,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .role("SCIENTIST")
+                .designation(request.getDesignation())
                 .build();
 
         if (request.getDivisionId() != null) {
@@ -41,12 +42,7 @@ public class AuthService {
 
         String token = jwtProvider.generateToken(user.getId(), user.getEmail(), user.getRole());
 
-        return AuthResponse.builder()
-                .token(token)
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
+        return toAuthResponse(user, token);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -59,11 +55,18 @@ public class AuthService {
 
         String token = jwtProvider.generateToken(user.getId(), user.getEmail(), user.getRole());
 
+        return toAuthResponse(user, token);
+    }
+
+    private AuthResponse toAuthResponse(User user, String token) {
         return AuthResponse.builder()
+                .id(user.getId())
                 .token(token)
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .role(user.getRole())
+                .designation(user.getDesignation())
+                .divisionName(user.getDivision() != null ? user.getDivision().getName() : null)
                 .build();
     }
 }
