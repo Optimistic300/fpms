@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, Plus, LogOut, Leaf, LayoutDashboard, ClipboardList, FolderOpen, BookOpen, Inbox } from 'lucide-react';
+import { Menu, X, Plus, LogOut, Leaf, LayoutDashboard, ClipboardList, BookOpen, Inbox } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useInboxCount } from '../hooks/queries';
 import { NAV_ITEMS } from '../constants';
