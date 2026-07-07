@@ -14,7 +14,23 @@ class ProjectPolicy
 
     public function view(User $user, Project $project): bool
     {
-        return $this->hasAccess($user, $project);
+        if ($this->isOwner($user, $project)) {
+            return true;
+        }
+
+        if ($this->hasAccess($user, $project)) {
+            return true;
+        }
+
+        if ($user->isDivisionHead() && $user->division_id === $project->division_id) {
+            return true;
+        }
+
+        if ($user->isManagement()) {
+            return true;
+        }
+
+        return false;
     }
 
     public function create(User $user): bool
@@ -53,6 +69,11 @@ class ProjectPolicy
         return false;
     }
 
+    public function manageAccessRequests(User $user, Project $project): bool
+    {
+        return $this->isOwner($user, $project);
+    }
+
     public function manageActivities(User $user, Project $project): bool
     {
         if ($this->isOwner($user, $project)) {
@@ -85,6 +106,10 @@ class ProjectPolicy
         }
 
         if ($user->isDivisionHead() && $user->division_id === $project->division_id) {
+            return true;
+        }
+
+        if ($user->isManagement()) {
             return true;
         }
 

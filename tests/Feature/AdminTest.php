@@ -96,4 +96,54 @@ class AdminTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function test_admin_can_create_activity_type(): void
+    {
+        $token = $this->admin->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->postJson('/api/admin/activity-types', [
+            'name' => 'Field Data Collection',
+            'slug' => 'field-data-collection',
+        ]);
+
+        $response->assertStatus(201);
+    }
+
+    public function test_researcher_cannot_create_activity_type(): void
+    {
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->postJson('/api/admin/activity-types', [
+            'name' => 'Should Not Work',
+            'slug' => 'should-not-work',
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_researcher_cannot_create_division(): void
+    {
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->postJson('/api/admin/divisions', [
+            'name' => 'Not Allowed',
+        ]);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_researcher_cannot_create_user(): void
+    {
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->postJson('/api/admin/users', [
+            'email' => 'hacker@forig.org',
+            'password' => 'password123',
+            'fullName' => 'Hacker',
+            'role' => 'ADMIN',
+            'divisionId' => $this->division->id,
+        ]);
+
+        $response->assertStatus(403);
+    }
 }

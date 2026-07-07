@@ -1,6 +1,6 @@
 # Task 027: Offline Support
 
-**Status:** In Progress
+**Status:** Done
 **Depends on:** 001
 **Docs referenced:** `docs/07-non-functional-requirements.md` (Offline-First Behaviour), `docs/04-frontend-architecture.md` (Offline Queue), `docs/09-open-questions-and-assumptions.md` (Offline Sync Strategy)
 
@@ -85,6 +85,13 @@ No new endpoints — this task is entirely frontend + service worker.
 - Report draft form auto-saves to localStorage, restores on return
 - No data loss on page refresh (queued operations survive refresh via IndexedDB)
 - `navigator.onLine` detection works across all major browsers
+
+## Completion Notes
+
+**Date:** 2026-07-07
+**Implemented by:** Subagent (ses_0c154f563ffen5SV06jHqDD2BT)
+
+Audited all 7 existing offline-support files against DoD. Registered service worker (already done). Added global online event handler for AI question queue in app.jsx. Created offline fallback page (public/offline.html). Fixed fake-indexeddb Infinity incompatibility in offlineQueue.js. Installed Vitest + test libraries. Wrote 41 passing tests across 7 test files covering all offline components, hooks, and services.
 
 ## Open questions / assumptions inherited
 

@@ -19,17 +19,17 @@
 | # | Title | Description | Depends On | Status |
 |---|-------|-------------|------------|--------|
 | 001 | Project Scaffold | Laravel + React/Vite init, env, folder structure | None | Done |
-| 002 | Database Schema & Models | All migrations, Eloquent models, enums, seeders | 001 | In Progress |
-| 003 | Base API Conventions | CamelCaseResource, pagination, error shapes, Contracts, queue config | 002 | Not Started |
-| 004 | Auth System Backend | Sanctum setup, AuthController, password reset, public stats | 003 | Not Started |
-| 005 | Auth Frontend | Login page (WF02), AuthContext, route guard, forgot password UI | 004 | Not Started |
-| 006 | Shell & Global Components | WF01 — sidebar, nav, routing, contexts, floating AI button | 004, 005 | Not Started |
+| 002 | Database Schema & Models | All migrations, Eloquent models, enums, seeders | 001 | Done |
+| 003 | Base API Conventions | CamelCaseResource, pagination, error shapes, Contracts, queue config | 002 | Done |
+| 004 | Auth System Backend | Sanctum setup, AuthController, password reset, public stats | 003 | Done |
+| 005 | Auth Frontend | Login page (WF02), AuthContext, route guard, forgot password UI | 004 | Done |
+| 006 | Shell & Global Components | WF01 — sidebar, nav, routing, contexts, floating AI button | 004, 005 | Done |
 | 007 | Inbox Backend & Frontend | InboxItem model, notification classes, InboxController, WF12 | 003, 004, 006 | Not Started |
-| 008 | Projects Backend | CRUD, Members, Access Requests, policies, resources, actions | 003, 004 | Not Started |
-| 009 | Activities Backend | CRUD, Types seeder, CSV export, policies, resources, actions | 003, 004 | Not Started |
-| 010 | Documents & File Storage | CRUD, upload/download/preview, FileStorageInterface, Library browse/search | 003, 004 | Not Started |
-| 011 | Reports Backend | CRUD, Draft, Submit, Approve/Return/Escalate, events/listeners, policies | 003, 004 | Not Started |
-| 012 | Publications Backend | CRUD, Pipeline stats, policies, resources | 003, 004 | Not Started |
+| 008 | Projects Backend | CRUD, Members, Access Requests, policies, resources, actions | 003, 004 | Done |
+| 009 | Activities Backend | CRUD, Types seeder, CSV export, policies, resources, actions | 003, 004 | Done |
+| 010 | Documents & File Storage | CRUD, upload/download/preview, FileStorageInterface, Library browse/search | 003, 004 | Done |
+| 011 | Reports Backend | CRUD, Draft, Submit, Approve/Return/Escalate, events/listeners, policies | 003, 004 | Done |
+| 012 | Publications Backend | CRUD, Pipeline stats, policies, resources | 003, 004 | Done |
 | 013 | Stats Backend | Dashboard stats, Division endpoints, Institute endpoints | 004, 008, 009, 011 | Not Started |
 | 014 | Dashboard & Project Directory | WF03 + WF04a frontend screens | 006, 008, 009, 011, 013 | Not Started |
 | 015 | Project Detail Frontend | WF04b — tabs, locked preview, team, actions | 006, 008, 009, 010, 011 | Not Started |
@@ -44,8 +44,8 @@
 | 024 | AI Assistant Backend | MySQL FTS, AiRetrievalInterface, document indexing, AiController | 003, 004, 010 | Not Started |
 | 025 | AI Assistant Frontend | WF13 — floating button, panel, conversation, citations | 006, 024 | Not Started |
 | 026 | Scheduled Commands | CalculateReportOverdue, GenerateDeadlineAlerts | 003, 004, 011 | Not Started |
-| 027 | Offline Support | Service Worker, IndexedDB queue, offline indicators | 001 | In Progress |
-| 028 | Non-Functional Hardening & CI | Performance, security, backup config, testing, CI pipeline | 001 | In Progress |
+| 027 | Offline Support | Service Worker, IndexedDB queue, offline indicators | 001 | Done |
+| 028 | Non-Functional Hardening & CI | Performance, security, backup config, testing, CI pipeline | 001 | Done |
 
 ## Dependency Graph (Acyclic)
 

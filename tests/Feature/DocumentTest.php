@@ -112,6 +112,25 @@ class DocumentTest extends TestCase
             ->assertJsonStructure(['data', 'meta']);
     }
 
+    public function test_download_published_document(): void
+    {
+        $doc = Document::factory()->create([
+            'project_id' => $this->project->id,
+            'uploaded_by' => $this->researcher->id,
+            'published' => true,
+            'file_path' => 'documents/test-download.pdf',
+        ]);
+
+        Storage::fake('local');
+        Storage::disk('local')->put($doc->file_path, 'fake content');
+
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->get("/api/documents/{$doc->id}/download");
+
+        $response->assertStatus(200);
+    }
+
     public function test_preview_document(): void
     {
         $doc = Document::factory()->create([

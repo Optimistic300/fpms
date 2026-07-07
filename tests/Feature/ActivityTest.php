@@ -143,4 +143,34 @@ class ActivityTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure(['data']);
     }
+
+    public function test_activity_csv_export(): void
+    {
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->getJson('/api/activities?format=csv');
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('text/csv', $response->headers->get('Content-Type') ?? '');
+    }
+
+    public function test_collaborator_can_log_activity(): void
+    {
+        $collaborator = User::factory()->researcher()->create(['division_id' => $this->division->id]);
+        ProjectMember::create([
+            'project_id' => $this->project->id,
+            'user_id' => $collaborator->id,
+            'role' => 'COLLABORATOR',
+        ]);
+        $token = $collaborator->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->postJson('/api/activities', [
+            'projectId' => $this->project->id,
+            'date' => '2026-06-15',
+            'type' => 'Lab analysis',
+            'description' => 'Soil sample analysis',
+        ]);
+
+        $response->assertStatus(201);
+    }
 }

@@ -1,6 +1,6 @@
 # Task 028: Non-Functional Hardening, Testing & CI
 
-**Status:** In Progress
+**Status:** Done
 **Depends on:** 001
 **Docs referenced:** `docs/07-non-functional-requirements.md`, `docs/01-roles-and-permissions.md`, `docs/09-open-questions-and-assumptions.md`
 
@@ -97,6 +97,13 @@ The system must be secure, performant, and maintainable. All permission checks m
 - Sanctum token authentication works with proper 401 responses
 - Database backup and storage backup procedures documented
 - `.env.example` contains all required variables with documentation
+
+## Completion Notes
+
+**Date:** 2026-07-07
+**Implemented by:** Subagent (ses_0c154e13effeugopEId3aF2wf0)
+
+Fixed all 7 failing tests (nullable field bugs, policy permissiveness, default status values). Replaced inline role checks in AdminController, InstituteController, DivisionController, InboxController, ReportController with Policy calls. Added MIME validation on file uploads. Expanded test coverage: 111 backend tests (240 assertions, up from 72/156) + 41 frontend tests = 152 total passing. Verified CI workflow, CORS, rate limiting, Sanctum 24h expiry, security headers, inactive user blocking. Updated .env.example with full production documentation.
 
 ## Open questions / assumptions inherited
 

@@ -100,6 +100,20 @@ class User extends Authenticatable
         return $this->hasMany(ReportComment::class);
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (User $user): void {
+            if (empty($user->avatar_initials)) {
+                $words = explode(' ', $user->full_name);
+                $initials = '';
+                foreach ($words as $word) {
+                    $initials .= strtoupper((string) mb_substr($word, 0, 1));
+                }
+                $user->avatar_initials = mb_substr($initials, 0, 4);
+            }
+        });
+    }
+
     public function isResearcher(): bool
     {
         return $this->role === 'RESEARCHER';

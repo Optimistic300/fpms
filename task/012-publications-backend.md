@@ -1,6 +1,6 @@
 # Task 012: Publications Backend
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 003, 004
 **Docs referenced:** `docs/03-api-reference.md` (Publications section), `docs/02-data-model.md` (Publication)
 

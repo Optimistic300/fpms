@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Report\ApproveReportAction;
+use App\Actions\Report\EscalateReportAction;
+use App\Actions\Report\ReturnReportAction;
+use App\Actions\Report\SaveDraftAction;
+use App\Actions\Report\SubmitReportAction;
+use App\Http\Requests\SaveDraftRequest;
+use App\Http\Requests\SubmitReportRequest;
+use App\Http\Requests\UpdateReportStatusRequest;
+use App\Http\Resources\ReportResource;
 use App\Models\Report;
-use App\Models\ReportComment;
-use App\Policies\ProjectPolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -45,12 +52,10 @@ class ReportController extends Controller
         }
 
         // Scoping
-        if ($user->isResearcher() || $user->isStudent()) {
+        if (in_array($user->role, ['RESEARCHER', 'STUDENT'])) {
             $query->where('submitted_by', $user->id);
-        } elseif ($user->isDivisionHead()) {
+        } elseif ($user->role === 'DIVISION_HEAD') {
             $query->whereHas('project', fn($q) => $q->where('division_id', $user->division_id));
-        } elseif ($user->isSecretary()) {
-            // Can see all pending/returned/approved
         }
 
         $sortBy = $request->sortBy ?? 'createdAt';
@@ -68,28 +73,8 @@ class ReportController extends Controller
         $limit = min((int) $request->limit, 100);
         $reports = $query->orderBy($sortColumn, $sortDirection)->paginate($limit);
 
-        $reports->getCollection()->transform(function ($report) {
-            $daysWaiting = $report->submitted_at ? now()->diffInDays($report->submitted_at) : 0;
-
-            return [
-                'id' => $report->id,
-                'reportName' => $report->type . ' Report',
-                'projectId' => $report->project_id,
-                'projectTitle' => $report->project?->title,
-                'period' => $report->period_start?->toDateString() . ' — ' . $report->period_end?->toDateString(),
-                'type' => $report->type,
-                'status' => $report->status,
-                'version' => $report->version,
-                'parentReportId' => $report->parent_report_id,
-                'submittedBy' => $report->submitter?->full_name,
-                'division' => $report->project?->division?->name,
-                'submittedAt' => $report->submitted_at?->toIso8601String(),
-                'daysWaiting' => $daysWaiting,
-            ];
-        });
-
         return response()->json([
-            'data' => $reports->items(),
+            'data' => ReportResource::collection($reports)->resolve(),
             'meta' => [
                 'currentPage' => $reports->currentPage(),
                 'lastPage' => $reports->lastPage(),
@@ -101,7 +86,7 @@ class ReportController extends Controller
 
     public function stats(Request $request): JsonResponse
     {
-        $request->user()->isSecretary() || abort(403);
+        $this->authorize('review', Report::class);
 
         return response()->json([
             'data' => [
@@ -120,56 +105,25 @@ class ReportController extends Controller
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(SubmitReportRequest $request, SubmitReportAction $action): JsonResponse
     {
-        $validated = $request->validate([
-            'projectId' => 'required|exists:projects,id',
-            'type' => 'required|in:QUARTERLY,MID_YEAR,ANNUAL',
-            'periodStart' => 'required|date',
-            'periodEnd' => 'required|date|after:periodStart',
-            'narrativeSummary' => 'required|string',
-            'file' => 'nullable|string',
-        ]);
-
-        $report = Report::create([
-            'project_id' => $validated['projectId'],
-            'submitted_by' => $request->user()->id,
-            'type' => $validated['type'],
-            'period_start' => $validated['periodStart'],
-            'period_end' => $validated['periodEnd'],
-            'narrative_summary' => $validated['narrativeSummary'],
-            'status' => 'PENDING',
-            'version' => 1,
-            'submitted_at' => now(),
-        ]);
+        $report = $action->execute($request);
 
         return response()->json([
-            'data' => ['id' => $report->id, 'status' => $report->status, 'version' => $report->version],
+            'data' => [
+                'id' => $report->id,
+                'status' => $report->status,
+                'version' => $report->version,
+            ],
             'message' => 'Report submitted to Scientific Secretary.',
         ], 201);
     }
 
-    public function saveDraft(Request $request): JsonResponse
+    public function saveDraft(SaveDraftRequest $request, SaveDraftAction $action): JsonResponse
     {
-        $validated = $request->validate([
-            'projectId' => 'sometimes|exists:projects,id',
-            'type' => 'sometimes|in:QUARTERLY,MID_YEAR,ANNUAL',
-            'periodStart' => 'sometimes|date',
-            'periodEnd' => 'sometimes|date|after:periodStart',
-            'narrativeSummary' => 'sometimes|string',
-        ]);
+        $this->authorize('create', Report::class);
 
-        $data = [
-            'submitted_by' => $request->user()->id,
-            'status' => 'DRAFT',
-            'period_start' => $validated['periodStart'] ?? now()->toDateString(),
-            'period_end' => $validated['periodEnd'] ?? now()->addDay()->toDateString(),
-            'narrative_summary' => $validated['narrativeSummary'] ?? '',
-        ];
-        if (isset($validated['projectId'])) $data['project_id'] = $validated['projectId'];
-        if (isset($validated['type'])) $data['type'] = $validated['type'];
-
-        $report = Report::create($data);
+        $report = $action->execute($request);
 
         return response()->json([
             'data' => ['id' => $report->id, 'status' => 'DRAFT'],
@@ -181,72 +135,33 @@ class ReportController extends Controller
     {
         $report->load(['project', 'submitter', 'project.division', 'comments.user']);
 
-        $daysWaiting = $report->submitted_at ? now()->diffInDays($report->submitted_at) : 0;
-
-        $history = $report->comments->map(fn($c) => [
-            'event' => 'COMMENT',
-            'timestamp' => $c->created_at?->toIso8601String(),
-            'user' => $c->user?->full_name,
-            'comment' => $c->comment,
-        ]);
-
-        // Add status transitions to history
-        $history->prepend([
-            'event' => 'SUBMITTED',
-            'timestamp' => $report->submitted_at?->toIso8601String(),
-            'user' => $report->submitter?->full_name,
-            'comment' => null,
-        ]);
+        $resource = (new ReportResource($report))->withHistory(true);
 
         return response()->json([
-            'data' => [
-                'id' => $report->id,
-                'projectId' => $report->project_id,
-                'projectTitle' => $report->project?->title,
-                'type' => $report->type,
-                'status' => $report->status,
-                'version' => $report->version,
-                'narrativeSummary' => $report->narrative_summary,
-                'file' => $report->file_path ? ['filename' => basename($report->file_path), 'size' => 0] : null,
-                'submittedBy' => $report->submitter?->full_name,
-                'division' => $report->project?->division?->name,
-                'submittedAt' => $report->submitted_at?->toIso8601String(),
-                'daysWaiting' => $daysWaiting,
-                'comment' => $report->comment,
-                'history' => $history,
-            ],
+            'data' => $resource->resolve($request),
         ]);
     }
 
-    public function update(Request $request, Report $report): JsonResponse
-    {
-        $validated = $request->validate([
-            'status' => 'required|in:APPROVED,RETURNED,ESCALATED',
-            'comment' => 'required_if:status,RETURNED,ESCALATED|string|nullable',
-        ]);
-
+    public function update(
+        UpdateReportStatusRequest $request,
+        Report $report,
+        ApproveReportAction $approveAction,
+        ReturnReportAction $returnAction,
+        EscalateReportAction $escalateAction,
+    ): JsonResponse {
         $validTransitions = ['PENDING' => ['APPROVED', 'RETURNED', 'ESCALATED']];
 
-        if (!isset($validTransitions[$report->status]) || !in_array($validated['status'], $validTransitions[$report->status])) {
+        if (!isset($validTransitions[$report->status]) || !in_array($request->input('status'), $validTransitions[$report->status])) {
             return response()->json(['message' => 'Invalid status transition.'], 422);
         }
 
-        $report->update([
-            'status' => $validated['status'],
-            'comment' => $validated['comment'] ?? null,
-            'reviewed_by' => $request->user()->id,
-        ]);
+        $report = match ($request->input('status')) {
+            'APPROVED' => $approveAction->execute($request, $report),
+            'RETURNED' => $returnAction->execute($request, $report),
+            'ESCALATED' => $escalateAction->execute($request, $report),
+        };
 
-        // Add a comment to history
-        if ($validated['comment']) {
-            ReportComment::create([
-                'report_id' => $report->id,
-                'user_id' => $request->user()->id,
-                'comment' => $validated['comment'],
-            ]);
-        }
-
-        $actionText = match ($validated['status']) {
+        $actionText = match ($request->input('status')) {
             'APPROVED' => 'approved',
             'RETURNED' => 'returned',
             'ESCALATED' => 'escalated',

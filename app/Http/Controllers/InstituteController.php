@@ -6,6 +6,7 @@ use App\Models\Division;
 use App\Models\Document;
 use App\Models\Project;
 use App\Models\Report;
+use App\Policies\InstitutePolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,7 @@ class InstituteController extends Controller
 {
     public function stats(Request $request): JsonResponse
     {
-        $request->user()->isManagement() || abort(403);
+        abort_unless(app(InstitutePolicy::class)->view($request->user()), 403);
 
         return response()->json([
             'data' => [
@@ -31,7 +32,7 @@ class InstituteController extends Controller
 
     public function divisionSummary(Request $request): JsonResponse
     {
-        $request->user()->isManagement() || abort(403);
+        abort_unless(app(InstitutePolicy::class)->view($request->user()), 403);
 
         $divisions = Division::with('head')->get()->map(function ($div) {
             $totalProj = $div->projects()->count();
@@ -68,7 +69,7 @@ class InstituteController extends Controller
 
     public function fundingBreakdown(Request $request): JsonResponse
     {
-        $request->user()->isManagement() || abort(403);
+        abort_unless(app(InstitutePolicy::class)->view($request->user()), 403);
 
         return response()->json([
             'data' => [
@@ -81,7 +82,7 @@ class InstituteController extends Controller
 
     public function compliance(Request $request): JsonResponse
     {
-        $request->user()->isManagement() || abort(403);
+        abort_unless(app(InstitutePolicy::class)->view($request->user()), 403);
 
         $divisions = Division::all()->map(function ($div) {
             $totalReports = Report::whereHas('project', fn($q) => $q->where('division_id', $div->id))->count();
@@ -100,7 +101,7 @@ class InstituteController extends Controller
 
     public function alerts(Request $request): JsonResponse
     {
-        $request->user()->isManagement() || abort(403);
+        abort_unless(app(InstitutePolicy::class)->view($request->user()), 403);
 
         $limit = min((int) $request->limit, 20);
 

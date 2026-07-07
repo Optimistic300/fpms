@@ -1,6 +1,6 @@
 # Task 004: Auth System Backend
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 003
 **Docs referenced:** `docs/03-api-reference.md` (Auth section, Public section), `docs/02-data-model.md`, `docs/01-roles-and-permissions.md`, `docs/09-open-questions-and-assumptions.md`
 

@@ -209,4 +209,71 @@ class ProjectTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure(['data', 'meta' => ['currentPage', 'lastPage', 'perPage', 'total']]);
     }
+
+    public function test_search_projects_by_title(): void
+    {
+        Project::factory()->create([
+            'lead_researcher_id' => $this->researcher->id,
+            'division_id' => $this->division->id,
+            'title' => 'Carbon Sequestration Study',
+        ]);
+
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->getJson('/api/projects?q=Carbon');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'data');
+    }
+
+    public function test_filter_projects_by_status(): void
+    {
+        Project::factory()->create([
+            'lead_researcher_id' => $this->researcher->id,
+            'division_id' => $this->division->id,
+            'status' => 'ACTIVE',
+        ]);
+        Project::factory()->create([
+            'lead_researcher_id' => $this->researcher->id,
+            'division_id' => $this->division->id,
+            'status' => 'ARCHIVED',
+        ]);
+
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->getJson('/api/projects?status=ACTIVE');
+
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'data');
+    }
+
+    public function test_filter_projects_by_division(): void
+    {
+        Project::factory()->create([
+            'lead_researcher_id' => $this->researcher->id,
+            'division_id' => $this->division->id,
+        ]);
+
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->getJson('/api/projects?division=' . $this->division->id);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_list_project_members(): void
+    {
+        $project = Project::factory()->create([
+            'lead_researcher_id' => $this->researcher->id,
+            'division_id' => $this->division->id,
+        ]);
+        ProjectMember::create(['project_id' => $project->id, 'user_id' => $this->researcher->id, 'role' => 'LEAD']);
+
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->getJson("/api/projects/{$project->id}/members");
+
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data']);
+    }
 }

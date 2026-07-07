@@ -1,6 +1,6 @@
 # Task 009: Activities Backend
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 003, 004
 **Docs referenced:** `docs/03-api-reference.md` (Activities section), `docs/02-data-model.md` (Activity, ActivityType), `docs/04b-backend-architecture.md`
 

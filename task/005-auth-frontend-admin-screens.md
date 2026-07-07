@@ -1,6 +1,6 @@
 # Task 005: Auth Frontend
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 004
 **Docs referenced:** `docs/04-frontend-architecture.md`, `docs/05-screens/02-login.md`, `docs/09-open-questions-and-assumptions.md`
 

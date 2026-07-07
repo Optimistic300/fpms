@@ -1,6 +1,6 @@
 # Task 003: Base API Conventions Layer
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 002
 **Docs referenced:** `docs/03-api-reference.md`, `docs/04b-backend-architecture.md`
 
@@ -135,6 +135,15 @@ Not applicable.
 - `QUEUE_CONNECTION=database` is set
 - A form request extending `ApiRequest` validates correctly with camelCase inputs
 - A resource extending `CamelCaseResource` returns camelCase JSON
+
+## Completion Notes
+
+**Date:** 2026-07-07
+**Implemented by:** Subagent (ses_0c1550533ffeJM3Fsg4bkALwOU)
+
+Created the base API conventions layer: CamelCaseResource, BaseResource with pagination envelope, HasMessage trait, ApiRequest (camelCase→snake_case), Contracts (FileStorageInterface, AiRetrievalInterface, ReportRepositoryInterface, AiQueryResult DTO), stub service/repository implementations, container bindings in AppServiceProvider, exception renderers in bootstrap/app.php, helpers.php, and AuthServiceProvider policy registration. 12 new tests all passing.
+
+Note: Laravel 11 uses bootstrap/app.php for exception handling instead of Handler.php — error envelope rendering done there.
 
 ## Open questions / assumptions inherited
 

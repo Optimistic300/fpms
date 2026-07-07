@@ -1,6 +1,6 @@
 # Task 002: Database Schema & Models
 
-**Status:** In Progress
+**Status:** Done
 **Depends on:** 001
 **Docs referenced:** `docs/02-data-model.md`, `docs/03-api-reference.md`, `docs/08-glossary.md`
 
@@ -259,6 +259,15 @@ Not applicable.
 - Seeders produce reference data (divisions, activity types)
 - `php artisan db:seed` runs cleanly on a fresh database
 - FULLTEXT indexes exist on `documents.filename` and `document_texts.content`
+
+## Completion Notes
+
+**Date:** 2026-07-07
+**Verified by:** Orchestrator (manual audit + migration run)
+
+All 18 migrations execute cleanly (`php artisan migrate:fresh`). All 12+ tables created with correct columns, foreign keys, and indexes. All 11 PHP enums exist matching spec. All 12 Eloquent models instantiable with correct relationships and casts. Both seeders (DivisionSeeder, ActivityTypeSeeder) populate reference data. FULLTEXT indexes confirmed on `documents.filename` and `document_texts.content`.
+
+No code changes needed — work was already present in the working tree as uncommitted files from prior development.
 
 ## Open questions / assumptions inherited
 

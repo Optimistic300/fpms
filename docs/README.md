@@ -16,6 +16,21 @@ SKMS is a secure, centralised web application that gives CSIR-FORIG a single hom
 - **Database:** MySQL
 - **File storage:** Local disk (dev), S3-compatible (production)
 
+### Deployment
+
+**Primary platform: cPanel.** SKMS is deployed on cPanel shared hosting with the following configuration:
+
+- **Web server:** Apache (via cPanel's native stack or XAMPP-equivalent during local dev).
+- **PHP:** 8.4+, configured through cPanel's MultiPHP Manager.
+- **Database:** MySQL managed via cPanel's phpMyAdmin or remote connection.
+- **Queue worker:** Laravel queue runs via a cron entry set up in cPanel's Cron Jobs interface (`* * * * * php /path/to/artisan schedule:run`). The `database` queue driver is used (no Redis requirement).
+- **File storage:** Local disk within the cPanel account's storage; S3-compatible storage can be configured via environment variables when available.
+- **Environment:** cPanel's "dotenv" or manual `.env` configuration. `APP_DEBUG=false` in production.
+
+**Future: Docker deployment.** A `Dockerfile` and `docker-compose.yml` will be added for containerized deployments (staging, CI, or alternative hosting). This is not required for the initial cPanel-hosted pilot.
+
+**Local development:** XAMPP (PHP 8.2+, Apache, MySQL) is the recommended local environment, matching the cPanel production stack.
+
 ### Document Index (Read in Order)
 
 | # | File | What it covers |

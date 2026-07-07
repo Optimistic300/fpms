@@ -1,6 +1,6 @@
 # Task 010: Documents & File Storage Backend
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 003, 004
 **Docs referenced:** `docs/03-api-reference.md` (Documents section, Library sections), `docs/02-data-model.md` (Document), `docs/04b-backend-architecture.md` (FileStorageInterface), `docs/07-non-functional-requirements.md` (File upload constraints)
 

@@ -12,3 +12,49 @@ body {
     font-family: system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
+
+@media (max-width: 767px) {
+    .login-brand-panel {
+        display: none !important;
+    }
+    .login-mobile-logo {
+        display: block !important;
+    }
+
+    .app-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .app-sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        display: block !important;
+    }
+
+    .sidebar-toggle {
+        display: block !important;
+    }
+
+    .app-content {
+        margin-left: 0 !important;
+        padding: 16px !important;
+        padding-bottom: 72px !important;
+    }
+
+    .bottom-tab-bar {
+        display: flex !important;
+    }
+
+    .floating-ai-button {
+        right: 16px !important;
+        bottom: 80px !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .app-sidebar {
+        transform: translateX(0);
+    }
+}

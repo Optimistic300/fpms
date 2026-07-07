@@ -1,6 +1,6 @@
 # Task 006: Shell & Global Components
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 004, 005
 **Docs referenced:** `docs/04-frontend-architecture.md`, `docs/05-screens/01-shell.md`, `docs/01-roles-and-permissions.md`, `docs/08-glossary.md`
 

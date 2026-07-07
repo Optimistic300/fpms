@@ -59,9 +59,7 @@ class InboxController extends Controller
 
     public function markRead(Request $request, InboxItem $inboxItem): JsonResponse
     {
-        if ($inboxItem->user_id !== $request->user()->id) {
-            abort(403);
-        }
+        $this->authorize('view', $inboxItem);
 
         $inboxItem->update(['read' => true]);
 

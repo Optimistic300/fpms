@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Publication\CreatePublicationAction;
+use App\Actions\Publication\UpdatePublicationAction;
+use App\Http\Requests\StorePublicationRequest;
+use App\Http\Requests\UpdatePublicationRequest;
+use App\Http\Resources\PublicationResource;
 use App\Models\Publication;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,38 +34,15 @@ class PublicationController extends Controller
             $query->where('type', $request->type);
         }
 
-        $limit = min((int) $request->limit, 100);
+        $limit = min((int) $request->integer('limit', 20), 100);
         $publications = $query->orderBy('created_at', 'desc')->paginate($limit);
 
-        $publications->getCollection()->transform(function ($pub) {
-            return [
-                'id' => $pub->id,
-                'title' => $pub->title,
-                'authors' => $pub->authors,
-                'type' => $pub->type,
-                'status' => $pub->status,
-                'journalName' => $pub->journal_name,
-                'doi' => $pub->doi,
-                'linkedProject' => $pub->linkedProject ? [
-                    'id' => $pub->linkedProject->id,
-                    'title' => $pub->linkedProject->title,
-                ] : null,
-                'submittedAt' => $pub->created_at?->toIso8601String(),
-            ];
-        });
-
-        return response()->json([
-            'data' => $publications->items(),
-            'meta' => [
-                'currentPage' => $publications->currentPage(),
-                'lastPage' => $publications->lastPage(),
-                'perPage' => $publications->perPage(),
-                'total' => $publications->total(),
-            ],
-        ]);
+        return response()->json(
+            PublicationResource::paginated($publications, PublicationResource::collection($publications))
+        );
     }
 
-    public function pipeline(Request $request): JsonResponse
+    public function pipeline(): JsonResponse
     {
         return response()->json([
             'data' => [
@@ -72,70 +54,34 @@ class PublicationController extends Controller
         ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(StorePublicationRequest $request, CreatePublicationAction $action): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:500',
-            'authors' => 'required|string',
-            'type' => 'required|in:PAPER,THESIS,REPORT,STUDENT',
-            'status' => 'required|in:DRAFT,SUBMITTED,IN_REVISION,PUBLISHED',
-            'journalName' => 'nullable|string|max:255',
-            'linkedProjectId' => 'nullable|exists:projects,id',
-            'doi' => 'nullable|string|max:255',
-            'manuscriptFile' => 'nullable|string',
-        ]);
+        $publication = $action->execute($request->validated());
 
-        if ($validated['status'] === 'PUBLISHED' && empty($validated['doi'])) {
-            return response()->json([
-                'message' => 'DOI is required for published publications.',
-                'errors' => ['doi' => ['DOI is required when status is PUBLISHED.']],
-            ], 422);
-        }
+        $publication->load(['submitter', 'linkedProject']);
 
-        $publication = Publication::create([
-            'title' => $validated['title'],
-            'authors' => $validated['authors'],
-            'type' => $validated['type'],
-            'status' => $validated['status'],
-            'journal_name' => $validated['journalName'],
-            'linked_project_id' => $validated['linkedProjectId'],
-            'doi' => $validated['doi'],
-            'submitted_by_id' => $request->user()->id,
-        ]);
-
-        return response()->json(['data' => $publication], 201);
+        return response()->json([
+            'data' => new PublicationResource($publication),
+        ], 201);
     }
 
     public function show(Request $request, Publication $publication): JsonResponse
     {
         $publication->load(['submitter', 'linkedProject']);
 
-        return response()->json(['data' => $publication]);
+        return response()->json([
+            'data' => new PublicationResource($publication),
+        ]);
     }
 
-    public function update(Request $request, Publication $publication): JsonResponse
+    public function update(UpdatePublicationRequest $request, UpdatePublicationAction $action, Publication $publication): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'sometimes|string|max:500',
-            'authors' => 'sometimes|string',
-            'type' => 'sometimes|in:PAPER,THESIS,REPORT,STUDENT',
-            'status' => 'sometimes|in:DRAFT,SUBMITTED,IN_REVISION,PUBLISHED',
-            'journalName' => 'nullable|string|max:255',
-            'linkedProjectId' => 'nullable|exists:projects,id',
-            'doi' => 'nullable|string|max:255',
+        $publication = $action->execute($publication, $request->validated());
+
+        $publication->load(['submitter', 'linkedProject']);
+
+        return response()->json([
+            'data' => new PublicationResource($publication),
         ]);
-
-        $update = [];
-        if (isset($validated['title'])) $update['title'] = $validated['title'];
-        if (isset($validated['authors'])) $update['authors'] = $validated['authors'];
-        if (isset($validated['type'])) $update['type'] = $validated['type'];
-        if (isset($validated['status'])) $update['status'] = $validated['status'];
-        if (isset($validated['journalName'])) $update['journal_name'] = $validated['journalName'];
-        if (isset($validated['linkedProjectId'])) $update['linked_project_id'] = $validated['linkedProjectId'];
-        if (isset($validated['doi'])) $update['doi'] = $validated['doi'];
-
-        $publication->update($update);
-
-        return response()->json(['data' => $publication->fresh()]);
     }
 }

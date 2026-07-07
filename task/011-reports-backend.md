@@ -1,6 +1,6 @@
 # Task 011: Reports Backend
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 003, 004
 **Docs referenced:** `docs/03-api-reference.md` (Reports section), `docs/02-data-model.md` (Report, ReportComment), `docs/01-roles-and-permissions.md`, `docs/04b-backend-architecture.md` (Worked example), `docs/07-non-functional-requirements.md`
 

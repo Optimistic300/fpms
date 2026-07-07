@@ -1,6 +1,6 @@
 # Task 008: Projects Backend
 
-**Status:** Not Started
+**Status:** Done
 **Depends on:** 003, 004
 **Docs referenced:** `docs/03-api-reference.md` (Projects section), `docs/02-data-model.md` (Project, ProjectMember, AccessRequest), `docs/01-roles-and-permissions.md`, `docs/04b-backend-architecture.md`
 

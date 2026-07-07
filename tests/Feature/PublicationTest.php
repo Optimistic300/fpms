@@ -65,6 +65,40 @@ class PublicationTest extends TestCase
             ->assertJsonStructure(['data' => ['draft', 'submitted', 'inRevision', 'published']]);
     }
 
+    public function test_researcher_can_update_own_publication(): void
+    {
+        $publication = Publication::factory()->create([
+            'submitted_by_id' => $this->researcher->id,
+            'title' => 'Original Title',
+            'status' => 'DRAFT',
+        ]);
+
+        $token = $this->researcher->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->putJson("/api/publications/{$publication->id}", [
+            'title' => 'Updated Title',
+            'status' => 'SUBMITTED',
+        ]);
+
+        $response->assertStatus(200);
+    }
+
+    public function test_other_user_cannot_update_publication(): void
+    {
+        $publication = Publication::factory()->create([
+            'submitted_by_id' => $this->researcher->id,
+        ]);
+
+        $otherUser = User::factory()->researcher()->create(['division_id' => $this->division->id]);
+        $token = $otherUser->createToken('test')->plainTextToken;
+
+        $response = $this->withToken($token)->putJson("/api/publications/{$publication->id}", [
+            'title' => 'Hacked Title',
+        ]);
+
+        $response->assertStatus(403);
+    }
+
     public function test_publication_requires_doi_when_published(): void
     {
         $token = $this->researcher->createToken('test')->plainTextToken;

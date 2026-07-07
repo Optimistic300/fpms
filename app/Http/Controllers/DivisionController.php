@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Division;
 use App\Models\Report;
+use App\Policies\DivisionPolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -11,10 +12,7 @@ class DivisionController extends Controller
 {
     public function stats(Request $request, Division $division): JsonResponse
     {
-        $user = $request->user();
-        if (!$user->isDivisionHead() && !$user->isManagement()) {
-            abort(403);
-        }
+        app(DivisionPolicy::class)->view($request->user()) || abort(403);
 
         $totalProjects = $division->projects()->count();
         $ongoing = $division->projects()->where('status', 'ACTIVE')->count();
@@ -43,10 +41,7 @@ class DivisionController extends Controller
 
     public function researcherActivity(Request $request, Division $division): JsonResponse
     {
-        $user = $request->user();
-        if (!$user->isDivisionHead() && !$user->isManagement()) {
-            abort(403);
-        }
+        app(DivisionPolicy::class)->view($request->user()) || abort(403);
 
         $users = $division->users()
             ->whereIn('role', ['RESEARCHER', 'STUDENT'])
@@ -71,10 +66,7 @@ class DivisionController extends Controller
 
     public function activityFeed(Request $request, Division $division): JsonResponse
     {
-        $user = $request->user();
-        if (!$user->isDivisionHead() && !$user->isManagement()) {
-            abort(403);
-        }
+        app(DivisionPolicy::class)->view($request->user()) || abort(403);
 
         $limit = min((int) $request->limit, 50);
 

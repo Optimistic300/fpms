@@ -101,15 +101,15 @@ class ProjectController extends Controller
 
         $project = Project::create([
             'title' => $validated['title'],
-            'description' => $validated['description'],
+            'description' => $validated['description'] ?? null,
             'division_id' => $validated['divisionId'],
             'lead_researcher_id' => $request->user()->id,
             'funding_type' => $validated['fundingType'],
-            'funding_source' => $validated['fundingSource'],
-            'research_area' => $validated['researchArea'],
-            'location' => $validated['location'],
+            'funding_source' => $validated['fundingSource'] ?? null,
+            'research_area' => $validated['researchArea'] ?? null,
+            'location' => $validated['location'] ?? null,
             'start_date' => $validated['startDate'],
-            'end_date' => $validated['endDate'],
+            'end_date' => $validated['endDate'] ?? null,
             'status' => 'PROPOSED',
             'progress' => 0,
         ]);
@@ -274,6 +274,7 @@ class ProjectController extends Controller
         AccessRequest::create([
             'project_id' => $project->id,
             'requester_id' => $request->user()->id,
+            'status' => 'PENDING',
         ]);
 
         return response()->json([

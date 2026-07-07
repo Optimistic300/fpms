@@ -105,7 +105,7 @@ export async function getAllMutations() {
         const tx = db.transaction(MUTATIONS_STORE, 'readonly');
         const store = tx.objectStore(MUTATIONS_STORE);
         const index = store.index('timestamp');
-        const request = index.getAll(null, Infinity);
+        const request = index.getAll();
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
         tx.oncomplete = () => db.close();
@@ -183,7 +183,7 @@ export async function getAiQuestions() {
         const tx = db.transaction(AI_STORE, 'readonly');
         const store = tx.objectStore(AI_STORE);
         const index = store.index('timestamp');
-        const request = index.getAll(null, Infinity);
+        const request = index.getAll();
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
         tx.oncomplete = () => db.close();

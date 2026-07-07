@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Division;
 use App\Models\User;
 use App\Models\ActivityType;
+use App\Policies\AdminPolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +14,7 @@ class AdminController extends Controller
 {
     public function users(Request $request): JsonResponse
     {
-        $request->user()->isAdmin() || abort(403);
+        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
 
         $users = User::with('division')->orderBy('created_at', 'desc')->paginate(50);
 
@@ -34,7 +35,7 @@ class AdminController extends Controller
 
     public function createUser(Request $request): JsonResponse
     {
-        $request->user()->isAdmin() || abort(403);
+        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
 
         $validated = $request->validate([
             'email' => 'required|email|unique:users,email',
@@ -59,7 +60,7 @@ class AdminController extends Controller
 
     public function updateUser(Request $request, User $user): JsonResponse
     {
-        $request->user()->isAdmin() || abort(403);
+        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
 
         $validated = $request->validate([
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
@@ -88,7 +89,7 @@ class AdminController extends Controller
 
     public function divisions(Request $request): JsonResponse
     {
-        $request->user()->isAdmin() || abort(403);
+        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
 
         $divisions = Division::with('head')->get()->map(fn($d) => [
             'id' => $d->id,
@@ -101,7 +102,7 @@ class AdminController extends Controller
 
     public function createDivision(Request $request): JsonResponse
     {
-        $request->user()->isAdmin() || abort(403);
+        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:divisions,name',
@@ -110,7 +111,7 @@ class AdminController extends Controller
 
         $division = Division::create([
             'name' => $validated['name'],
-            'head_id' => $validated['headId'],
+            'head_id' => $validated['headId'] ?? null,
         ]);
 
         return response()->json(['data' => $division], 201);
@@ -129,7 +130,7 @@ class AdminController extends Controller
 
     public function createActivityType(Request $request): JsonResponse
     {
-        $request->user()->isAdmin() || abort(403);
+        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
 
         $validated = $request->validate([
             'name' => 'required|string|max:100',
