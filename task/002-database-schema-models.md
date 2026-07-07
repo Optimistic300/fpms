@@ -1,6 +1,6 @@
 # Task 002: Database Schema & Models
 
-**Status:** Not Started
+**Status:** In Progress
 **Depends on:** 001
 **Docs referenced:** `docs/02-data-model.md`, `docs/03-api-reference.md`, `docs/08-glossary.md`
 

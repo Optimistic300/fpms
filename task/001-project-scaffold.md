@@ -1,6 +1,6 @@
 # Task 001: Project Scaffold
 
-**Status:** In Progress
+**Status:** Done
 **Depends on:** None
 **Docs referenced:** `docs/04b-backend-architecture.md`, `docs/04-frontend-architecture.md`, `AGENTS.md`
 
@@ -92,6 +92,26 @@ Not applicable — this task creates the frontend skeleton only.
 - `php artisan route:list` shows the default Laravel routes
 - The `app/` directory has all subdirectories listed above (each with a `.gitkeep` or README)
 - The repository can be cloned fresh and a new developer can run the setup steps above to get the same result
+
+## Completion Notes
+
+**Completed:** 2026-07-05
+**Commit:** `696a9e7`
+
+**Summary:** Scaffolded Laravel 13 with React + Vite, Sanctum token-mode, full `app/` directory structure, React Router skeleton. MySQL `skms` database configured, all default migrations ran, `npm run build` passes.
+
+**Files created:** 75 files — full Laravel scaffold with React entry point (`resources/js/app.jsx`), router (`App.jsx`), all `app/` subdirectories with `.gitkeep`, Sanctum config, notifications migration, Vite config with React plugin.
+
+**Verification:**
+- `php artisan migrate` — all migrations OK
+- `npm run build` — builds successfully (720ms)
+- `php artisan route:list` — 6 routes including SPA catch-all
+
+**Assumptions:**
+- Laravel 13 uses `password_reset_tokens` not `password_resets` — migration adjusted.
+- `failed_jobs` table is created by the jobs migration — no separate migration needed.
+- `@vitejs/plugin-react` v6 used (compatible with Vite 8 shipping with Laravel 13).
+- `.env` left untracked (standard Laravel practice) — developer copies `.env.example`.
 
 ## Open questions / assumptions inherited
 

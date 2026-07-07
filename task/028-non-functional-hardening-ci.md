@@ -1,6 +1,6 @@
 # Task 028: Non-Functional Hardening, Testing & CI
 
-**Status:** Not Started
+**Status:** In Progress
 **Depends on:** 001
 **Docs referenced:** `docs/07-non-functional-requirements.md`, `docs/01-roles-and-permissions.md`, `docs/09-open-questions-and-assumptions.md`
 

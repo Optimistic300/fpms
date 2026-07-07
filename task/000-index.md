@@ -18,8 +18,8 @@
 
 | # | Title | Description | Depends On | Status |
 |---|-------|-------------|------------|--------|
-| 001 | Project Scaffold | Laravel + React/Vite init, env, folder structure | None | In Progress |
-| 002 | Database Schema & Models | All migrations, Eloquent models, enums, seeders | 001 | Not Started |
+| 001 | Project Scaffold | Laravel + React/Vite init, env, folder structure | None | Done |
+| 002 | Database Schema & Models | All migrations, Eloquent models, enums, seeders | 001 | In Progress |
 | 003 | Base API Conventions | CamelCaseResource, pagination, error shapes, Contracts, queue config | 002 | Not Started |
 | 004 | Auth System Backend | Sanctum setup, AuthController, password reset, public stats | 003 | Not Started |
 | 005 | Auth Frontend | Login page (WF02), AuthContext, route guard, forgot password UI | 004 | Not Started |
@@ -44,8 +44,8 @@
 | 024 | AI Assistant Backend | MySQL FTS, AiRetrievalInterface, document indexing, AiController | 003, 004, 010 | Not Started |
 | 025 | AI Assistant Frontend | WF13 — floating button, panel, conversation, citations | 006, 024 | Not Started |
 | 026 | Scheduled Commands | CalculateReportOverdue, GenerateDeadlineAlerts | 003, 004, 011 | Not Started |
-| 027 | Offline Support | Service Worker, IndexedDB queue, offline indicators | 001 | Not Started |
-| 028 | Non-Functional Hardening & CI | Performance, security, backup config, testing, CI pipeline | 001 | Not Started |
+| 027 | Offline Support | Service Worker, IndexedDB queue, offline indicators | 001 | In Progress |
+| 028 | Non-Functional Hardening & CI | Performance, security, backup config, testing, CI pipeline | 001 | In Progress |
 
 ## Dependency Graph (Acyclic)
 

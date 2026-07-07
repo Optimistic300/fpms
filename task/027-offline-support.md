@@ -1,6 +1,6 @@
 # Task 027: Offline Support
 
-**Status:** Not Started
+**Status:** In Progress
 **Depends on:** 001
 **Docs referenced:** `docs/07-non-functional-requirements.md` (Offline-First Behaviour), `docs/04-frontend-architecture.md` (Offline Queue), `docs/09-open-questions-and-assumptions.md` (Offline Sync Strategy)
 
