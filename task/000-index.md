@@ -24,7 +24,7 @@
 | 004 | Auth System Backend | Sanctum setup, AuthController, password reset, public stats | 003 | Done |
 | 005 | Auth Frontend | Login page (WF02), AuthContext, route guard, forgot password UI | 004 | Done |
 | 006 | Shell & Global Components | WF01 — sidebar, nav, routing, contexts, floating AI button | 004, 005 | Done |
-| 007 | Inbox Backend & Frontend | InboxItem model, notification classes, InboxController, WF12 | 003, 004, 006 | Not Started |
+| 007 | Inbox Backend & Frontend | InboxItem model, notification classes, InboxController, WF12 | 003, 004, 006 | Done |
 | 008 | Projects Backend | CRUD, Members, Access Requests, policies, resources, actions | 003, 004 | Done |
 | 009 | Activities Backend | CRUD, Types seeder, CSV export, policies, resources, actions | 003, 004 | Done |
 | 010 | Documents & File Storage | CRUD, upload/download/preview, FileStorageInterface, Library browse/search | 003, 004 | Done |

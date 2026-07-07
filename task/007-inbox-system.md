@@ -1,6 +1,9 @@
 # Task 007: Inbox System
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Refactored InboxController to use InboxService + InboxItemResource + FormRequests + Policy. Created 9 new backend files (Resource, Requests, Service, Events, Listeners, Notifications). Created full Inbox.jsx frontend with tabs, bulk actions, forward modal, inline expand for documents. Wired events/listeners for report lifecycle + document forwarding + access requests. Tests: 115 PHPUnit + 109 Vitest all passing.
 **Depends on:** 003, 004, 006
 **Docs referenced:** `docs/03-api-reference.md` (Inbox section), `docs/02-data-model.md` (InboxItem), `docs/05-screens/12-inbox.md`, `docs/04b-backend-architecture.md` (Notifications/Events)
 

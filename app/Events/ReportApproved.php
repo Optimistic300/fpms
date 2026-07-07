@@ -12,9 +12,11 @@ class ReportApproved
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Report $report;
+    public ?string $comment;
 
-    public function __construct(Report $report)
+    public function __construct(Report $report, ?string $comment = null)
     {
         $this->report = $report;
+        $this->comment = $comment;
     }
 }

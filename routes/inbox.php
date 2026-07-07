@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\InboxController;
+use App\Http\Controllers\Api\InboxController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
