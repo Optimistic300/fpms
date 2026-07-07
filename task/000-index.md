@@ -30,7 +30,7 @@
 | 010 | Documents & File Storage | CRUD, upload/download/preview, FileStorageInterface, Library browse/search | 003, 004 | Done |
 | 011 | Reports Backend | CRUD, Draft, Submit, Approve/Return/Escalate, events/listeners, policies | 003, 004 | Done |
 | 012 | Publications Backend | CRUD, Pipeline stats, policies, resources | 003, 004 | Done |
-| 013 | Stats Backend | Dashboard stats, Division endpoints, Institute endpoints | 004, 008, 009, 011 | Not Started |
+| 013 | Stats Backend | Dashboard stats, Division endpoints, Institute endpoints | 004, 008, 009, 011 | Done |
 | 014 | Dashboard & Project Directory | WF03 + WF04a frontend screens | 006, 008, 009, 011, 013 | Not Started |
 | 015 | Project Detail Frontend | WF04b — tabs, locked preview, team, actions | 006, 008, 009, 010, 011 | Not Started |
 | 016 | Log Activity & My Activities | WF05a + WF05b — multi-step form, activity list | 006, 009, 010 | Not Started |

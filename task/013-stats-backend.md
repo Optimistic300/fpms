@@ -1,6 +1,9 @@
 # Task 013: Dashboard, Division & Institute Stats Backend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Created DivisionRepository and InstituteService to encapsulate aggregation queries. Refactored DivisionController and InstituteController from inline logic to delegate to Repository/Service. DashboardController kept thin (no extraction needed). All 9 stat endpoints working with role authorization. Tests: 115 PHPUnit passing.
 **Depends on:** 004, 008, 009, 011
 **Docs referenced:** `docs/03-api-reference.md` (Dashboard, Divisions, Institute sections), `docs/05-screens/03-dashboard.md`, `docs/05-screens/08-division-dashboard.md`, `docs/05-screens/09-executive-dashboard.md`
 
