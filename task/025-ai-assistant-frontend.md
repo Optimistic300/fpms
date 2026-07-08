@@ -1,6 +1,9 @@
 # Task 025: AI Assistant Frontend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Full WF13 AI Assistant. Replaced AIPanel.jsx with chat interface, citation cards, honest-limits banner, suggested prompts, typing indicator, offline queuing. Updated FloatingAIButton with gold styling + offline indicator. 26 new tests. 548 total frontend tests passing.
 **Depends on:** 006, 024
 **Docs referenced:** `docs/05-screens/13-ai-assistant.md`, `docs/06-ai-assistant.md`
 
