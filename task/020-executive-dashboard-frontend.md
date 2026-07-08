@@ -1,6 +1,9 @@
 # Task 020: Executive Dashboard Frontend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Executive Dashboard (WF09) with institute stat cards, division breakdown, funding/compliance charts, alerts. 45 new tests. All passing.
 **Depends on:** 006, 013
 **Docs referenced:** `docs/05-screens/09-executive-dashboard.md`
 

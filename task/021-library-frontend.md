@@ -1,6 +1,9 @@
 # Task 021: Library Frontend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Library (WF10) with browse, search, preview, forward. DOMPurify for search snippets. 26 new tests. All passing.
 **Depends on:** 006, 010
 **Docs referenced:** `docs/05-screens/10-library.md`, `docs/03-api-reference.md` (Library section), `docs/04-frontend-architecture.md` (DOMPurify)
 

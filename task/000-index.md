@@ -35,11 +35,11 @@
 | 015 | Project Detail Frontend | WF04b — tabs, locked preview, team, actions | 006, 008, 009, 010, 011 | Done |
 | 016 | Log Activity & My Activities | WF05a + WF05b — multi-step form, activity list | 006, 009, 010 | Done |
 | 017 | Submit Report & My Reports | WF06a + WF06b — multi-step form, report list, timeline | 006, 011 | Done |
-| 018 | Report Queue & Review | WF07a + WF07b — Secretary workspace | 006, 011, 013 | Not Started |
-| 019 | Division Dashboard | WF08 — Division Head overview | 006, 013 | Not Started |
-| 020 | Executive Dashboard | WF09 — Management overview | 006, 013 | Not Started |
-| 021 | Library Frontend | WF10 — browse, search, preview, forward | 006, 010 | Not Started |
-| 022 | Publications Frontend | WF11 — cards, tabs, pipeline, CRUD | 006, 012 | Not Started |
+| 018 | Report Queue & Review | WF07a + WF07b — Secretary workspace | 006, 011, 013 | Done |
+| 019 | Division Dashboard | WF08 — Division Head overview | 006, 013 | Done |
+| 020 | Executive Dashboard | WF09 — Management overview | 006, 013 | Done |
+| 021 | Library Frontend | WF10 — browse, search, preview, forward | 006, 010 | Done |
+| 022 | Publications Frontend | WF11 — cards, tabs, pipeline, CRUD | 006, 012 | Done |
 | 023 | Admin Screens (Backend + Frontend) | User CRUD, Division CRUD, ActivityType CRUD, User Management & Settings screens | 004, 006 | Not Started |
 | 024 | AI Assistant Backend | MySQL FTS, AiRetrievalInterface, document indexing, AiController | 003, 004, 010 | Not Started |
 | 025 | AI Assistant Frontend | WF13 — floating button, panel, conversation, citations | 006, 024 | Not Started |

@@ -1,6 +1,9 @@
 # Task 018: Report Queue & Report Review Frontend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Report Queue (WF07a) with stat cards, filters, overdue queue. Report Review (WF07b) with two-column layout, approve/return/escalate actions, comments. 44 new tests. All passing.
 **Depends on:** 006, 011, 013
 **Docs referenced:** `docs/05-screens/07a-report-queue.md`, `docs/05-screens/07b-report-review.md`
 
