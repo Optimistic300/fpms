@@ -40,10 +40,10 @@
 | 020 | Executive Dashboard | WF09 — Management overview | 006, 013 | Done |
 | 021 | Library Frontend | WF10 — browse, search, preview, forward | 006, 010 | Done |
 | 022 | Publications Frontend | WF11 — cards, tabs, pipeline, CRUD | 006, 012 | Done |
-| 023 | Admin Screens (Backend + Frontend) | User CRUD, Division CRUD, ActivityType CRUD, User Management & Settings screens | 004, 006 | Not Started |
-| 024 | AI Assistant Backend | MySQL FTS, AiRetrievalInterface, document indexing, AiController | 003, 004, 010 | Not Started |
-| 025 | AI Assistant Frontend | WF13 — floating button, panel, conversation, citations | 006, 024 | Not Started |
-| 026 | Scheduled Commands | CalculateReportOverdue, GenerateDeadlineAlerts | 003, 004, 011 | Not Started |
+| 023 | Admin Screens (Backend + Frontend) | User CRUD, Division CRUD, ActivityType CRUD, User Management & Settings screens | 004, 006 | Done |
+| 024 | AI Assistant Backend | MySQL FTS, AiRetrievalInterface, document indexing, AiController | 003, 004, 010 | Done |
+| 025 | AI Assistant Frontend | WF13 — floating button, panel, conversation, citations | 006, 024 | In Progress |
+| 026 | Scheduled Commands | CalculateReportOverdue, GenerateDeadlineAlerts | 003, 004, 011 | Done |
 | 027 | Offline Support | Service Worker, IndexedDB queue, offline indicators | 001 | Done |
 | 028 | Non-Functional Hardening & CI | Performance, security, backup config, testing, CI pipeline | 001 | Done |
 

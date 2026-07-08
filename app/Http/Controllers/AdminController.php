@@ -2,143 +2,143 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Admin\CreateActivityTypeAction;
+use App\Actions\Admin\CreateDivisionAction;
+use App\Actions\Admin\CreateUserAction;
+use App\Actions\Admin\DeleteActivityTypeAction;
+use App\Actions\Admin\DeleteDivisionAction;
+use App\Actions\Admin\ListActivityTypesAction;
+use App\Actions\Admin\ListDivisionsAction;
+use App\Actions\Admin\ListUsersAction;
+use App\Actions\Admin\UpdateActivityTypeAction;
+use App\Actions\Admin\UpdateDivisionAction;
+use App\Actions\Admin\UpdateUserAction;
+use App\Http\Requests\StoreActivityTypeRequest;
+use App\Http\Requests\StoreDivisionRequest;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateActivityTypeRequest;
+use App\Http\Requests\UpdateDivisionRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\ActivityTypeResource;
+use App\Http\Resources\BaseResource;
+use App\Http\Resources\DivisionResource;
+use App\Http\Resources\UserResource;
+use App\Models\ActivityType;
 use App\Models\Division;
 use App\Models\User;
-use App\Models\ActivityType;
-use App\Policies\AdminPolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    public function users(Request $request): JsonResponse
+    public function users(Request $request, ListUsersAction $action): JsonResponse
     {
-        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
+        $this->authorize('viewAny', User::class);
 
-        $users = User::with('division')->orderBy('created_at', 'desc')->paginate(50);
+        $users = $action->execute($request);
+        $collection = UserResource::collection($users->items());
 
-        $users->getCollection()->transform(function ($user) {
-            return [
-                'id' => $user->id,
-                'email' => $user->email,
-                'fullName' => $user->full_name,
-                'role' => $user->role,
-                'division' => $user->division?->name,
-                'isActive' => $user->is_active,
-                'createdAt' => $user->created_at?->toIso8601String(),
-            ];
-        });
-
-        return response()->json(['data' => $users->items()]);
+        return response()->json(BaseResource::paginated($users, $collection));
     }
 
-    public function createUser(Request $request): JsonResponse
+    public function createUser(StoreUserRequest $request, CreateUserAction $action): JsonResponse
     {
-        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
+        $this->authorize('create', User::class);
+
+        $user = $action->execute($request->validated());
+
+        return response()->json(['data' => new UserResource($user)], 201);
+    }
+
+    public function updateUser(UpdateUserRequest $request, User $user, UpdateUserAction $action): JsonResponse
+    {
+        $this->authorize('update', $user);
+
+        $user = $action->execute($user, $request->validated());
+
+        return response()->json(['data' => new UserResource($user)]);
+    }
+
+    public function resetPassword(Request $request, User $user): JsonResponse
+    {
+        $this->authorize('update', $user);
 
         $validated = $request->validate([
-            'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
-            'fullName' => 'required|string|max:255',
-            'role' => 'required|in:RESEARCHER,STUDENT,SECRETARY,DIVISION_HEAD,MANAGEMENT,ADMIN',
-            'divisionId' => 'required|exists:divisions,id',
         ]);
 
-        $user = User::create([
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'full_name' => $validated['fullName'],
-            'avatar_initials' => strtoupper(substr($validated['fullName'], 0, 2)),
-            'role' => $validated['role'],
-            'division_id' => $validated['divisionId'],
-            'is_active' => true,
-        ]);
+        $user->update(['password' => bcrypt($validated['password'])]);
 
-        return response()->json(['data' => $user], 201);
+        return response()->json(['message' => 'Password reset successfully.']);
     }
 
-    public function updateUser(Request $request, User $user): JsonResponse
+    public function divisions(Request $request, ListDivisionsAction $action): JsonResponse
     {
-        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
+        $this->authorize('viewAny', User::class);
 
-        $validated = $request->validate([
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'fullName' => 'sometimes|string|max:255',
-            'role' => 'sometimes|in:RESEARCHER,STUDENT,SECRETARY,DIVISION_HEAD,MANAGEMENT,ADMIN',
-            'divisionId' => 'sometimes|exists:divisions,id',
-            'isActive' => 'sometimes|boolean',
-            'password' => 'sometimes|string|min:8',
-        ]);
+        $divisions = $action->execute();
 
-        $update = [];
-        if (isset($validated['email'])) $update['email'] = $validated['email'];
-        if (isset($validated['fullName'])) {
-            $update['full_name'] = $validated['fullName'];
-            $update['avatar_initials'] = strtoupper(substr($validated['fullName'], 0, 2));
-        }
-        if (isset($validated['role'])) $update['role'] = $validated['role'];
-        if (isset($validated['divisionId'])) $update['division_id'] = $validated['divisionId'];
-        if (isset($validated['isActive'])) $update['is_active'] = $validated['isActive'];
-        if (isset($validated['password'])) $update['password'] = Hash::make($validated['password']);
-
-        $user->update($update);
-
-        return response()->json(['data' => $user->fresh()->load('division')]);
+        return response()->json(['data' => DivisionResource::collection($divisions)]);
     }
 
-    public function divisions(Request $request): JsonResponse
+    public function createDivision(StoreDivisionRequest $request, CreateDivisionAction $action): JsonResponse
     {
-        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
+        $this->authorize('create', User::class);
 
-        $divisions = Division::with('head')->get()->map(fn($d) => [
-            'id' => $d->id,
-            'name' => $d->name,
-            'headName' => $d->head?->full_name,
-        ]);
+        $division = $action->execute($request->validated());
 
-        return response()->json(['data' => $divisions]);
+        return response()->json(['data' => new DivisionResource($division)], 201);
     }
 
-    public function createDivision(Request $request): JsonResponse
+    public function updateDivision(UpdateDivisionRequest $request, Division $division, UpdateDivisionAction $action): JsonResponse
     {
-        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
+        $this->authorize('create', User::class);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:divisions,name',
-            'headId' => 'nullable|exists:users,id',
-        ]);
+        $division = $action->execute($division, $request->validated());
 
-        $division = Division::create([
-            'name' => $validated['name'],
-            'head_id' => $validated['headId'] ?? null,
-        ]);
-
-        return response()->json(['data' => $division], 201);
+        return response()->json(['data' => new DivisionResource($division)]);
     }
 
-    public function activityTypes(Request $request): JsonResponse
+    public function deleteDivision(Request $request, Division $division, DeleteDivisionAction $action): JsonResponse
     {
-        return response()->json([
-            'data' => ActivityType::orderBy('name')->get()->map(fn($at) => [
-                'id' => $at->id,
-                'name' => $at->name,
-                'slug' => $at->slug,
-            ]),
-        ]);
+        $this->authorize('create', User::class);
+
+        $action->execute($division);
+
+        return response()->json(['message' => 'Division deleted successfully.']);
     }
 
-    public function createActivityType(Request $request): JsonResponse
+    public function activityTypes(Request $request, ListActivityTypesAction $action): JsonResponse
     {
-        app(AdminPolicy::class)->manageUsers($request->user()) || abort(403);
+        $activityTypes = $action->execute();
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'slug' => 'required|string|max:100|unique:activity_types,slug',
-        ]);
+        return response()->json(['data' => ActivityTypeResource::collection($activityTypes)]);
+    }
 
-        $activityType = ActivityType::create($validated);
+    public function createActivityType(StoreActivityTypeRequest $request, CreateActivityTypeAction $action): JsonResponse
+    {
+        $this->authorize('create', User::class);
 
-        return response()->json(['data' => $activityType], 201);
+        $activityType = $action->execute($request->validated());
+
+        return response()->json(['data' => new ActivityTypeResource($activityType)], 201);
+    }
+
+    public function updateActivityType(UpdateActivityTypeRequest $request, ActivityType $activityType, UpdateActivityTypeAction $action): JsonResponse
+    {
+        $this->authorize('create', User::class);
+
+        $activityType = $action->execute($activityType, $request->validated());
+
+        return response()->json(['data' => new ActivityTypeResource($activityType)]);
+    }
+
+    public function deleteActivityType(Request $request, ActivityType $activityType, DeleteActivityTypeAction $action): JsonResponse
+    {
+        $this->authorize('create', User::class);
+
+        $action->execute($activityType);
+
+        return response()->json(['message' => 'Activity type deleted successfully.']);
     }
 }

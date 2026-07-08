@@ -9,6 +9,18 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class InboxService
 {
+    public function createSystemAlert(User $user, string $subject, string $message, ?\App\Models\Report $report = null): InboxItem
+    {
+        return InboxItem::create([
+            'user_id' => $user->id,
+            'sender_id' => null,
+            'type' => 'SYSTEM',
+            'subject' => $subject,
+            'message' => $message,
+            'report_id' => $report?->id,
+            'read' => false,
+        ]);
+    }
     public function getItemsForUser(User $user, array $filters): LengthAwarePaginator
     {
         $query = InboxItem::with(['sender.division', 'document', 'report'])

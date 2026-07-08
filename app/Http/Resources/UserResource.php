@@ -11,7 +11,10 @@ class UserResource extends CamelCaseResource
             'fullName' => $this->full_name,
             'email' => $this->email,
             'role' => $this->role,
+            'isActive' => $this->is_active,
+            'createdAt' => $this->created_at?->toIso8601String(),
             'division' => $this->when($this->relationLoaded('division'), fn () => $this->division?->name),
+            'divisionId' => $this->when($this->relationLoaded('division'), fn () => $this->division?->id),
         ];
     }
 }

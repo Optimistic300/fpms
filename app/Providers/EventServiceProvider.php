@@ -4,12 +4,14 @@ namespace App\Providers;
 
 use App\Events\AccessRequestCreated;
 use App\Events\DocumentForwarded;
+use App\Events\DocumentPublished;
 use App\Events\ProjectMemberAdded;
 use App\Events\ReportApproved;
 use App\Events\ReportEscalated;
 use App\Events\ReportReturned;
 use App\Events\ReportSubmitted;
 use App\Listeners\SendAccessRequestNotification;
+use App\Listeners\IndexPublishedDocumentForAi;
 use App\Listeners\SendDocumentForwardedNotification;
 use App\Listeners\SendReportStatusChangedNotification;
 use App\Listeners\SendReportSubmittedNotification;
@@ -37,6 +39,9 @@ class EventServiceProvider extends ServiceProvider
             SendAccessRequestNotification::class,
         ],
         ProjectMemberAdded::class => [],
+        DocumentPublished::class => [
+            IndexPublishedDocumentForAi::class,
+        ],
     ];
 
     public function shouldDiscoverEvents(): bool

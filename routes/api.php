@@ -14,3 +14,4 @@ require __DIR__.'/divisions.php';
 require __DIR__.'/institute.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/dashboard.php';
+require __DIR__.'/ai.php';

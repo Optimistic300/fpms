@@ -1,6 +1,9 @@
 # Task 023: Admin Screens (Backend + Frontend)
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Refactored AdminController with Actions/Requests/Resources. Admin frontend pages: UserManagement, Settings (with DivisionManager, ActivityTypeManager). 11 backend Action classes, 6 FormRequests, UserResource/DivisionResource. 131 backend tests, 522 frontend tests passing.
 **Depends on:** 004, 006
 **Docs referenced:** `docs/01-roles-and-permissions.md` (Admin section), `docs/09-open-questions-and-assumptions.md` (Admin screens not specified)
 

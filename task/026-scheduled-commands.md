@@ -1,6 +1,9 @@
 # Task 026: Scheduled Commands
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Created CalculateReportOverdue and GenerateDeadlineAlerts commands. Added is_overdue migration to reports. Registered daily schedules in routes/console.php. 9 ConsoleCommandTest tests. 131 backend tests passing.
 **Depends on:** 003, 004, 011
 **Docs referenced:** `docs/03-api-reference.md` (no direct endpoint — these are console commands), `docs/04b-backend-architecture.md` (Scheduled Commands), `docs/07-non-functional-requirements.md` (Audit), `docs/09-open-questions-and-assumptions.md`
 

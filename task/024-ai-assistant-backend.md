@@ -1,6 +1,9 @@
 # Task 024: AI Assistant Backend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Implemented AiRetrievalService with MySQL FULLTEXT search + re-ranking. AiController with POST /api/ai/query endpoint. IndexDocumentForAi queued job with PDF/DOCX/XLSX extraction. LlmService mock for answer synthesis. 7 AiTest tests. 131 backend tests passing.
 **Depends on:** 003, 004, 010
 **Docs referenced:** `docs/06-ai-assistant.md`, `docs/03-api-reference.md` (AI Assistant section), `docs/04b-backend-architecture.md` (AiRetrievalInterface, Queued Jobs)
 

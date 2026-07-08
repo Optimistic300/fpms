@@ -26,6 +26,7 @@ class Report extends Model
         'comment',
         'reviewed_by',
         'submitted_at',
+        'is_overdue',
     ];
 
     protected function casts(): array
@@ -35,6 +36,7 @@ class Report extends Model
             'period_end' => 'date',
             'version' => 'integer',
             'submitted_at' => 'datetime',
+            'is_overdue' => 'boolean',
         ];
     }
 
