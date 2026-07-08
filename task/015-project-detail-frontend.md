@@ -1,6 +1,9 @@
 # Task 015: Project Detail Frontend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Full Project Detail (WF04b) with 4 tabs, right sidebar, edit/add-member/share modals. ProjectPreview page with request access. DocumentActions component. Routes pre-existed. 292 frontend tests passing.
 **Depends on:** 006, 008, 009, 010, 011
 **Docs referenced:** `docs/05-screens/04b-project-detail.md`, `docs/03-api-reference.md` (Projects, Activities, Documents, Reports), `docs/04-frontend-architecture.md`
 

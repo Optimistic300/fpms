@@ -32,9 +32,9 @@
 | 012 | Publications Backend | CRUD, Pipeline stats, policies, resources | 003, 004 | Done |
 | 013 | Stats Backend | Dashboard stats, Division endpoints, Institute endpoints | 004, 008, 009, 011 | Done |
 | 014 | Dashboard & Project Directory | WF03 + WF04a frontend screens | 006, 008, 009, 011, 013 | Done |
-| 015 | Project Detail Frontend | WF04b — tabs, locked preview, team, actions | 006, 008, 009, 010, 011 | Not Started |
-| 016 | Log Activity & My Activities | WF05a + WF05b — multi-step form, activity list | 006, 009, 010 | Not Started |
-| 017 | Submit Report & My Reports | WF06a + WF06b — multi-step form, report list, timeline | 006, 011 | Not Started |
+| 015 | Project Detail Frontend | WF04b — tabs, locked preview, team, actions | 006, 008, 009, 010, 011 | Done |
+| 016 | Log Activity & My Activities | WF05a + WF05b — multi-step form, activity list | 006, 009, 010 | Done |
+| 017 | Submit Report & My Reports | WF06a + WF06b — multi-step form, report list, timeline | 006, 011 | Done |
 | 018 | Report Queue & Review | WF07a + WF07b — Secretary workspace | 006, 011, 013 | Not Started |
 | 019 | Division Dashboard | WF08 — Division Head overview | 006, 013 | Not Started |
 | 020 | Executive Dashboard | WF09 — Management overview | 006, 013 | Not Started |

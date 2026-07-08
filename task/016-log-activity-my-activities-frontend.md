@@ -1,6 +1,9 @@
 # Task 016: Log Activity & My Activities Frontend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. 3-step Log Activity wizard (WF05a) + My Activities list (WF05b) with filters, CSV export, inline expand, edit/delete. FileUploadZone, EditActivityModal, step components. 292 frontend tests passing.
 **Depends on:** 006, 009, 010
 **Docs referenced:** `docs/05-screens/05a-log-activity.md`, `docs/05-screens/05b-my-activities.md`, `docs/04-frontend-architecture.md` (Multi-step forms, File upload), `docs/07-non-functional-requirements.md` (Offline)
 

@@ -1,6 +1,9 @@
 # Task 017: Submit Report & My Reports Frontend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. 4-step Submit Report wizard (WF06a) with draft save/resume + resubmission. My Reports list (WF06b) with timeline, status badges, resubmit flow. ReportTimeline, ResubmitButton components. 292 frontend tests passing.
 **Depends on:** 006, 011
 **Docs referenced:** `docs/05-screens/06a-submit-report.md`, `docs/05-screens/06b-my-reports.md`, `docs/04-frontend-architecture.md` (Multi-step forms)
 
