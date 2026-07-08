@@ -1,6 +1,9 @@
 # Task 014: Dashboard & Project Directory Frontend
 
-**Status:** Not Started
+**Status:** Done
+
+## Completion Notes
+Completed 2026-07-07. Replaced placeholder Dashboard.jsx and ProjectDirectory.jsx with full WF03/WF04a implementations. Created reusable StatCard, ProjectFilters, NewProjectModal components. Added 53 new Vitest tests (5 new test files). All 162 frontend tests passing. Backend unchanged.
 **Depends on:** 006, 008, 009, 011, 013
 **Docs referenced:** `docs/05-screens/03-dashboard.md`, `docs/05-screens/04a-project-directory.md`, `docs/03-api-reference.md` (Dashboard, Projects), `docs/04-frontend-architecture.md`
 
