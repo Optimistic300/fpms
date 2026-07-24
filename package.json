@@ -1,0 +1,29 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "dev": "vite",
+        "test": "vitest run",
+        "test:watch": "vitest"
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^6.9.1",
+        "@testing-library/react": "^16.3.2",
+        "@testing-library/user-event": "^14.6.1",
+        "@vitejs/plugin-react": "^6.0.3",
+        "fake-indexeddb": "^6.2.5",
+        "jsdom": "^29.1.1",
+        "laravel-vite-plugin": "^3.1",
+        "vite": "^8.0.0",
+        "vitest": "^4.1.10"
+    },
+    "dependencies": {
+        "axios": "^1.7.9",
+        "dompurify": "^3.2.4",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-router-dom": "^7.1.3"
+    }
+}
