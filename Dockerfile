@@ -12,7 +12,8 @@ RUN apk add --no-cache \
     libzip-dev \
     libpng-dev \
     oniguruma-dev \
-    libxml2-dev
+    libxml2-dev \
+    postgresql-dev
 
 # Install PHP extensions
 RUN docker-php-ext-install \
