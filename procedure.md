@@ -157,6 +157,47 @@ re-verified via curl through the new Apache vhost — returned a valid token and
 - New users going forward should be created by an admin through that page, not via
   tinker — the tinker route was only needed to bootstrap the very first account.
 
+## 6. Dockerfile drafted for deployment
+
+Reviewed a hand-written `Dockerfile` (PHP-FPM + nginx on Alpine) against the actual
+project (`composer.json`, `.env`) to correct mismatches before it was ever built:
+
+- **Wrong DB driver:** it installed `postgresql-dev`/`pdo_pgsql`, but `.env` has
+  `DB_CONNECTION=mysql`. Swapped for `pdo_mysql` — no extra system package needed for
+  that one, since MySQL client support (mysqlnd) is already built into the official PHP
+  image, unlike Postgres which needs headers at compile time.
+- **Missing `zip` extension:** `phpoffice/phpspreadsheet` and `phpoffice/phpword` (both
+  in `composer.json`) read/write xlsx/docx, which are zip-based formats — without
+  `ext-zip` those would fail at runtime. Added `libzip-dev` (system) and
+  `docker-php-ext-install zip`.
+- Left `gd`, `mbstring`, `exif`, `pcntl`, `bcmath`, `pdo`, `libpng-dev`,
+  `oniguruma-dev`, `libxml2-dev`, and the nginx/node/composer setup as-is — checked
+  against actual usage and all still needed.
+
+The Dockerfile also `COPY`s `docker/nginx.conf` and `docker/start.sh`, neither of which
+existed yet, and there was no `.dockerignore` — meaning `COPY . .` would have baked the
+real local `.env` (live `APP_KEY`, DB credentials) straight into the image. Created all
+three:
+
+- **`.dockerignore`** — excludes `.env`/`.env.*` (except `.env.example`), `.git`,
+  `node_modules`, `vendor`, transient `storage/` contents, and test/editor files from
+  the build context.
+- **`docker/nginx.conf`** — a full `nginx.conf` (the Dockerfile replaces
+  `/etc/nginx/nginx.conf` wholesale, not a `conf.d` snippet), listening on `10000` to
+  match the Dockerfile's `EXPOSE`, serving `public/` as document root, and proxying
+  `.php` requests to php-fpm on `127.0.0.1:9000` (php-fpm's default pool address,
+  unchanged).
+- **`docker/start.sh`** — deliberately does `config:cache`/`route:cache`/`view:cache`
+  and `migrate --force` at container **start**, not at image build time, since real
+  env vars (`APP_KEY`, `DB_*`, etc.) typically only exist at runtime on hosting
+  platforms, not during the build step. Then starts `php-fpm -D` (backgrounded) and
+  `nginx -g "daemon off;"` (foreground, keeps the container alive).
+
+**Known trade-off:** `start.sh` runs `php artisan migrate --force` on every container
+start. Fine for a single instance; if this is ever scaled to multiple replicas,
+simultaneous migrations from each container could race — would need to move to a
+separate release/init step at that point.
+
 ## Known follow-ups / things to watch
 
 - If this repo is later deployed to a case-sensitive (e.g. Linux) server, double-check
