@@ -48,7 +48,9 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install && npm run build
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs \
+    && chmod -R 777 storage bootstrap/cache
 
 # Copy nginx config
 COPY docker/nginx.conf /etc/nginx/nginx.conf

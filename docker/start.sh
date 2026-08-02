@@ -1,20 +1,18 @@
 #!/bin/sh
-set -e
 
-# Fix storage permissions
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
-
-mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs
-chmod -R 775 storage/framework storage/logs
+# Fix permissions
+chmod -R 777 /var/www/html/storage
+chmod -R 777 /var/www/html/bootstrap/cache
 
 # Run migrations
-php artisan migrate --force 2>/dev/null || true
+php artisan migrate --force
 
-# Cache config
+# Cache
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
+# Start services
 php-fpm -D
+sleep 1
 nginx -g "daemon off;"
