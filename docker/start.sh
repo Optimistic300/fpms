@@ -8,6 +8,10 @@ chmod -R 777 /var/www/html/bootstrap/cache
 # Run migrations
 php artisan migrate --force
 
+# Seed reference data (divisions, activity types) - idempotent, safe to
+# rerun on every boot (Render free tier respins the container on cold starts)
+php artisan db:seed --force
+
 # Create the admin account on first deploy (no-op if it already exists,
 # or if ADMIN_EMAIL / ADMIN_PASSWORD aren't set)
 php artisan db:seed --class=Database\\Seeders\\AdminUserSeeder --force
