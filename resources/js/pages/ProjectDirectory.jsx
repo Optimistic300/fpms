@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import apiClient from '../api/axios';
 import ProjectFilters from '../components/projects/ProjectFilters';
 import NewProjectModal from '../components/projects/NewProjectModal';
@@ -37,6 +37,8 @@ function SkeletonRow() {
 
 export default function ProjectDirectory() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const showNewModal = location.pathname === '/projects/new';
 
     const [allProjects, setAllProjects] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -47,8 +49,6 @@ export default function ProjectDirectory() {
     const [division, setDivision] = useState('');
     const [status, setStatus] = useState('');
     const [fundingType, setFundingType] = useState('');
-
-    const [showNewModal, setShowNewModal] = useState(false);
 
     const debounceRef = useRef(null);
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -175,7 +175,7 @@ export default function ProjectDirectory() {
                 </h1>
                 <button
                     type="button"
-                    onClick={() => setShowNewModal(true)}
+                    onClick={() => navigate('/projects/new')}
                     style={{
                         padding: '10px 20px',
                         fontSize: '14px',
@@ -434,7 +434,7 @@ export default function ProjectDirectory() {
 
             <NewProjectModal
                 isOpen={showNewModal}
-                onClose={() => setShowNewModal(false)}
+                onClose={() => navigate('/projects')}
                 divisions={divisions}
             />
         </div>

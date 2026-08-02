@@ -198,14 +198,126 @@ start. Fine for a single instance; if this is ever scaled to multiple replicas,
 simultaneous migrations from each container could race — would need to move to a
 separate release/init step at that point.
 
+## 7. Deployed to Render — switched DB driver back to Postgres
+
+The Dockerfile/`start.sh` pair above was written assuming MySQL (matching the local
+`.env` at the time). Actual production deploy target ended up being Render + a managed
+Neon Postgres database, so the Dockerfile was hand-edited (by the user) back to
+`postgresql-dev`/`pdo_pgsql`/`pgsql`, with a `RUN php -m | grep -i pgsql` build-time
+sanity check that the extension actually loaded. `start.sh` was also hand-edited: storage
+permissions changed from a targeted `chown www-data` to a blanket `chmod -R 777` on both
+`storage` and `bootstrap/cache`, and `sleep 1` was added between starting `php-fpm -D` and
+`nginx -g "daemon off;"`.
+
+## 8. First deploy: Internal Server Error — storage permission denied + missing `sessions` table
+
+**Symptom:** Visiting the live Render URL returned a Laravel `UnexpectedValueException`
+page repeating "The stream or file `/var/www/html/storage/logs/laravel.log` could not be
+opened in append mode: Permission denied" dozens of times, followed by
+`SQLSTATE[42P01]: Undefined table: relation "sessions" does not exist` against the Neon
+Postgres host.
+
+**Investigation:** Two independent problems bundled in one page:
+- `storage/logs` wasn't writable at runtime despite `chmod -R 777` running both at image
+  build time (in the Dockerfile) and again at container start (in `start.sh`) — consistent
+  with the classic "persistent disk mounted over the directory after the image was built"
+  gotcha, though this wasn't confirmed against the actual Render dashboard.
+- `SESSION_DRIVER=database` requires a `sessions` table, which didn't exist — meaning
+  `php artisan migrate --force` never successfully completed against the Neon database.
+  At the time, `start.sh` had **no `set -e`** and no error checking, so a failed migration
+  would silently fall through to starting php-fpm/nginx anyway, masking the failure
+  entirely instead of failing the deploy.
+
+**Fix:**
+1. Added `set -e` back to the top of `start.sh` so any failed step (migrations included)
+   now aborts the boot and fails the deploy loudly, instead of serving a broken app.
+2. Advised checking the Render dashboard's **Disks** tab for a volume mounted over
+   `/var/www/html/storage` (and narrowing it to a subpath like `storage/app/public` if one
+   exists), and confirming Postgres env vars (`DB_CONNECTION=pgsql`, host/port/database/
+   user/password) are set directly in Render's Environment tab rather than relying on the
+   (dockerignored) local `.env`.
+
+## 9. Second deploy attempt: `SQLSTATE[42P07]: Duplicate table "users" already exists`
+
+**Symptom:** After the `set -e` fix, the next deploy failed migrations with a duplicate
+table error on `users`.
+
+**Diagnosis:** Migration state mismatch — an earlier deploy attempt had gotten far enough
+to create some tables before crashing (on the logging-permission failure above), but died
+before Laravel could record that batch in its `migrations` tracking table. The next run
+started from migration #1 again and collided with tables that already existed.
+
+**Fix:** Since no request had ever successfully used the database up to this point, the
+Neon schema was dropped and recreated from scratch via the Neon SQL console
+(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`) rather than trying to hand-reconcile
+partial migration state, then redeployed so `migrate --force` ran clean against an empty
+schema.
+
+## 10. Page loaded but was blank — mixed content from `http://` asset URLs
+
+**Symptom:** After the schema reset, Render returned HTTP 200 and the page structure was
+correct, but the browser showed a blank page.
+
+**Investigation:** Fetched the deployed HTML directly and found the built JS/CSS were
+linked as `http://fpms-1.onrender.com/build/assets/...` while the page itself was served
+over `https://`. Browsers silently block that as mixed content, so the script never
+loaded and React never mounted into `<div id="root">`. Root cause: Render terminates TLS
+at its edge and forwards requests to the container over plain HTTP. The original request
+did carry `x-forwarded-proto: https`, but nothing in the app was configured to trust/use
+that header, so Laravel's URL generation defaulted to the scheme it saw at the container
+(`http`).
+
+**Fix:** Added to `app/Providers/AppServiceProvider.php`'s `boot()`:
+
+```php
+if ($this->app->environment('production')) {
+    URL::forceScheme('https');
+}
+```
+
+This sidesteps proxy-trust configuration entirely by unconditionally forcing `https` for
+all generated URLs/assets whenever `APP_ENV` resolves to `production` — which it does by
+default (`config/app.php`: `'env' => env('APP_ENV', 'production')`) even without an
+explicit `APP_ENV` var set on Render, since `.env` is intentionally excluded from the
+image.
+
+## 11. Login worked structurally but always returned 422 "Invalid email or password"
+
+**Constraint:** Render's free tier has no Shell/SSH access, so the `php artisan tinker`
+approach used locally (step 3) wasn't available for bootstrapping the first admin account
+in production.
+
+**Fix:** Added `database/seeders/AdminUserSeeder.php` — reads `ADMIN_EMAIL`,
+`ADMIN_PASSWORD`, and optional `ADMIN_NAME` from the environment, and does nothing if
+those aren't set, if a user with that email already exists, or if no `Division` exists
+yet (guards against duplicate-creation errors on every redeploy/cold-start). Wired into
+`start.sh` after `migrate --force`.
+
+**Follow-up bug found immediately after wiring it in:** login still 422'd. Root cause —
+`start.sh` only ever called the `AdminUserSeeder`, never the base `DatabaseSeeder`, so
+`divisions` was empty on Neon and `AdminUserSeeder`'s `Division::first()` guard silently
+no-op'd every time; no admin user was ever actually created. Before adding a `db:seed`
+call to fix that, `DivisionSeeder`/`ActivityTypeSeeder` had to be made idempotent first
+(`Division::create`/`ActivityType::create` → `firstOrCreate`), since Render's free tier
+respins the container — and reruns `start.sh` — on every cold start after idling; a
+non-idempotent seed running on every cold start would have piled up duplicate divisions
+within days. Final `start.sh` order: `migrate --force` → `db:seed --force` (base seeder)
+→ `db:seed --class=...AdminUserSeeder --force` → config/route/view cache → start servers.
+
 ## Known follow-ups / things to watch
 
 - If this repo is later deployed to a case-sensitive (e.g. Linux) server, double-check
   there isn't a stray duplicate `App.jsx`/`app.jsx` pair expected there — this Windows
   checkout only has one physical entry file (`app.jsx`) plus the separately-named
   `AppRoot.jsx`.
-- If the `users` table ever gets wiped again (e.g. by `migrate:fresh`), the admin account
-  needs to be recreated via the tinker command in step 3 — there is no automatic
-  first-admin seeder.
+- Local dev (XAMPP) still targets MySQL per `.env`; production (Render) now targets
+  Postgres per the Dockerfile — keep that split in mind if debugging DB-specific behavior,
+  since the two environments run different `DB_CONNECTION` drivers.
+- On Render, the admin account is now bootstrapped automatically via `AdminUserSeeder` as
+  long as `ADMIN_EMAIL`/`ADMIN_PASSWORD` env vars are set — locally (XAMPP/MySQL), there's
+  still no automatic seeder, so a wiped `users` table needs the tinker command from step 3.
 - The Apache vhost now claims `localhost` for this project; remember that if you need to
   serve another project from XAMPP on this machine.
+- `start.sh` runs `migrate --force` and the full `db:seed --force` on every container
+  boot, including Render free-tier cold starts. Both are now idempotent/safe, but this is
+  worth revisiting if migrations or seeders ever become slow or non-idempotent again.

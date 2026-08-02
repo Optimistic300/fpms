@@ -9,7 +9,6 @@ import Dashboard from './pages/Dashboard';
 import DivisionDashboard from './pages/DivisionDashboard';
 import ExecutiveDashboard from './pages/ExecutiveDashboard';
 import ProjectDirectory from './pages/ProjectDirectory';
-import NewProject from './pages/NewProject';
 import ProjectDetail from './pages/ProjectDetail';
 import ProjectPreview from './pages/ProjectPreview';
 import MyActivities from './pages/MyActivities';
@@ -53,7 +52,7 @@ export default function AppRoot() {
                         <Route path="executive" element={<ExecutiveDashboard />} />
 
                         <Route path="projects" element={<ProjectDirectory />} />
-                        <Route path="projects/new" element={<NewProject />} />
+                        <Route path="projects/new" element={<ProjectDirectory />} />
                         <Route path="projects/:id" element={<ProjectDetail />} />
                         <Route path="projects/:id/preview" element={<ProjectPreview />} />
 
