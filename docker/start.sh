@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # Fix permissions
 chmod -R 777 /var/www/html/storage
