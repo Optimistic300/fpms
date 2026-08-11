@@ -12,6 +12,10 @@ php artisan migrate --force
 # rerun on every boot (Render free tier respins the container on cold starts)
 php artisan db:seed --force
 
+# Move anything still on a legacy placeholder division to Administration,
+# then remove the legacy rows - no-op once none remain
+php artisan db:seed --class=Database\\Seeders\\CleanupLegacyDivisionsSeeder --force
+
 # Create the admin account on first deploy (no-op if it already exists,
 # or if ADMIN_EMAIL / ADMIN_PASSWORD aren't set)
 php artisan db:seed --class=Database\\Seeders\\AdminUserSeeder --force

@@ -10,12 +10,17 @@ class DivisionSeeder extends Seeder
     public function run(): void
     {
         $divisions = [
-            'Forest Ecology',
-            'Climate Change',
-            'Social Science',
-            'Forest Products and Utilisation',
-            'Forest Genetics and Tree Improvement',
-            'Plant Health and Quarantine',
+            'Biodiversity Conservation and Ecosystem Services',
+            'Forest Improvement and Productivity',
+            'Forest and Climate Change',
+            'Forest Economics and Marketing Division',
+            'Forest Policy, Governance and Livelihoods',
+            'Wood Industry and Utilisation',
+            'Commercialisation',
+            'Administration',
+            'Finance',
+            'Information and Communication Section',
+            'Grants and Projects Office',
         ];
 
         foreach ($divisions as $name) {
