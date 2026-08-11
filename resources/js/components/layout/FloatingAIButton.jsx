@@ -35,7 +35,7 @@ export default function FloatingAIButton() {
                 overflow: 'hidden',
                 gap: '8px',
             }}
-            aria-label="Ask SKMS"
+            aria-label="Ask FPMS"
         >
             <svg
                 width="20"
@@ -61,7 +61,7 @@ export default function FloatingAIButton() {
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    Ask SKMS
+                    Ask FPMS
                 </span>
             )}
             {!isOnline && (

@@ -83,9 +83,9 @@ export default function DocumentActions({ document: doc, onAction }) {
                         disabled={publishing}
                         style={{
                             ...iconBtn,
-                            backgroundColor: '#dbeafe',
-                            borderColor: '#93c5fd',
-                            color: '#1e40af',
+                            backgroundColor: 'var(--color-primary-bg)',
+                            borderColor: 'var(--color-primary-lighter)',
+                            color: 'var(--color-primary-dark)',
                             cursor: publishing ? 'not-allowed' : 'pointer',
                         }}
                     >
@@ -136,9 +136,9 @@ export default function DocumentActions({ document: doc, onAction }) {
                         disabled={forwarding}
                         style={{
                             ...iconBtn,
-                            backgroundColor: '#dbeafe',
-                            borderColor: '#93c5fd',
-                            color: '#1e40af',
+                            backgroundColor: 'var(--color-primary-bg)',
+                            borderColor: 'var(--color-primary-lighter)',
+                            color: 'var(--color-primary-dark)',
                             cursor: forwarding ? 'not-allowed' : 'pointer',
                         }}
                     >

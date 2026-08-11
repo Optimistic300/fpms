@@ -23,7 +23,7 @@ describe('FloatingAIButton', () => {
     it('renders AI button', () => {
         mockUseAI.mockReturnValue({ openPanel: vi.fn() });
         render(<FloatingAIButton />);
-        expect(screen.getByLabelText('Ask SKMS')).toBeInTheDocument();
+        expect(screen.getByLabelText('Ask FPMS')).toBeInTheDocument();
     });
 
     it('calls openPanel on click', async () => {
@@ -31,7 +31,7 @@ describe('FloatingAIButton', () => {
         const openPanel = vi.fn();
         mockUseAI.mockReturnValue({ openPanel });
         render(<FloatingAIButton />);
-        await user.click(screen.getByLabelText('Ask SKMS'));
+        await user.click(screen.getByLabelText('Ask FPMS'));
         expect(openPanel).toHaveBeenCalledOnce();
     });
 
@@ -39,8 +39,8 @@ describe('FloatingAIButton', () => {
         const user = userEvent.setup();
         mockUseAI.mockReturnValue({ openPanel: vi.fn() });
         render(<FloatingAIButton />);
-        await user.hover(screen.getByLabelText('Ask SKMS'));
-        expect(screen.getByText('Ask SKMS')).toBeInTheDocument();
+        await user.hover(screen.getByLabelText('Ask FPMS'));
+        expect(screen.getByText('Ask FPMS')).toBeInTheDocument();
     });
 
     it('shows offline indicator when offline', async () => {

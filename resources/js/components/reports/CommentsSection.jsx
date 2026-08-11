@@ -88,7 +88,7 @@ export default function CommentsSection({ comments = [], onSubmitComment }) {
                             padding: '8px 16px',
                             borderRadius: '6px',
                             border: 'none',
-                            backgroundColor: !newComment.trim() || submitting ? '#94a3b8' : '#2563eb',
+                            backgroundColor: !newComment.trim() || submitting ? '#94a3b8' : 'var(--color-primary)',
                             color: 'white',
                             fontSize: '13px',
                             fontWeight: 600,

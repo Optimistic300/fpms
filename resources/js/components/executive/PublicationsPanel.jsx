@@ -90,7 +90,7 @@ export default function PublicationsPanel({ publications, loading, error }) {
                 to="/publications"
                 style={{
                     display: 'block', padding: '10px 20px', fontSize: '13px', fontWeight: 500,
-                    color: '#2563eb', textDecoration: 'none', textAlign: 'center',
+                    color: 'var(--color-primary)', textDecoration: 'none', textAlign: 'center',
                     borderTop: '1px solid #f1f5f9',
                 }}
             >

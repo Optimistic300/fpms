@@ -67,7 +67,7 @@ export default function ForwardModal({ documentId, onClose }) {
                 }}
                 onClick={e => e.stopPropagation()}
             >
-                <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1a365d', margin: '0 0 16px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-brand-dark)', margin: '0 0 16px' }}>
                     Forward Document
                 </h2>
 
@@ -128,14 +128,14 @@ export default function ForwardModal({ documentId, onClose }) {
                                     display: 'inline-flex', alignItems: 'center', gap: '4px',
                                     padding: '4px 8px', backgroundColor: '#ebf4ff',
                                     border: '1px solid #bee3f8', borderRadius: '16px',
-                                    fontSize: '12px', color: '#2b6cb0',
+                                    fontSize: '12px', color: 'var(--color-primary)',
                                 }}>
                                     {user.fullName || user.name}
                                     <button
                                         onClick={() => removeRecipient(user.id)}
                                         style={{
                                             background: 'none', border: 'none', cursor: 'pointer',
-                                            fontSize: '14px', color: '#2b6cb0', padding: '0 2px',
+                                            fontSize: '14px', color: 'var(--color-primary)', padding: '0 2px',
                                         }}
                                     >
                                         ×
@@ -190,7 +190,7 @@ export default function ForwardModal({ documentId, onClose }) {
                         disabled={selectedRecipients.length === 0 || forwarding}
                         style={{
                             padding: '8px 16px', fontSize: '14px', fontWeight: 600,
-                            color: 'white', background: selectedRecipients.length === 0 ? '#a0aec0' : '#2b6cb0',
+                            color: 'white', background: selectedRecipients.length === 0 ? '#a0aec0' : 'var(--color-primary)',
                             border: 'none', borderRadius: '6px',
                             cursor: selectedRecipients.length === 0 ? 'not-allowed' : 'pointer',
                         }}

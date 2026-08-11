@@ -60,11 +60,11 @@ export default function TopNav({ onToggleSidebar }) {
                     style={{
                         fontWeight: 700,
                         fontSize: '18px',
-                        color: '#1a365d',
+                        color: 'var(--color-brand-dark)',
                         textDecoration: 'none',
                     }}
                 >
-                    SKMS
+                    FPMS
                 </Link>
                 <OfflineIndicator />
             </div>
@@ -78,8 +78,8 @@ export default function TopNav({ onToggleSidebar }) {
                                 padding: '6px 14px',
                                 fontSize: '13px',
                                 fontWeight: 500,
-                                color: '#2b6cb0',
-                                border: '1px solid #2b6cb0',
+                                color: 'var(--color-primary)',
+                                border: '1px solid var(--color-primary)',
                                 borderRadius: '6px',
                                 textDecoration: 'none',
                             }}
@@ -93,7 +93,7 @@ export default function TopNav({ onToggleSidebar }) {
                                 fontSize: '13px',
                                 fontWeight: 500,
                                 color: 'white',
-                                backgroundColor: '#2b6cb0',
+                                backgroundColor: 'var(--color-primary)',
                                 borderRadius: '6px',
                                 textDecoration: 'none',
                             }}
@@ -108,7 +108,7 @@ export default function TopNav({ onToggleSidebar }) {
                             padding: '4px 12px',
                             fontSize: '12px',
                             fontWeight: 600,
-                            color: '#2b6cb0',
+                            color: 'var(--color-primary)',
                             backgroundColor: '#ebf4ff',
                             borderRadius: '12px',
                             textTransform: 'uppercase',

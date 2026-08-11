@@ -1,3 +1,17 @@
+:root {
+    /* CSIR-FORIG forest-green brand palette (replaces the generic SaaS blue) */
+    --color-primary: #15803d;
+    --color-primary-dark: #14532d;
+    --color-primary-darker: #0f3d1f;
+    --color-primary-mid: #16a34a;
+    --color-primary-light: #4ade80;
+    --color-primary-lighter: #86efac;
+    --color-primary-bg: #dcfce7;
+
+    --color-brand-dark: #14532d;
+    --color-brand-darker: #052e16;
+}
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;

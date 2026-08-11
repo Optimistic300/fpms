@@ -230,8 +230,8 @@ export default function AIPanel() {
                             <line x1="12" y1="17" x2="12.01" y2="17" />
                         </svg>
                         <div>
-                            <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1a365d', margin: 0, lineHeight: 1.2 }}>
-                                Ask SKMS
+                            <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-brand-dark)', margin: 0, lineHeight: 1.2 }}>
+                                Ask FPMS
                             </h2>
                             <p style={{ fontSize: '11px', color: '#718096', margin: 0, lineHeight: 1.3, maxWidth: '220px' }}>
                                 Searches across all library documents · always cites sources
@@ -384,7 +384,7 @@ export default function AIPanel() {
                                 textAlign: 'center',
                             }}
                         >
-                            Ask SKMS requires an internet connection. Your questions will be saved and answered when you reconnect.
+                            Ask FPMS requires an internet connection. Your questions will be saved and answered when you reconnect.
                         </div>
                     )}
 

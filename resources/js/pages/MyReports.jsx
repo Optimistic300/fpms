@@ -130,7 +130,7 @@ export default function MyReports() {
                         fontSize: '14px',
                         fontWeight: 600,
                         color: 'white',
-                        backgroundColor: '#2563eb',
+                        backgroundColor: 'var(--color-primary)',
                         border: 'none',
                         borderRadius: '6px',
                         cursor: 'pointer',
@@ -188,7 +188,7 @@ export default function MyReports() {
                             fontSize: '14px',
                             fontWeight: 600,
                             color: 'white',
-                            backgroundColor: '#2563eb',
+                            backgroundColor: 'var(--color-primary)',
                             border: 'none',
                             borderRadius: '6px',
                             cursor: 'pointer',
@@ -360,7 +360,7 @@ export default function MyReports() {
                                                                 ? '#dc2626'
                                                                 : report.status === 'DRAFT'
                                                                   ? '#64748b'
-                                                                  : '#2563eb',
+                                                                  : 'var(--color-primary)',
                                                         border: 'none',
                                                         borderRadius: '4px',
                                                         cursor: 'pointer',

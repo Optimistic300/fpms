@@ -33,7 +33,7 @@ export default function AvatarDropdown() {
                     width: '36px',
                     height: '36px',
                     borderRadius: '50%',
-                    backgroundColor: '#2b6cb0',
+                    backgroundColor: 'var(--color-primary)',
                     color: 'white',
                     border: 'none',
                     cursor: 'pointer',
@@ -76,7 +76,7 @@ export default function AvatarDropdown() {
                         </div>
                         <div
                             style={{
-                                color: '#2b6cb0',
+                                color: 'var(--color-primary)',
                                 fontSize: '12px',
                                 marginTop: '4px',
                                 fontWeight: 500,

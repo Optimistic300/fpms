@@ -54,17 +54,17 @@ export default function StatCard({ label, value, icon, onClick, isActive, loadin
                 padding: '20px',
                 backgroundColor: isActive ? '#eff6ff' : 'white',
                 borderRadius: '8px',
-                border: `1px solid ${isActive ? '#3b82f6' : '#e2e8f0'}`,
+                border: `1px solid ${isActive ? 'var(--color-primary-mid)' : '#e2e8f0'}`,
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.15s ease',
-                borderLeft: `4px solid ${isActive ? '#3b82f6' : '#e2e8f0'}`,
+                borderLeft: `4px solid ${isActive ? 'var(--color-primary-mid)' : '#e2e8f0'}`,
                 fontFamily: 'inherit',
             }}
             onMouseEnter={(e) => {
                 if (!isActive) {
-                    e.currentTarget.style.borderColor = '#93c5fd';
-                    e.currentTarget.style.borderLeftColor = '#3b82f6';
+                    e.currentTarget.style.borderColor = 'var(--color-primary-lighter)';
+                    e.currentTarget.style.borderLeftColor = 'var(--color-primary-mid)';
                 }
             }}
             onMouseLeave={(e) => {

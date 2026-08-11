@@ -49,7 +49,7 @@ export default function BottomTabBar() {
                         gap: '2px',
                         padding: '6px 12px',
                         textDecoration: 'none',
-                        color: isActive ? '#2b6cb0' : '#64748b',
+                        color: isActive ? 'var(--color-primary)' : '#64748b',
                         fontWeight: isActive ? 600 : 400,
                         fontSize: '10px',
                     })}

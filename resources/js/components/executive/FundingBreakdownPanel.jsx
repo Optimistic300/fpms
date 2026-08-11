@@ -12,7 +12,7 @@ function Skeleton() {
 }
 
 const barColors = {
-    DONOR: '#3b82f6',
+    DONOR: 'var(--color-primary-mid)',
     GOVERNMENT: '#22c55e',
     INTERNAL: '#f59e0b',
 };

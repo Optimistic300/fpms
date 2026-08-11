@@ -139,7 +139,7 @@ export default function ReportQueue() {
 
     function typeBadge(type) {
         const colors = {
-            QUARTERLY: { bg: '#dbeafe', color: '#2563eb' },
+            QUARTERLY: { bg: 'var(--color-primary-bg)', color: 'var(--color-primary)' },
             ANNUAL: { bg: '#e0e7ff', color: '#4f46e5' },
             COMPLETION: { bg: '#d1fae5', color: '#059669' },
             SPECIAL: { bg: '#ede9fe', color: '#7c3aed' },
@@ -183,7 +183,7 @@ export default function ReportQueue() {
                             padding: '6px 14px',
                             borderRadius: '20px',
                             border: 'none',
-                            backgroundColor: '#2563eb',
+                            backgroundColor: 'var(--color-primary)',
                             color: 'white',
                             fontSize: '13px',
                             fontWeight: 600,
@@ -347,9 +347,9 @@ export default function ReportQueue() {
                                                 style={{
                                                     padding: '6px 14px',
                                                     borderRadius: '6px',
-                                                    border: '1px solid #2563eb',
+                                                    border: '1px solid var(--color-primary)',
                                                     backgroundColor: 'white',
-                                                    color: '#2563eb',
+                                                    color: 'var(--color-primary)',
                                                     fontSize: '13px',
                                                     fontWeight: 600,
                                                     cursor: 'pointer',

@@ -5,7 +5,7 @@ import UserFormModal from '../components/admin/UserFormModal';
 
 const ROLE_COLORS = {
     ADMIN: { bg: '#fee2e2', color: '#991b1b' },
-    DIVISION_HEAD: { bg: '#dbeafe', color: '#1e40af' },
+    DIVISION_HEAD: { bg: 'var(--color-primary-bg)', color: 'var(--color-primary-dark)' },
     SECRETARY: { bg: '#fef3c7', color: '#92400e' },
     MANAGEMENT: { bg: '#e0e7ff', color: '#3730a3' },
     RESEARCHER: { bg: '#d1fae5', color: '#065f46' },
@@ -110,7 +110,7 @@ export default function UserManagement() {
 
     const addBtnStyle = {
         padding: '9px 20px', fontSize: '14px', fontWeight: 600,
-        color: 'white', backgroundColor: '#2563eb', border: 'none',
+        color: 'white', backgroundColor: 'var(--color-primary)', border: 'none',
         borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit',
     };
 
@@ -255,7 +255,7 @@ export default function UserManagement() {
                         <input type="password" value={resetPassword} onChange={(e) => setResetPassword(e.target.value)} placeholder="New password (min. 8 characters)" style={{ width: '100%', padding: '9px 12px', fontSize: '14px', border: '1px solid #e2e8f0', borderRadius: '6px', outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box', marginBottom: '16px' }} />
                         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                             <button type="button" onClick={() => { setResetConfirm(null); setResetPassword(''); setResetError(''); }} style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 500, color: '#475569', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
-                            <button type="button" onClick={handleResetPassword} style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 600, color: 'white', backgroundColor: '#2563eb', border: 'none', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>Set Password</button>
+                            <button type="button" onClick={handleResetPassword} style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 600, color: 'white', backgroundColor: 'var(--color-primary)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>Set Password</button>
                         </div>
                     </div>
                 </div>

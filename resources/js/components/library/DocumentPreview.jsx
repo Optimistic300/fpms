@@ -25,12 +25,12 @@ export default function DocumentPreview({ document, onClose }) {
                     padding: '16px 20px', borderBottom: '1px solid #e2e8f0',
                 }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                        <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#1a365d', margin: '0 0 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--color-brand-dark)', margin: '0 0 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {document.title || document.fileName}
                         </h2>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#64748b' }}>
                             <span style={{
-                                fontSize: '11px', fontWeight: 600, color: '#2b6cb0',
+                                fontSize: '11px', fontWeight: 600, color: 'var(--color-primary)',
                                 backgroundColor: '#ebf4ff', padding: '1px 6px', borderRadius: '4px',
                             }}>
                                 {document.type}
@@ -45,7 +45,7 @@ export default function DocumentPreview({ document, onClose }) {
                             href={downloadUrl}
                             style={{
                                 padding: '6px 12px', fontSize: '12px', fontWeight: 500,
-                                color: '#2b6cb0', backgroundColor: 'white',
+                                color: 'var(--color-primary)', backgroundColor: 'white',
                                 border: '1px solid #bee3f8', borderRadius: '6px',
                                 cursor: 'pointer', textDecoration: 'none',
                             }}
@@ -94,7 +94,7 @@ export default function DocumentPreview({ document, onClose }) {
                                 href={downloadUrl}
                                 style={{
                                     padding: '10px 24px', fontSize: '14px', fontWeight: 600,
-                                    color: 'white', backgroundColor: '#2b6cb0',
+                                    color: 'white', backgroundColor: 'var(--color-primary)',
                                     border: 'none', borderRadius: '6px', cursor: 'pointer',
                                     textDecoration: 'none', display: 'inline-block',
                                 }}

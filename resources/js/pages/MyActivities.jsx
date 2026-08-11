@@ -170,7 +170,7 @@ export default function MyActivities() {
 
     function getDocumentActions(doc) {
         return [
-            { label: 'Download', action: () => window.open(`/api/documents/${doc.id}/download`, '_blank'), color: '#2563eb' },
+            { label: 'Download', action: () => window.open(`/api/documents/${doc.id}/download`, '_blank'), color: 'var(--color-primary)' },
             { label: 'Publish', action: () => setPublishConfirmId(doc.id), color: '#16a34a', hidden: doc.published },
             { label: 'Forward', action: () => setForwardDocId(doc.id), color: '#9333ea' },
             { label: 'Delete', action: () => setDeleteDocId(doc.id), color: '#dc2626' },
@@ -207,7 +207,7 @@ export default function MyActivities() {
 
     const badgeStyle = {
         display: 'inline-block', padding: '2px 8px', fontSize: '11px', fontWeight: 600,
-        backgroundColor: '#dbeafe', color: '#1d4ed8', borderRadius: '10px',
+        backgroundColor: 'var(--color-primary-bg)', color: '#1d4ed8', borderRadius: '10px',
     };
 
     const actionIconStyle = (color) => ({
@@ -244,7 +244,7 @@ export default function MyActivities() {
                     onClick={() => navigate('/log-activity')}
                     style={{
                         padding: '9px 20px', fontSize: '14px', fontWeight: 600,
-                        color: 'white', backgroundColor: '#2563eb', border: 'none',
+                        color: 'white', backgroundColor: 'var(--color-primary)', border: 'none',
                         borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit',
                     }}
                 >
@@ -301,7 +301,7 @@ export default function MyActivities() {
                         onClick={() => navigate('/log-activity')}
                         style={{
                             padding: '9px 20px', fontSize: '14px', fontWeight: 600,
-                            color: 'white', backgroundColor: '#2563eb', border: 'none',
+                            color: 'white', backgroundColor: 'var(--color-primary)', border: 'none',
                             borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit',
                         }}
                     >
@@ -384,7 +384,7 @@ export default function MyActivities() {
                                                         onClick={(e) => { e.stopPropagation(); setEditActivity(act); }}
                                                         style={{
                                                             padding: '6px 14px', fontSize: '13px', fontWeight: 500,
-                                                            color: '#2563eb', backgroundColor: '#eff6ff',
+                                                            color: 'var(--color-primary)', backgroundColor: '#eff6ff',
                                                             border: '1px solid #bfdbfe', borderRadius: '6px',
                                                             cursor: 'pointer', fontFamily: 'inherit',
                                                         }}

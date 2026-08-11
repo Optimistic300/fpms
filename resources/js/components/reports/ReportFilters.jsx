@@ -69,9 +69,9 @@ export default function ReportFilters({ filters, onChange }) {
                 style={{
                     padding: '7px 14px',
                     borderRadius: '20px',
-                    border: `1px solid ${filters.pendingOnly ? '#2563eb' : '#e2e8f0'}`,
+                    border: `1px solid ${filters.pendingOnly ? 'var(--color-primary)' : '#e2e8f0'}`,
                     backgroundColor: filters.pendingOnly ? '#eff6ff' : 'white',
-                    color: filters.pendingOnly ? '#2563eb' : '#64748b',
+                    color: filters.pendingOnly ? 'var(--color-primary)' : '#64748b',
                     fontSize: '13px',
                     fontWeight: 500,
                     cursor: 'pointer',

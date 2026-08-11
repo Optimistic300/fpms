@@ -4,7 +4,7 @@ const severityConfig = {
     danger: { icon: '🔴', color: '#dc2626', bg: '#fef2f2' },
     warning: { icon: '🟡', color: '#d97706', bg: '#fffbeb' },
     success: { icon: '🟢', color: '#16a34a', bg: '#f0fdf4' },
-    info: { icon: '🔵', color: '#2563eb', bg: '#eff6ff' },
+    info: { icon: '🔵', color: 'var(--color-primary)', bg: '#eff6ff' },
 };
 
 function Skeleton() {

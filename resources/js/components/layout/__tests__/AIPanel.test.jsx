@@ -39,7 +39,7 @@ describe('AIPanel', () => {
     it('renders panel when isOpen is true', () => {
         mockUseAI.mockReturnValue({ isOpen: true, closePanel: vi.fn(), conversationHistory: [], setConversationHistory: vi.fn() });
         render(<AIPanel />);
-        expect(screen.getByText('Ask SKMS')).toBeInTheDocument();
+        expect(screen.getByText('Ask FPMS')).toBeInTheDocument();
     });
 
     it('calls closePanel when close button is clicked', async () => {
@@ -71,7 +71,7 @@ describe('AIPanel', () => {
     it('shows header with title and subtitle', () => {
         mockUseAI.mockReturnValue({ isOpen: true, closePanel: vi.fn(), conversationHistory: [], setConversationHistory: vi.fn() });
         render(<AIPanel />);
-        expect(screen.getByText('Ask SKMS')).toBeInTheDocument();
+        expect(screen.getByText('Ask FPMS')).toBeInTheDocument();
         expect(screen.getByText(/Searches across all library documents/)).toBeInTheDocument();
     });
 

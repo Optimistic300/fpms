@@ -188,7 +188,7 @@ export default function BrowsePanel({ onPreview, onDownload, onForward }) {
                                 onClick={handleClearFilters}
                                 style={{
                                     padding: '8px 16px', fontSize: '13px', fontWeight: 600,
-                                    color: '#2b6cb0', backgroundColor: '#ebf4ff',
+                                    color: 'var(--color-primary)', backgroundColor: '#ebf4ff',
                                     border: '1px solid #bee3f8', borderRadius: '6px',
                                     cursor: 'pointer',
                                 }}
@@ -288,7 +288,7 @@ export default function BrowsePanel({ onPreview, onDownload, onForward }) {
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                                 <span style={{
-                                    fontSize: '11px', fontWeight: 600, color: '#2b6cb0',
+                                    fontSize: '11px', fontWeight: 600, color: 'var(--color-primary)',
                                     backgroundColor: '#ebf4ff', padding: '1px 6px', borderRadius: '4px',
                                     textTransform: 'uppercase', whiteSpace: 'nowrap',
                                 }}>
@@ -343,7 +343,7 @@ export default function BrowsePanel({ onPreview, onDownload, onForward }) {
                                 disabled={loadingMore}
                                 style={{
                                     padding: '10px 24px', fontSize: '14px', fontWeight: 600,
-                                    color: '#2b6cb0', backgroundColor: 'white',
+                                    color: 'var(--color-primary)', backgroundColor: 'white',
                                     border: '1px solid #bee3f8', borderRadius: '8px',
                                     cursor: loadingMore ? 'not-allowed' : 'pointer',
                                 }}

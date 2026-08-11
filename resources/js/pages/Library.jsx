@@ -42,7 +42,7 @@ export default function Library() {
     return (
         <div style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
             <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1a365d', margin: '0 0 4px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-brand-dark)', margin: '0 0 4px' }}>
                     Library
                 </h1>
                 <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>
@@ -65,7 +65,7 @@ export default function Library() {
                         flex: '1 1 180px', padding: '16px', backgroundColor: 'white',
                         border: '1px solid #e2e8f0', borderRadius: '10px',
                     }}>
-                        <div style={{ fontSize: '28px', fontWeight: 700, color: '#2b6cb0' }}>
+                        <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--color-primary)' }}>
                             {stats.totalDocuments}
                         </div>
                         <div style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
@@ -108,9 +108,9 @@ export default function Library() {
                     style={{
                         padding: '10px 16px', fontSize: '14px',
                         fontWeight: activeView === 'browse' ? 600 : 400,
-                        color: activeView === 'browse' ? '#2b6cb0' : '#64748b',
+                        color: activeView === 'browse' ? 'var(--color-primary)' : '#64748b',
                         background: 'none', border: 'none',
-                        borderBottom: activeView === 'browse' ? '2px solid #2b6cb0' : '2px solid transparent',
+                        borderBottom: activeView === 'browse' ? '2px solid var(--color-primary)' : '2px solid transparent',
                         cursor: 'pointer',
                     }}
                 >
@@ -121,9 +121,9 @@ export default function Library() {
                     style={{
                         padding: '10px 16px', fontSize: '14px',
                         fontWeight: activeView === 'search' ? 600 : 400,
-                        color: activeView === 'search' ? '#2b6cb0' : '#64748b',
+                        color: activeView === 'search' ? 'var(--color-primary)' : '#64748b',
                         background: 'none', border: 'none',
-                        borderBottom: activeView === 'search' ? '2px solid #2b6cb0' : '2px solid transparent',
+                        borderBottom: activeView === 'search' ? '2px solid var(--color-primary)' : '2px solid transparent',
                         cursor: 'pointer',
                     }}
                 >

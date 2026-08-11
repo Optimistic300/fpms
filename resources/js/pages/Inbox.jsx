@@ -188,7 +188,7 @@ export default function Inbox() {
     return (
         <div style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
             <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#1a365d', margin: '0 0 4px' }}>
+                <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--color-brand-dark)', margin: '0 0 4px' }}>
                     Inbox
                     {meta.unreadCount > 0 && (
                         <span style={{
@@ -222,10 +222,10 @@ export default function Inbox() {
                             padding: '10px 16px',
                             fontSize: '14px',
                             fontWeight: activeTab === tab.key ? 600 : 400,
-                            color: activeTab === tab.key ? '#2b6cb0' : '#64748b',
+                            color: activeTab === tab.key ? 'var(--color-primary)' : '#64748b',
                             background: 'none',
                             border: 'none',
-                            borderBottom: activeTab === tab.key ? '2px solid #2b6cb0' : '2px solid transparent',
+                            borderBottom: activeTab === tab.key ? '2px solid var(--color-primary)' : '2px solid transparent',
                             cursor: 'pointer',
                             transition: 'all 0.15s ease',
                         }}
@@ -240,10 +240,10 @@ export default function Inbox() {
                             padding: '6px 12px',
                             fontSize: '12px',
                             fontWeight: 500,
-                            color: filterUnread ? '#2b6cb0' : '#64748b',
+                            color: filterUnread ? 'var(--color-primary)' : '#64748b',
                             background: filterUnread ? '#ebf4ff' : 'transparent',
                             border: '1px solid',
-                            borderColor: filterUnread ? '#2b6cb0' : '#e2e8f0',
+                            borderColor: filterUnread ? 'var(--color-primary)' : '#e2e8f0',
                             borderRadius: '6px',
                             cursor: 'pointer',
                         }}
@@ -279,7 +279,7 @@ export default function Inbox() {
                     borderRadius: '8px',
                     marginBottom: '12px',
                 }}>
-                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#2b6cb0' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--color-primary)' }}>
                         {selectedIds.size} item{selectedIds.size !== 1 ? 's' : ''} selected
                     </span>
                     <button onClick={handleBulkMarkRead} style={actionBtnStyle}>
@@ -334,7 +334,7 @@ export default function Inbox() {
                                         display: 'flex',
                                         alignItems: 'flex-start',
                                         padding: '12px 16px',
-                                        borderLeft: item.read ? '3px solid transparent' : '3px solid #2b6cb0',
+                                        borderLeft: item.read ? '3px solid transparent' : '3px solid var(--color-primary)',
                                         backgroundColor: isSelected ? '#f7fafc' : 'transparent',
                                         borderRadius: '6px',
                                         cursor: 'pointer',
@@ -381,7 +381,7 @@ export default function Inbox() {
                                                     width: '8px',
                                                     height: '8px',
                                                     borderRadius: '50%',
-                                                    backgroundColor: '#2b6cb0',
+                                                    backgroundColor: 'var(--color-primary)',
                                                     flexShrink: 0,
                                                 }} />
                                             )}
@@ -411,7 +411,7 @@ export default function Inbox() {
                                             <span>
                                                 {item.sender
                                                     ? `${item.sender.fullName} · ${item.sender.division || 'No division'}`
-                                                    : 'SKMS · System'
+                                                    : 'FPMS · System'
                                                 }
                                             </span>
                                             <span>·</span>
@@ -445,14 +445,14 @@ export default function Inbox() {
                                             <span style={{
                                                 fontSize: '11px',
                                                 fontWeight: 600,
-                                                color: '#2b6cb0',
+                                                color: 'var(--color-primary)',
                                                 backgroundColor: '#ebf4ff',
                                                 padding: '2px 6px',
                                                 borderRadius: '4px',
                                             }}>
                                                 DOC
                                             </span>
-                                            <span style={{ fontSize: '13px', color: '#2d3748' }}>Document #{item.documentId}</span>
+                                            <span style={{ fontSize: '13px', color: 'var(--color-brand-darker)' }}>Document #{item.documentId}</span>
                                         </div>
                                         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                             <a
@@ -525,7 +525,7 @@ export default function Inbox() {
                         }}
                         onClick={e => e.stopPropagation()}
                     >
-                        <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#1a365d', margin: '0 0 16px' }}>
+                        <h2 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-brand-dark)', margin: '0 0 16px' }}>
                             Forward Document
                         </h2>
 
@@ -586,14 +586,14 @@ export default function Inbox() {
                                             display: 'inline-flex', alignItems: 'center', gap: '4px',
                                             padding: '4px 8px', backgroundColor: '#ebf4ff',
                                             border: '1px solid #bee3f8', borderRadius: '16px',
-                                            fontSize: '12px', color: '#2b6cb0',
+                                            fontSize: '12px', color: 'var(--color-primary)',
                                         }}>
                                             {user.fullName || user.name}
                                             <button
                                                 onClick={() => removeRecipient(user.id)}
                                                 style={{
                                                     background: 'none', border: 'none', cursor: 'pointer',
-                                                    fontSize: '14px', color: '#2b6cb0', padding: '0 2px',
+                                                    fontSize: '14px', color: 'var(--color-primary)', padding: '0 2px',
                                                 }}
                                             >
                                                 ×
@@ -638,7 +638,7 @@ export default function Inbox() {
                                 disabled={selectedRecipients.length === 0 || forwarding}
                                 style={{
                                     padding: '8px 16px', fontSize: '14px', fontWeight: 600,
-                                    color: 'white', background: selectedRecipients.length === 0 ? '#a0aec0' : '#2b6cb0',
+                                    color: 'white', background: selectedRecipients.length === 0 ? '#a0aec0' : 'var(--color-primary)',
                                     border: 'none', borderRadius: '6px', cursor: selectedRecipients.length === 0 ? 'not-allowed' : 'pointer',
                                 }}
                             >
@@ -654,7 +654,7 @@ export default function Inbox() {
 
 function typeColor(type) {
     switch (type) {
-        case 'DOCUMENT': return '#2b6cb0';
+        case 'DOCUMENT': return 'var(--color-primary)';
         case 'REPORT_UPDATE': return '#2f855a';
         case 'SYSTEM': return '#d69e2e';
         default: return '#718096';
@@ -683,7 +683,7 @@ const actionBtnStyle = {
     padding: '4px 10px',
     fontSize: '12px',
     fontWeight: 500,
-    color: '#2b6cb0',
+    color: 'var(--color-primary)',
     backgroundColor: 'transparent',
     border: '1px solid #bee3f8',
     borderRadius: '4px',
@@ -694,7 +694,7 @@ const inlineActionBtnStyle = {
     padding: '6px 12px',
     fontSize: '12px',
     fontWeight: 500,
-    color: '#2b6cb0',
+    color: 'var(--color-primary)',
     backgroundColor: 'white',
     border: '1px solid #e2e8f0',
     borderRadius: '4px',
@@ -707,7 +707,7 @@ function paginationBtnStyle(disabled) {
     return {
         padding: '6px 12px',
         fontSize: '13px',
-        color: disabled ? '#cbd5e0' : '#2b6cb0',
+        color: disabled ? '#cbd5e0' : 'var(--color-primary)',
         background: 'white',
         border: '1px solid',
         borderColor: disabled ? '#e2e8f0' : '#bee3f8',

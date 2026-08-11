@@ -56,7 +56,7 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
                     disabled={!query.trim() || searching}
                     style={{
                         padding: '10px 20px', fontSize: '14px', fontWeight: 600,
-                        color: 'white', backgroundColor: !query.trim() ? '#a0aec0' : '#2b6cb0',
+                        color: 'white', backgroundColor: !query.trim() ? '#a0aec0' : 'var(--color-primary)',
                         border: 'none', borderRadius: '8px',
                         cursor: !query.trim() ? 'not-allowed' : 'pointer',
                     }}
@@ -84,7 +84,7 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
                     border: '1px solid #f6e05e', borderRadius: '8px',
                     fontSize: '13px', color: '#744210', marginBottom: '16px',
                 }}>
-                    This is full-text search, not AI. For a synthesised answer use the Ask SKMS button.
+                    This is full-text search, not AI. For a synthesised answer use the Ask FPMS button.
                 </div>
             )}
 
@@ -97,19 +97,19 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
             {!searching && searched && results.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '32px', color: '#94a3b8' }}>
                     <p style={{ margin: '0 0 8px' }}>
-                        No documents found matching '<strong>{query}</strong>'. Try different keywords or use Ask SKMS for a synthesised answer.
+                        No documents found matching '<strong>{query}</strong>'. Try different keywords or use Ask FPMS for a synthesised answer.
                     </p>
                     {onOpenAiPanel && (
                         <button
                             onClick={onOpenAiPanel}
                             style={{
                                 padding: '8px 16px', fontSize: '13px', fontWeight: 600,
-                                color: '#2b6cb0', backgroundColor: '#ebf4ff',
+                                color: 'var(--color-primary)', backgroundColor: '#ebf4ff',
                                 border: '1px solid #bee3f8', borderRadius: '6px',
                                 cursor: 'pointer', marginTop: '8px',
                             }}
                         >
-                            Ask SKMS
+                            Ask FPMS
                         </button>
                     )}
                 </div>
@@ -132,7 +132,7 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                                 <span style={{
-                                    fontSize: '11px', fontWeight: 600, color: '#2b6cb0',
+                                    fontSize: '11px', fontWeight: 600, color: 'var(--color-primary)',
                                     backgroundColor: '#ebf4ff', padding: '2px 6px', borderRadius: '4px',
                                     textTransform: 'uppercase',
                                 }}>
@@ -202,7 +202,7 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
 
 const actionBtnStyle = {
     padding: '6px 12px', fontSize: '12px', fontWeight: 500,
-    color: '#2b6cb0', backgroundColor: 'white',
+    color: 'var(--color-primary)', backgroundColor: 'white',
     border: '1px solid #e2e8f0', borderRadius: '6px',
     cursor: 'pointer',
 };

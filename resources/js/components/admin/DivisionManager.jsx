@@ -113,7 +113,7 @@ export default function DivisionManager() {
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1e293b', margin: 0 }}>Divisions</h3>
-                <button type="button" onClick={() => setShowCreate(true)} style={{ padding: '7px 14px', fontSize: '13px', fontWeight: 600, color: 'white', backgroundColor: '#2563eb', border: 'none', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>+ Add Division</button>
+                <button type="button" onClick={() => setShowCreate(true)} style={{ padding: '7px 14px', fontSize: '13px', fontWeight: 600, color: 'white', backgroundColor: 'var(--color-primary)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>+ Add Division</button>
             </div>
 
             {error && (
@@ -154,7 +154,7 @@ export default function DivisionManager() {
                                 <td style={tdStyle}>
                                     {editingId === div.id ? (
                                         <>
-                                            <button type="button" onClick={() => saveEdit(div.id)} style={{ ...actionBtnStyle, backgroundColor: '#2563eb', color: 'white', border: 'none' }}>Save</button>
+                                            <button type="button" onClick={() => saveEdit(div.id)} style={{ ...actionBtnStyle, backgroundColor: 'var(--color-primary)', color: 'white', border: 'none' }}>Save</button>
                                             <button type="button" onClick={() => setEditingId(null)} style={actionBtnStyle}>Cancel</button>
                                         </>
                                     ) : (
@@ -181,7 +181,7 @@ export default function DivisionManager() {
                         </select>
                         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                             <button type="button" onClick={() => setShowCreate(false)} style={{ padding: '7px 14px', fontSize: '13px', fontWeight: 500, color: '#475569', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
-                            <button type="submit" style={{ padding: '7px 14px', fontSize: '13px', fontWeight: 600, color: 'white', backgroundColor: '#2563eb', border: 'none', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>Create</button>
+                            <button type="submit" style={{ padding: '7px 14px', fontSize: '13px', fontWeight: 600, color: 'white', backgroundColor: 'var(--color-primary)', border: 'none', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>Create</button>
                         </div>
                     </form>
                 </div>

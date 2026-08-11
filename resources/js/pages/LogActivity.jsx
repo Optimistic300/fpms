@@ -188,7 +188,7 @@ export default function LogActivity() {
         display: 'flex', alignItems: 'center', gap: '6px',
         padding: '6px 14px', borderRadius: '20px',
         fontSize: '13px', fontWeight: 500,
-        backgroundColor: active ? '#2563eb' : '#e2e8f0',
+        backgroundColor: active ? 'var(--color-primary)' : '#e2e8f0',
         color: active ? 'white' : '#64748b',
         transition: 'all 0.2s',
     });
@@ -295,7 +295,7 @@ export default function LogActivity() {
                             onClick={step === 1 ? handleNext : () => setStep(3)}
                             style={{
                                 ...navBtnBase,
-                                color: 'white', backgroundColor: '#2563eb',
+                                color: 'white', backgroundColor: 'var(--color-primary)',
                             }}
                         >
                             {step === 1 ? 'Next' : 'Skip & Continue'}
@@ -309,7 +309,7 @@ export default function LogActivity() {
                             style={{
                                 ...navBtnBase,
                                 color: 'white',
-                                backgroundColor: submitting ? '#93c5fd' : '#16a34a',
+                                backgroundColor: submitting ? 'var(--color-primary-lighter)' : '#16a34a',
                                 cursor: submitting ? 'not-allowed' : 'pointer',
                             }}
                         >

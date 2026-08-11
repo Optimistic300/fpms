@@ -43,8 +43,8 @@ describe('TopNav', () => {
             user: { role: 'RESEARCHER', fullName: 'Test User', email: 'test@test.com' },
         });
         renderTopNav();
-        expect(screen.getByText('SKMS')).toBeInTheDocument();
-        expect(screen.getByText('SKMS').closest('a')).toHaveAttribute('href', '/dashboard');
+        expect(screen.getByText('FPMS')).toBeInTheDocument();
+        expect(screen.getByText('FPMS').closest('a')).toHaveAttribute('href', '/dashboard');
     });
 
     it('shows action buttons for RESEARCHER', () => {
