@@ -5,6 +5,7 @@ import PublicRoute from './components/auth/PublicRoute';
 import AppShell from './components/layout/AppShell';
 
 import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import DivisionDashboard from './pages/DivisionDashboard';
 import ExecutiveDashboard from './pages/ExecutiveDashboard';
@@ -37,6 +38,8 @@ export default function AppRoot() {
                             </PublicRoute>
                         )}
                     />
+
+                    <Route path="/reset-password" element={<ResetPassword />} />
 
                     <Route
                         element={(
