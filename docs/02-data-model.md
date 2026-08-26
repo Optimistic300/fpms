@@ -24,6 +24,8 @@ erDiagram
     
     Activity ||--o{ Document : "attaches"
     
+    Document ||--o| DocumentText : "extracted text"
+    
     Report ||--o{ Report : "parent version"
     Report ||--o{ ReportComment : "has"
     
@@ -130,6 +132,20 @@ erDiagram
 | createdAt | timestamp | ✅ | |
 | updatedAt | timestamp | ✅ | |
 
+### DocumentText
+
+Extracted text content from uploaded documents. Used for full-text search via the library and AI assistant.
+
+| Field | Type | Required | Notes |
+|-------|------|----------|-------|
+| id | bigint, auto | ✅ | Primary key |
+| documentId | bigint | ✅ | FK to `documents` (unique constraint — one text record per document) |
+| content | longText | ✅ | Extracted text content of the document |
+| createdAt | timestamp | ✅ | |
+| updatedAt | timestamp | ✅ | |
+
+**Full-text index:** MySQL full-text index on `content` column for search queries.
+
 ### Report
 
 | Field | Type | Required | Notes |
@@ -143,6 +159,7 @@ erDiagram
 | narrativeSummary | text | ✅ | |
 | filePath | varchar(500) | ❌ | Path to uploaded report PDF |
 | status | enum | ✅ | `DRAFT`, `PENDING`, `RETURNED`, `APPROVED`, `ESCALATED` |
+| isOverdue | boolean | ✅ | Default `false`. Set by scheduled command when submission deadline passes |
 | parentReportId | bigint, nullable | ❌ | FK to self — links resubmissions to original |
 | version | int | ✅ | Starts at 1, incremented on resubmission |
 | comment | text | ❌ | Secretary's comment (populated on return/escalation) |
@@ -250,3 +267,4 @@ Laravel's native `notifications` table stores all user-facing alerts. The inbox 
 - **Project → Publication**: One-to-many (optional). A publication can be linked to a project.
 - **User → InboxItem**: One-to-many. Each user has many inbox items.
 - **User → AccessRequest**: One-to-many. A user can request access to multiple projects.
+- **Document → DocumentText**: One-to-one. Each document has an optional extracted text record for full-text search.

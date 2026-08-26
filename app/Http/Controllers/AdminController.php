@@ -69,7 +69,7 @@ class AdminController extends Controller
 
     public function divisions(Request $request, ListDivisionsAction $action): JsonResponse
     {
-        $this->authorize('viewAny', User::class);
+        $this->authorize('viewAny', Division::class);
 
         $divisions = $action->execute();
 
@@ -78,7 +78,7 @@ class AdminController extends Controller
 
     public function createDivision(StoreDivisionRequest $request, CreateDivisionAction $action): JsonResponse
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create', Division::class);
 
         $division = $action->execute($request->validated());
 
@@ -87,7 +87,7 @@ class AdminController extends Controller
 
     public function updateDivision(UpdateDivisionRequest $request, Division $division, UpdateDivisionAction $action): JsonResponse
     {
-        $this->authorize('create', User::class);
+        $this->authorize('update', $division);
 
         $division = $action->execute($division, $request->validated());
 
@@ -96,7 +96,7 @@ class AdminController extends Controller
 
     public function deleteDivision(Request $request, Division $division, DeleteDivisionAction $action): JsonResponse
     {
-        $this->authorize('create', User::class);
+        $this->authorize('delete', $division);
 
         $action->execute($division);
 
@@ -105,6 +105,8 @@ class AdminController extends Controller
 
     public function activityTypes(Request $request, ListActivityTypesAction $action): JsonResponse
     {
+        $this->authorize('viewAny', ActivityType::class);
+
         $activityTypes = $action->execute();
 
         return response()->json(['data' => ActivityTypeResource::collection($activityTypes)]);
@@ -112,7 +114,7 @@ class AdminController extends Controller
 
     public function createActivityType(StoreActivityTypeRequest $request, CreateActivityTypeAction $action): JsonResponse
     {
-        $this->authorize('create', User::class);
+        $this->authorize('create', ActivityType::class);
 
         $activityType = $action->execute($request->validated());
 
@@ -121,7 +123,7 @@ class AdminController extends Controller
 
     public function updateActivityType(UpdateActivityTypeRequest $request, ActivityType $activityType, UpdateActivityTypeAction $action): JsonResponse
     {
-        $this->authorize('create', User::class);
+        $this->authorize('update', $activityType);
 
         $activityType = $action->execute($activityType, $request->validated());
 
@@ -130,7 +132,7 @@ class AdminController extends Controller
 
     public function deleteActivityType(Request $request, ActivityType $activityType, DeleteActivityTypeAction $action): JsonResponse
     {
-        $this->authorize('create', User::class);
+        $this->authorize('delete', $activityType);
 
         $action->execute($activityType);
 

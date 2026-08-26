@@ -138,6 +138,59 @@ Check if stored token is still valid.
 
 **Response 401:** Token expired/invalid.
 
+### `POST /api/auth/forgot-password`
+
+Request a password reset link via email.
+
+**Auth:** None
+
+**Request:**
+```json
+{
+  "email": "user@forig.org"
+}
+```
+
+**Response 200:**
+```json
+{
+  "message": "If the email exists, a password reset link has been sent."
+}
+```
+
+### `POST /api/auth/reset-password`
+
+Reset password using the token received via email.
+
+**Auth:** None
+
+**Request:**
+```json
+{
+  "email": "user@forig.org",
+  "token": "reset-token-from-email",
+  "password": "new-password",
+  "password_confirmation": "new-password"
+}
+```
+
+**Response 200:**
+```json
+{
+  "message": "Password reset successful."
+}
+```
+
+**Response 422:** Invalid or expired token:
+```json
+{
+  "message": "Invalid or expired reset token.",
+  "errors": {
+    "email": ["This reset token is invalid."]
+  }
+}
+```
+
 ---
 
 ## Public

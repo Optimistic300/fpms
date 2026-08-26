@@ -59,6 +59,12 @@ class UserSeeder extends Seeder
         foreach ($users as $userData) {
             $division = Division::where('name', $userData['division_name'])->first();
 
+            $words = explode(' ', $userData['full_name']);
+            $initials = '';
+            foreach ($words as $word) {
+                $initials .= strtoupper(mb_substr($word, 0, 1));
+            }
+
             User::create([
                 'full_name' => $userData['full_name'],
                 'email' => $userData['email'],
@@ -66,6 +72,7 @@ class UserSeeder extends Seeder
                 'role' => $userData['role'],
                 'division_id' => $division->id,
                 'is_active' => true,
+                'avatar_initials' => mb_substr($initials, 0, 4),
             ]);
         }
     }

@@ -24,8 +24,6 @@ const Publications = lazy(() => import('./pages/Publications'));
 const Inbox = lazy(() => import('./pages/Inbox'));
 const UserManagement = lazy(() => import('./pages/UserManagement'));
 const Settings = lazy(() => import('./pages/Settings'));
-const NewProject = lazy(() => import('./pages/NewProject'));
-const SubmissionHistory = lazy(() => import('./pages/SubmissionHistory'));
 
 function App() {
     return (
@@ -61,14 +59,6 @@ function App() {
                                 element={
                                     <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
                                         <ProjectDirectory />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/projects/new"
-                                element={
-                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
-                                        <NewProject />
                                     </ProtectedRoute>
                                 }
                             />
@@ -157,7 +147,6 @@ function App() {
                                     </ProtectedRoute>
                                 }
                             />
-                            <Route path="/submissions" element={<SubmissionHistory />} />
                             <Route
                                 path="/"
                                 element={

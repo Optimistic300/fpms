@@ -4,16 +4,11 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class DivisionPolicy
+class ActivityTypePolicy
 {
     public function viewAny(User $user): bool
     {
         return $user->isAdmin();
-    }
-
-    public function view(User $user): bool
-    {
-        return in_array($user->role, ['DIVISION_HEAD', 'MANAGEMENT']);
     }
 
     public function create(User $user): bool
