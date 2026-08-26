@@ -6,6 +6,7 @@
 
         <title>{{ config('app.name', 'FPMS') }}</title>
 
+        @viteReactRefresh
         @vite(['resources/js/app.jsx'])
     </head>
     <body>

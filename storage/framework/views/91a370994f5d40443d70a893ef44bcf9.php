@@ -6,6 +6,7 @@
 
         <title><?php echo e(config('app.name', 'FPMS')); ?></title>
 
+        <?php echo app('Illuminate\Foundation\Vite')->reactRefresh(); ?>
         <?php echo app('Illuminate\Foundation\Vite')(['resources/js/app.jsx']); ?>
     </head>
     <body>
