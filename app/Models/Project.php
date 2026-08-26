@@ -70,4 +70,9 @@ class Project extends Model
     {
         return $this->hasMany(AccessRequest::class);
     }
+
+    public function publications(): HasMany
+    {
+        return $this->hasMany(Publication::class, 'linked_project_id');
+    }
 }

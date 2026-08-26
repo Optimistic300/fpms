@@ -15,7 +15,7 @@ vi.mock('../../services/offlineQueue', () => ({
     processAiQueue: (...args) => mockProcessAiQueue(...args),
 }));
 
-vi.mock('../../services/axios', () => ({
+vi.mock('../../api/axios', () => ({
     default: { post: vi.fn() },
 }));
 

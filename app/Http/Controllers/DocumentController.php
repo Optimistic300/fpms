@@ -59,7 +59,7 @@ class DocumentController extends Controller
         ]);
 
         return response()->json([
-            'data' => ['id' => $doc->id, 'filename' => $doc->filename, 'size' => $doc->size],
+            'data' => (new DocumentResource($doc))->resolve($request),
             'message' => 'File uploaded.',
         ], 201);
     }
@@ -69,7 +69,7 @@ class DocumentController extends Controller
         $document = $action->execute($document, $request->validated());
 
         return response()->json([
-            'data' => ['id' => $document->id, 'published' => $document->published],
+            'data' => (new DocumentResource($document))->resolve($request),
             'message' => $document->published ? 'Document published to library.' : 'Document updated.',
         ]);
     }

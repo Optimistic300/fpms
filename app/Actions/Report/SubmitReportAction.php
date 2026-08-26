@@ -2,18 +2,14 @@
 
 namespace App\Actions\Report;
 
-use App\Contracts\FileStorageInterface;
 use App\Events\ReportSubmitted;
 use App\Models\Report;
 use App\Models\ReportComment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SubmitReportAction
 {
-    public function __construct(
-        private readonly FileStorageInterface $fileStorage,
-    ) {}
-
     public function execute(Request $request): Report
     {
         $version = 1;
@@ -59,14 +55,8 @@ class SubmitReportAction
     {
         $decoded = base64_decode($base64);
         $filename = 'reports/' . uniqid() . '.pdf';
-        $path = storage_path('app/public/' . $filename);
 
-        $dir = dirname($path);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        file_put_contents($path, $decoded);
+        Storage::disk('local')->put($filename, $decoded);
 
         return $filename;
     }

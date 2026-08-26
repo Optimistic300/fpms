@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAI } from '../../contexts/AIContext';
 import { useOnlineStatus } from '../../hooks/useOnlineStatus';
 import { useAiQuestionQueue } from '../../hooks/useAiQuestionQueue';
-import axios from '../../services/axios';
+import axios from '../../api/axios';
 import SuggestedPrompts from '../ai/SuggestedPrompts';
 import MessageBubble from '../ai/MessageBubble';
 import TypingIndicator from '../ai/TypingIndicator';

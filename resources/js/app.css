@@ -48,7 +48,8 @@ body {
     }
 
     .floating-ai-button {
-        right: 16px !important;
+        right: auto !important;
+        left: 16px !important;
         bottom: 80px !important;
     }
 }

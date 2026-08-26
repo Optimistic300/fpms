@@ -48,26 +48,124 @@ function App() {
                                 </ProtectedRoute>
                             }
                         >
-                            <Route path="/dashboard" element={<Dashboard />} />
-                            <Route path="/projects" element={<ProjectDirectory />} />
-                            <Route path="/projects/new" element={<NewProject />} />
+                            <Route
+                                path="/dashboard"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT']}>
+                                        <Dashboard />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/projects"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
+                                        <ProjectDirectory />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/projects/new"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
+                                        <NewProject />
+                                    </ProtectedRoute>
+                                }
+                            />
                             <Route path="/projects/:id" element={<ProjectDetail />} />
                             <Route path="/projects/:id/preview" element={<ProjectPreview />} />
-                            <Route path="/log-activity" element={<LogActivity />} />
-                            <Route path="/activities" element={<MyActivities />} />
-                            <Route path="/reports/new" element={<SubmitReport />} />
-                            <Route path="/reports" element={<MyReports />} />
-                            <Route path="/queue/:reportId" element={<ReportReview />} />
-                            <Route path="/queue" element={<ReportQueue />} />
-                            <Route path="/division" element={<DivisionDashboard />} />
-                            <Route path="/executive" element={<ExecutiveDashboard />} />
+                            <Route
+                                path="/log-activity"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
+                                        <LogActivity />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/activities"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
+                                        <MyActivities />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/reports/new"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
+                                        <SubmitReport />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/reports"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
+                                        <MyReports />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/queue/:reportId"
+                                element={
+                                    <ProtectedRoute allowedRoles={['SECRETARY']}>
+                                        <ReportReview />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/queue"
+                                element={
+                                    <ProtectedRoute allowedRoles={['SECRETARY']}>
+                                        <ReportQueue />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/division"
+                                element={
+                                    <ProtectedRoute allowedRoles={['DIVISION_HEAD']}>
+                                        <DivisionDashboard />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/executive"
+                                element={
+                                    <ProtectedRoute allowedRoles={['MANAGEMENT']}>
+                                        <ExecutiveDashboard />
+                                    </ProtectedRoute>
+                                }
+                            />
                             <Route path="/library" element={<Library />} />
                             <Route path="/publications" element={<Publications />} />
                             <Route path="/inbox" element={<Inbox />} />
-                            <Route path="/users" element={<UserManagement />} />
-                            <Route path="/settings" element={<Settings />} />
+                            <Route
+                                path="/users"
+                                element={
+                                    <ProtectedRoute allowedRoles={['ADMIN']}>
+                                        <UserManagement />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/settings"
+                                element={
+                                    <ProtectedRoute allowedRoles={['ADMIN']}>
+                                        <Settings />
+                                    </ProtectedRoute>
+                                }
+                            />
                             <Route path="/submissions" element={<SubmissionHistory />} />
-                            <Route path="/" element={<Dashboard />} />
+                            <Route
+                                path="/"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT']}>
+                                        <Dashboard />
+                                    </ProtectedRoute>
+                                }
+                            />
                         </Route>
                     </Routes>
                 </ErrorBoundary>

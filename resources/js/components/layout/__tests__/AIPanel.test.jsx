@@ -19,7 +19,7 @@ vi.mock('../../../hooks/useAiQuestionQueue', () => ({
     useAiQuestionQueue: () => mockUseAiQuestionQueue(),
 }));
 
-vi.mock('../../../services/axios', () => ({
+vi.mock('../../../api/axios', () => ({
     default: { post: vi.fn() },
 }));
 
@@ -100,7 +100,7 @@ describe('AIPanel', () => {
         mockUseAiQuestionQueue.mockReturnValue({ submitQuestion, queuedCount: 0 });
         mockUseAI.mockReturnValue({ isOpen: true, closePanel: vi.fn(), conversationHistory: [], setConversationHistory });
 
-        const axios = await import('../../../services/axios');
+        const axios = await import('../../../api/axios');
         axios.default.post.mockResolvedValue({
             data: { data: { answer: 'Test answer', citations: [], followUpPrompts: [], canAnswer: true, banner: null } },
         });

@@ -2,17 +2,15 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-
-class AiResponseResource extends JsonResource
+class AiResponseResource extends CamelCaseResource
 {
-    public function toArray($request): array
+    protected function resourceToArray($request): array
     {
         return [
-            'canAnswer' => $this->canAnswer,
+            'can_answer' => $this->canAnswer,
             'answer' => $this->answer,
             'citations' => $this->citations,
-            'followUpPrompts' => $this->followUpPrompts,
+            'follow_up_prompts' => $this->followUpPrompts,
             'banner' => 'This answer draws only from FORIG\'s own library. It is not a literature review. For published external research use Google Scholar or Web of Science.',
         ];
     }

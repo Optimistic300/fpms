@@ -13,6 +13,7 @@ use App\Actions\Admin\ListUsersAction;
 use App\Actions\Admin\UpdateActivityTypeAction;
 use App\Actions\Admin\UpdateDivisionAction;
 use App\Actions\Admin\UpdateUserAction;
+use App\Http\Requests\ResetAdminPasswordRequest;
 use App\Http\Requests\StoreActivityTypeRequest;
 use App\Http\Requests\StoreDivisionRequest;
 use App\Http\Requests\StoreUserRequest;
@@ -59,15 +60,9 @@ class AdminController extends Controller
         return response()->json(['data' => new UserResource($user)]);
     }
 
-    public function resetPassword(Request $request, User $user): JsonResponse
+    public function resetPassword(ResetAdminPasswordRequest $request, User $user): JsonResponse
     {
-        $this->authorize('update', $user);
-
-        $validated = $request->validate([
-            'password' => 'required|string|min:8',
-        ]);
-
-        $user->update(['password' => bcrypt($validated['password'])]);
+        $user->update(['password' => bcrypt($request->input('password'))]);
 
         return response()->json(['message' => 'Password reset successfully.']);
     }

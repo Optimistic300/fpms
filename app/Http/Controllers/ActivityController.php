@@ -10,7 +10,6 @@ use App\Http\Requests\StoreActivityRequest;
 use App\Http\Requests\UpdateActivityRequest;
 use App\Http\Resources\ActivityResource;
 use App\Models\Activity;
-use App\Policies\ProjectPolicy;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -65,7 +64,7 @@ class ActivityController extends Controller
     public function store(StoreActivityRequest $request, LogActivityAction $action): JsonResponse
     {
         $project = \App\Models\Project::findOrFail($request->input('project_id'));
-        app(ProjectPolicy::class)->manageActivities($request->user(), $project);
+        $this->authorize('manageActivities', $project);
 
         $activity = $action->execute(
             $request->validated(),
@@ -73,7 +72,7 @@ class ActivityController extends Controller
         );
 
         return response()->json([
-            'data' => ['id' => $activity->id, 'activityId' => $activity->id],
+            'data' => (new ActivityResource($activity))->resolve($request),
             'message' => 'Activity created. You can now upload files.',
         ], 201);
     }

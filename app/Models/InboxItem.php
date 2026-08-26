@@ -11,8 +11,6 @@ class InboxItem extends Model
     /** @use HasFactory<\Database\Factories\InboxItemFactory> */
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
         'user_id',
         'sender_id',

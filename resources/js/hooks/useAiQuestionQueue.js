@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { enqueueAiQuestion, getAiQuestions, processAiQueue } from '../services/offlineQueue';
 import { useOnlineStatus } from './useOnlineStatus';
-import axios from '../services/axios';
+import axios from '../api/axios';
 
 export function useAiQuestionQueue() {
     const { isOnline } = useOnlineStatus();

@@ -7,6 +7,7 @@ use App\Actions\Report\EscalateReportAction;
 use App\Actions\Report\ReturnReportAction;
 use App\Actions\Report\SaveDraftAction;
 use App\Actions\Report\SubmitReportAction;
+use App\Contracts\ReportRepositoryInterface;
 use App\Http\Requests\SaveDraftRequest;
 use App\Http\Requests\SubmitReportRequest;
 use App\Http\Requests\UpdateReportStatusRequest;
@@ -17,61 +18,40 @@ use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
-    public function __construct()
-    {
+    public function __construct(
+        private ReportRepositoryInterface $reportRepository,
+    ) {
         $this->authorizeResource(Report::class, 'report');
     }
 
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        $query = Report::with(['project', 'submitter', 'project.division']);
-
-        if ($request->filled('projectId')) {
-            $query->where('project_id', $request->projectId);
-        }
-
-        if ($request->owner === 'me') {
-            $query->where('submitted_by', $user->id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
-        if ($request->filled('submittedBy')) {
-            $query->where('submitted_by', $request->submittedBy);
-        }
-
-        if ($request->filled('division')) {
-            $query->whereHas('project', fn($q) => $q->where('division_id', $request->division));
-        }
-
-        // Scoping
-        if (in_array($user->role, ['RESEARCHER', 'STUDENT'])) {
-            $query->where('submitted_by', $user->id);
-        } elseif ($user->role === 'DIVISION_HEAD') {
-            $query->whereHas('project', fn($q) => $q->where('division_id', $user->division_id));
-        }
 
         $sortBy = $request->sortBy ?? 'createdAt';
         $sortDirection = $request->sortDirection ?? ($sortBy === 'submittedAt' ? 'asc' : 'desc');
-
         $allowedSorts = ['submittedAt', 'createdAt', 'type'];
-        if (!in_array($sortBy, $allowedSorts)) $sortBy = 'createdAt';
+        if (!in_array($sortBy, $allowedSorts)) {
+            $sortBy = 'createdAt';
+        }
 
-        $sortColumn = match ($sortBy) {
-            'submittedAt' => 'submitted_at',
-            'type' => 'type',
-            default => 'created_at',
-        };
+        $filters = [];
+        if ($request->filled('projectId')) $filters['projectId'] = $request->projectId;
+        if ($request->owner === 'me') {
+            $filters['owner'] = 'me';
+            $filters['ownerId'] = $user->id;
+        }
+        if ($request->filled('status')) $filters['status'] = $request->status;
+        if ($request->filled('type')) $filters['type'] = $request->type;
+        if ($request->filled('submittedBy')) $filters['submittedBy'] = $request->submittedBy;
+        if ($request->filled('division')) $filters['division'] = $request->division;
+
+        $filters['scopingRole'] = $user->role;
+        $filters['scopingUserId'] = $user->id;
+        $filters['scopingDivisionId'] = $user->division_id;
 
         $limit = min((int) $request->limit, 100);
-        $reports = $query->orderBy($sortColumn, $sortDirection)->paginate($limit);
+        $reports = $this->reportRepository->getPaginated($filters, $limit, $sortBy, $sortDirection);
 
         return response()->json([
             'data' => ReportResource::collection($reports)->resolve(),
@@ -89,19 +69,7 @@ class ReportController extends Controller
         $this->authorize('review', Report::class);
 
         return response()->json([
-            'data' => [
-                'overdue' => Report::where('status', 'PENDING')
-                    ->where(function ($q) {
-                        $q->whereNull('submitted_at')
-                            ->orWhere('submitted_at', '<', now()->subDays(30));
-                    })
-                    ->count(),
-                'pending' => Report::where('status', 'PENDING')->count(),
-                'approvedThisQuarter' => Report::where('status', 'APPROVED')
-                    ->where('submitted_at', '>=', now()->startOfQuarter())
-                    ->count(),
-                'returned' => Report::where('status', 'RETURNED')->count(),
-            ],
+            'data' => $this->reportRepository->statsForSecretary($request->user()->id),
         ]);
     }
 
@@ -110,11 +78,7 @@ class ReportController extends Controller
         $report = $action->execute($request);
 
         return response()->json([
-            'data' => [
-                'id' => $report->id,
-                'status' => $report->status,
-                'version' => $report->version,
-            ],
+            'data' => (new ReportResource($report))->resolve($request),
             'message' => 'Report submitted to Scientific Secretary.',
         ], 201);
     }
@@ -126,7 +90,7 @@ class ReportController extends Controller
         $report = $action->execute($request);
 
         return response()->json([
-            'data' => ['id' => $report->id, 'status' => 'DRAFT'],
+            'data' => (new ReportResource($report))->resolve($request),
             'message' => 'Draft saved.',
         ], 201);
     }
@@ -168,7 +132,7 @@ class ReportController extends Controller
         };
 
         return response()->json([
-            'data' => ['id' => $report->id, 'status' => $report->status],
+            'data' => (new ReportResource($report))->resolve($request),
             'message' => "Report {$actionText}. Researcher notified.",
         ]);
     }

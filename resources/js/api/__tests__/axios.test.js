@@ -78,7 +78,7 @@ describe('axios integration', () => {
     });
 
     it('replayOfflineQueue processes queued mutations', async () => {
-        const { enqueue } = await import('../offlineQueue');
+        const { enqueue } = await import('../../services/offlineQueue');
         await enqueue('POST', '/api/activities', { text: 'field log' });
 
         const axiosModule = await import('../axios');
@@ -90,7 +90,7 @@ describe('axios integration', () => {
     });
 
     it('replayOfflineQueue returns cached promise for concurrent calls', async () => {
-        const { enqueue } = await import('../offlineQueue');
+        const { enqueue } = await import('../../services/offlineQueue');
         await enqueue('POST', '/api/activities', { text: 'first' });
 
         const axiosModule = await import('../axios');

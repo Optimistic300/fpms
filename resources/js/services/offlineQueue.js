@@ -209,7 +209,7 @@ export async function processAiQueue(axiosInstance) {
     let processed = 0;
     for (const item of questions) {
         try {
-            await axiosInstance.post('/api/ai/ask', { question: item.question });
+            await axiosInstance.post('/ai/query', { query: item.question });
             await removeAiQuestion(item.id);
             processed++;
         } catch {

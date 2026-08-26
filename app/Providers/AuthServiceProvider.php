@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\AccessRequest;
 use App\Models\Activity;
 use App\Models\Division;
 use App\Models\Document;
@@ -10,12 +11,12 @@ use App\Models\Project;
 use App\Models\Publication;
 use App\Models\Report;
 use App\Models\User;
+use App\Policies\AccessRequestPolicy;
 use App\Policies\ActivityPolicy;
 use App\Policies\AdminPolicy;
 use App\Policies\DivisionPolicy;
 use App\Policies\DocumentPolicy;
 use App\Policies\InboxItemPolicy;
-use App\Policies\InstitutePolicy;
 use App\Policies\ProjectPolicy;
 use App\Policies\PublicationPolicy;
 use App\Policies\ReportPolicy;
@@ -33,14 +34,15 @@ class AuthServiceProvider extends ServiceProvider
         Publication::class => PublicationPolicy::class,
         InboxItem::class => InboxItemPolicy::class,
         Division::class => DivisionPolicy::class,
+        AccessRequest::class => AccessRequestPolicy::class,
     ];
 
     public function boot(): void
     {
         $this->registerPolicies();
 
-        Gate::define('manageUsers', [AdminPolicy::class, 'manageUsers']);
-        Gate::define('manageSettings', [AdminPolicy::class, 'manageSettings']);
-        Gate::define('viewInstitute', [InstitutePolicy::class, 'view']);
+        Gate::define('viewInstitute', fn (User $user) => $user->isManagement());
+        Gate::define('manageUsers', fn (User $user) => $user->isAdmin());
+        Gate::define('manageSettings', fn (User $user) => $user->isAdmin());
     }
 }

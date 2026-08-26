@@ -11,8 +11,6 @@ class ReportComment extends Model
     /** @use HasFactory<\Database\Factories\ReportCommentFactory> */
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = ['report_id', 'user_id', 'comment'];
 
     public function report(): BelongsTo

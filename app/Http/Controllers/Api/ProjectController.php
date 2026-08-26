@@ -43,11 +43,7 @@ class ProjectController extends Controller
         $project = $action->execute($request->validated(), $request->user()->id);
 
         return response()->json([
-            'data' => [
-                'id' => $project->id,
-                'title' => $project->title,
-                'status' => $project->status,
-            ],
+            'data' => (new ProjectResource($project))->resolve($request),
             'message' => 'Project created successfully.',
         ], 201);
     }
@@ -89,11 +85,7 @@ class ProjectController extends Controller
         $project = $action->execute($project, $request->validated());
 
         return response()->json([
-            'data' => [
-                'id' => $project->id,
-                'title' => $project->title,
-                'status' => $project->status,
-            ],
+            'data' => (new ProjectResource($project))->resolve($request),
             'message' => 'Project updated successfully.',
         ]);
     }
