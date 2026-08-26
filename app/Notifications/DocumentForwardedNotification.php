@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\Document;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class DocumentForwardedNotification extends Notification
@@ -24,7 +25,20 @@ class DocumentForwardedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $mail = (new MailMessage)
+            ->subject("{$this->sender->full_name} forwarded you a document")
+            ->line("{$this->sender->full_name} has forwarded you the document \"{$this->document->filename}\".");
+
+        if ($this->message) {
+            $mail->line("Message: \"{$this->message}\"");
+        }
+
+        return $mail->action('View Library', url('/library'));
     }
 
     public function toArray(object $notifiable): array

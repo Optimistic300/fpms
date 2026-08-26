@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\AccessRequest;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class AccessRequestNotification extends Notification
@@ -19,7 +20,19 @@ class AccessRequestNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $project = $this->accessRequest->project;
+        $requester = $this->accessRequest->requester;
+        $requesterName = $requester?->full_name ?? 'A user';
+
+        return (new MailMessage)
+            ->subject("Access request for {$project->title}")
+            ->line("{$requesterName} has requested access to your project \"{$project->title}\".")
+            ->action('Review Request', url("/projects/{$project->id}"));
     }
 
     public function toArray(object $notifiable): array

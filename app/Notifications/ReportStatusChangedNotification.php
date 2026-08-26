@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\Report;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ReportStatusChangedNotification extends Notification
@@ -19,7 +20,34 @@ class ReportStatusChangedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $actionText = match ($this->report->status) {
+            'APPROVED' => 'approved',
+            'RETURNED' => 'returned for revision',
+            'ESCALATED' => 'escalated to Management',
+            default => 'updated',
+        };
+
+        $project = $this->report->project;
+        $mail = (new MailMessage)
+            ->subject("Your {$this->report->type} report has been {$actionText}")
+            ->line("Your {$this->report->type} report for \"{$project->title}\" has been {$actionText}.");
+
+        if ($this->report->comment) {
+            $mail->line("Comment: \"{$this->report->comment}\"");
+        }
+
+        if ($this->report->status === 'RETURNED') {
+            $mail->action('Resubmit Report', url('/reports'));
+        } elseif ($this->report->status === 'APPROVED') {
+            $mail->line('The report has been approved and will be published to the Library.');
+        }
+
+        return $mail;
     }
 
     public function toArray(object $notifiable): array

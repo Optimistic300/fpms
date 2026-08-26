@@ -20,7 +20,19 @@ class ReportSubmittedNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', 'mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $project = $this->report->project;
+
+        return (new MailMessage)
+            ->subject("New {$this->report->type} report submitted for review")
+            ->line("A new {$this->report->type} report has been submitted for the project \"{$project->title}\".")
+            ->line("Period: {$this->report->period_start->format('d M Y')} — {$this->report->period_end->format('d M Y')}")
+            ->action('Review Report', url('/queue'))
+            ->line('Please review the submission in the Report Queue.');
     }
 
     public function toArray(object $notifiable): array

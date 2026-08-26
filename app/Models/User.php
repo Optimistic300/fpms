@@ -143,4 +143,9 @@ class User extends Authenticatable
     {
         return $this->role === 'ADMIN';
     }
+
+    public function routeNotificationForMail(): string
+    {
+        return $this->email;
+    }
 }
