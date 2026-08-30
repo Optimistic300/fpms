@@ -12,6 +12,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +26,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Render terminates TLS at its edge and forwards requests over plain
+        // HTTP, so without this Laravel generates http:// asset/URL links
+        // behind an https:// page, which browsers block as mixed content.
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         RateLimiter::for('login', function (Request $request) {
             return Limit::perMinute(5)->by($request->ip());
         });
