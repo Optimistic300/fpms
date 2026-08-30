@@ -104,6 +104,7 @@ export default function LogActivity() {
     async function uploadFile(activityId, file, index) {
         const form = new FormData();
         form.append('file', file);
+        form.append('type', 'OTHER');
         try {
             await apiClient.post(`/activities/${activityId}/documents`, form, {
                 headers: { 'Content-Type': 'multipart/form-data' },
@@ -132,10 +133,13 @@ export default function LogActivity() {
         setSubmitting(true);
         setErrors(null);
         try {
+            const activityType = activityTypes.find(
+                (t) => String(t.id) === String(formData.activityTypeId)
+            );
             const payload = {
                 projectId: Number(formData.projectId),
                 date: formData.date,
-                activityTypeId: Number(formData.activityTypeId),
+                type: activityType?.name,
                 description: formData.description.trim(),
                 notes: formData.notes?.trim() || undefined,
             };
@@ -154,6 +158,10 @@ export default function LogActivity() {
                 const serverErrors = Object.fromEntries(
                     Object.entries(err.response.data.errors).map(([key, msgs]) => [key, msgs.join(', ')])
                 );
+                if (serverErrors.type) {
+                    serverErrors.activityTypeId = serverErrors.type;
+                    delete serverErrors.type;
+                }
                 if (serverErrors.projectId || serverErrors.date || serverErrors.activityTypeId || serverErrors.description) {
                     setErrors(serverErrors);
                     setStep(1);

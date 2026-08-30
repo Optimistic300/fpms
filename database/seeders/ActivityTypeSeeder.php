@@ -21,7 +21,7 @@ class ActivityTypeSeeder extends Seeder
         ];
 
         foreach ($types as $type) {
-            ActivityType::create($type);
+            ActivityType::firstOrCreate(['slug' => $type['slug']], $type);
         }
     }
 }

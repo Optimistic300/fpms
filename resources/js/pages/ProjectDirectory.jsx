@@ -96,10 +96,10 @@ export default function ProjectDirectory() {
     const [divisions, setDivisions] = useState([]);
     useEffect(() => {
         apiClient
-            .get('/divisions/summary')
+            .get('/divisions')
             .then((res) => {
                 if (res.data.data) {
-                    setDivisions(res.data.data.map((d) => ({ id: d.divisionId, name: d.divisionName })));
+                    setDivisions(res.data.data.map((d) => ({ id: d.id, name: d.name })));
                 }
             })
             .catch(() => {});

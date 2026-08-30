@@ -6,6 +6,7 @@ import PublicRoute from './components/auth/PublicRoute';
 import ErrorBoundary from './components/layout/ErrorBoundary';
 import AppShell from './components/layout/AppShell';
 import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
 
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ProjectDirectory = lazy(() => import('./pages/ProjectDirectory'));
@@ -31,6 +32,7 @@ function App() {
             <AuthProvider>
                 <ErrorBoundary>
                     <Routes>
+                        <Route path="/reset-password" element={<ResetPassword />} />
                         <Route
                             path="/login"
                             element={
