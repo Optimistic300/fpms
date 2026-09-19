@@ -25,6 +25,7 @@ class ReportResource extends CamelCaseResource
             'report_name' => $report->type . ' Report',
             'project_id' => $report->project_id,
             'project_title' => $report->project?->title,
+            'lead_researcher_id' => $report->project?->lead_researcher_id,
             'period' => $report->period_start?->toDateString() . ' — ' . $report->period_end?->toDateString(),
             'period_start' => $report->period_start?->toDateString(),
             'period_end' => $report->period_end?->toDateString(),

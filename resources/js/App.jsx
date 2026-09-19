@@ -101,7 +101,7 @@ function App() {
                             <Route
                                 path="/queue/:reportId"
                                 element={
-                                    <ProtectedRoute allowedRoles={['SECRETARY']}>
+                                    <ProtectedRoute allowedRoles={['SECRETARY', 'RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
                                         <ReportReview />
                                     </ProtectedRoute>
                                 }
@@ -109,7 +109,7 @@ function App() {
                             <Route
                                 path="/queue"
                                 element={
-                                    <ProtectedRoute allowedRoles={['SECRETARY']}>
+                                    <ProtectedRoute allowedRoles={['SECRETARY', 'RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
                                         <ReportQueue />
                                     </ProtectedRoute>
                                 }

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\ReportRepositoryInterface;
 use App\Models\Report;
+use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ReportRepository implements ReportRepositoryInterface
@@ -60,9 +61,17 @@ class ReportRepository implements ReportRepositoryInterface
             $role = $filters['scopingRole'];
             $userId = $filters['scopingUserId'];
             $divisionId = $filters['scopingDivisionId'] ?? null;
+            $isOwnerFilter = isset($filters['owner']) && $filters['owner'] === 'me';
 
-            if (in_array($role, ['RESEARCHER', 'STUDENT'])) {
+            if (in_array($role, ['RESEARCHER', 'STUDENT']) && $isOwnerFilter) {
                 $query->where('submitted_by', $userId);
+            } elseif (in_array($role, ['RESEARCHER', 'STUDENT'])) {
+                // Outside "My Reports": also surface reports awaiting review
+                // as a project lead, not just reports this user submitted.
+                $query->where(function ($q) use ($userId) {
+                    $q->where('submitted_by', $userId)
+                        ->orWhereHas('project', fn($p) => $p->where('lead_researcher_id', $userId));
+                });
             } elseif ($role === 'DIVISION_HEAD') {
                 $query->whereHas('project', fn($q) => $q->where('division_id', $divisionId));
             }
@@ -77,20 +86,30 @@ class ReportRepository implements ReportRepositoryInterface
         return $query->orderBy($sortColumn, $sortDirection)->paginate($perPage);
     }
 
-    public function statsForSecretary(int $userId): array
+    public function statsForSecretary(User $user): array
     {
+        // Secretary: institute-wide counts, for record-keeping.
+        // Project lead: counts scoped to reports on projects they lead.
+        $scope = function ($query) use ($user) {
+            if (!$user->isSecretary()) {
+                $query->whereHas('project', fn($p) => $p->where('lead_researcher_id', $user->id));
+            }
+        };
+
         return [
             'overdue' => Report::where('status', 'PENDING')
                 ->where(function ($q) {
                     $q->whereNull('submitted_at')
                         ->orWhere('submitted_at', '<', now()->subDays(30));
                 })
+                ->tap($scope)
                 ->count(),
-            'pending' => Report::where('status', 'PENDING')->count(),
+            'pending' => Report::where('status', 'PENDING')->tap($scope)->count(),
             'approvedThisQuarter' => Report::where('status', 'APPROVED')
                 ->where('submitted_at', '>=', now()->startOfQuarter())
+                ->tap($scope)
                 ->count(),
-            'returned' => Report::where('status', 'RETURNED')->count(),
+            'returned' => Report::where('status', 'RETURNED')->tap($scope)->count(),
         ];
     }
 }

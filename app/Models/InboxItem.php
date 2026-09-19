@@ -11,6 +11,9 @@ class InboxItem extends Model
     /** @use HasFactory<\Database\Factories\InboxItemFactory> */
     use HasFactory;
 
+    // The inbox_items table only has created_at, no updated_at column.
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'user_id',
         'sender_id',

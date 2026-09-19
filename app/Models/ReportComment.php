@@ -11,6 +11,11 @@ class ReportComment extends Model
     /** @use HasFactory<\Database\Factories\ReportCommentFactory> */
     use HasFactory;
 
+    // The report_comments table only has created_at (append-only event log,
+    // entries are never edited) - tell Eloquent not to manage updated_at,
+    // since that column doesn't exist.
+    const UPDATED_AT = null;
+
     protected $fillable = ['report_id', 'user_id', 'comment'];
 
     public function report(): BelongsTo

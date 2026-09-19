@@ -69,7 +69,7 @@ class ReportController extends Controller
         $this->authorize('review', Report::class);
 
         return response()->json([
-            'data' => $this->reportRepository->statsForSecretary($request->user()->id),
+            'data' => $this->reportRepository->statsForSecretary($request->user()),
         ]);
     }
 

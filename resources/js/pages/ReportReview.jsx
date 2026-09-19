@@ -3,10 +3,12 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from '../api/axios';
 import ReviewActions from '../components/reports/ReviewActions';
 import CommentsSection from '../components/reports/CommentsSection';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ReportReview() {
     const { reportId } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [report, setReport] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -456,11 +458,27 @@ export default function ReportReview() {
 
                 {/* Right column: Action panel */}
                 <div>
-                    <ReviewActions
-                        report={report}
-                        onAction={handleAction}
-                        loading={actionLoading}
-                    />
+                    {user?.userId === report.leadResearcherId ? (
+                        <ReviewActions
+                            report={report}
+                            onAction={handleAction}
+                            loading={actionLoading}
+                        />
+                    ) : (
+                        <div
+                            style={{
+                                backgroundColor: 'white',
+                                borderRadius: '8px',
+                                border: '1px solid #e2e8f0',
+                                padding: '20px',
+                                fontSize: '13px',
+                                color: '#64748b',
+                            }}
+                        >
+                            Only the project's lead researcher can approve, return, or escalate this
+                            report. You're viewing it for record-keeping.
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

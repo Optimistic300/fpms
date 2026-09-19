@@ -28,6 +28,10 @@ vi.mock('../../api/axios', () => ({
     },
 }));
 
+vi.mock('../../contexts/AuthContext', () => ({
+    useAuth: () => ({ user: { userId: 1 } }),
+}));
+
 function renderReview(reportId = '1') {
     return render(
         <MemoryRouter initialEntries={[`/queue/${reportId}`]}>
@@ -43,6 +47,7 @@ const mockReport = {
         data: {
             id: 1,
             projectId: 42,
+            leadResearcherId: 1,
             reportName: 'Q1 2026 Progress Report',
             projectTitle: 'Carbon Stock Assessment',
             type: 'QUARTERLY',

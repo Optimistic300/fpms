@@ -23,6 +23,9 @@ export default function getSidebarItems(role) {
             { label: 'My Activities', path: '/activities', icon: '📝' },
             { label: 'Reports', path: '/reports', icon: '📋', badge: 'reports' },
         );
+        roleSpecific.push(
+            { label: 'Report Queue', path: '/queue', icon: '📑' },
+        );
     }
 
     if (role === 'DIVISION_HEAD') {
@@ -30,6 +33,9 @@ export default function getSidebarItems(role) {
             { label: 'Projects', path: '/projects', icon: '📁' },
             { label: 'My Activities', path: '/activities', icon: '📝' },
             { label: 'Reports', path: '/reports', icon: '📋', badge: 'reports' },
+        );
+        roleSpecific.push(
+            { label: 'Report Queue', path: '/queue', icon: '📑' },
         );
     }
 

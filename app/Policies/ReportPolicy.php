@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Project;
 use App\Models\Report;
 use App\Models\User;
 
@@ -47,13 +48,21 @@ class ReportPolicy
         return $user->id === $report->submitted_by && $report->status === 'DRAFT';
     }
 
+    /**
+     * Report review is now performed by each project's own lead researcher,
+     * not the Scientific Secretary (who keeps institute-wide records only).
+     */
     public function review(User $user): bool
     {
-        return $user->isSecretary();
+        if ($user->isSecretary()) {
+            return true;
+        }
+
+        return Project::where('lead_researcher_id', $user->id)->exists();
     }
 
     public function update(User $user, Report $report): bool
     {
-        return $user->isSecretary();
+        return $user->id === $report->project->lead_researcher_id;
     }
 }

@@ -10,7 +10,8 @@ describe('getSidebarItems', () => {
         expect(result.workspace[2].label).toBe('My Activities');
         expect(result.workspace[3].label).toBe('Reports');
         expect(result.institute).toHaveLength(3);
-        expect(result.roleSpecific).toHaveLength(0);
+        expect(result.roleSpecific).toHaveLength(1);
+        expect(result.roleSpecific[0].label).toBe('Report Queue');
     });
 
     it('returns workspace items for STUDENT', () => {
@@ -33,8 +34,9 @@ describe('getSidebarItems', () => {
         const result = getSidebarItems('DIVISION_HEAD');
         expect(result.workspace).toHaveLength(3);
         expect(result.workspace[0].label).toBe('Projects');
-        expect(result.roleSpecific).toHaveLength(1);
-        expect(result.roleSpecific[0].label).toBe('Division Overview');
+        expect(result.roleSpecific).toHaveLength(2);
+        expect(result.roleSpecific[0].label).toBe('Report Queue');
+        expect(result.roleSpecific[1].label).toBe('Division Overview');
     });
 
     it('returns Executive Dashboard for MANAGEMENT', () => {
