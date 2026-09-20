@@ -7,7 +7,7 @@ A Laravel + React application for managing forestry research projects, activitie
 ### Prerequisites
 - PHP 8.4+
 - Composer
-- MySQL 8.0+ (or MariaDB 10.4+)
+- PostgreSQL 14+ (with pgvector extension)
 - Node.js 22+
 - Redis (optional, for cache/queue)
 

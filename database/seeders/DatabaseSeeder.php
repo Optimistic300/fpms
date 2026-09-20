@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             DivisionSeeder::class,
             UserSeeder::class,
             ActivityTypeSeeder::class,
+            ProjectSeeder::class,
         ]);
     }
 }

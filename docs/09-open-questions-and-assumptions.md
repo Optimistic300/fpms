@@ -10,11 +10,11 @@
 
 ## HIGHEST PRIORITY: Semantic Search Retrieval Mechanism
 
-**Question:** Will MySQL Full-Text Search with application-layer re-ranking provide adequate retrieval quality for the AI Assistant, or is a dedicated vector/semantic search store (Meilisearch, Typesense, Pinecone) required?
+**Question:** Will pgvector provide adequate retrieval quality for the AI Assistant, or is a different vector/semantic search store (Typesense, Pinecone) required?
 
-**Assumption made:** MySQL FTS + re-ranking is sufficient for v1 at FORIG's expected document volume (hundreds to low thousands). The `AiRetrievalInterface` contract makes this swappable without touching calling code.
+**Assumption made:** pgvector is sufficient for v1 at FORIG's expected document volume (hundreds to low thousands). The `AiRetrievalInterface` contract makes this swappable without touching calling code.
 
-**Risk:** If FTS relevance proves inadequate in user testing, or if document volume exceeds ~10,000, a migration to a vector-capable store will be needed. This is explicitly flagged in `06-ai-assistant.md` and should be revisited during the pilot phase.
+**Risk:** If pgvector relevance proves inadequate in user testing, or if document volume exceeds ~10,000, a migration to another vector-capable store will be needed. This is explicitly flagged in `06-ai-assistant.md` and should be revisited during the pilot phase.
 
 ## Admin Screens Not Specified
 

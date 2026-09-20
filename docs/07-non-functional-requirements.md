@@ -31,10 +31,10 @@ Core functions must work on weak or absent connectivity and sync on reconnect.
 
 ## Backup / Durability
 
-- **Database:** MySQL daily automated backups. Backups stored in separate geographic location (S3-compatible storage).
+- **Database:** PostgreSQL daily automated backups. Backups stored in separate geographic location (S3-compatible storage).
 - **File storage:** S3-compatible in production with cross-region replication enabled. Local disk for development only.
 - **Retention:** At least 30 days of daily backups. Monthly backups retained for 12 months.
-- **Point-in-time recovery:** MySQL binary logs enabled for point-in-time recovery capability.
+- **Point-in-time recovery:** Enable PostgreSQL WAL archiving for point-in-time recovery capability.
 
 ## Performance
 

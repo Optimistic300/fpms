@@ -7,7 +7,7 @@ SKMS is deployed on cPanel shared hosting as the primary production platform.
 ### Prerequisites
 
 - PHP 8.4+ (configured via cPanel's MultiPHP Manager)
-- MySQL 8.0+ (managed via cPanel's phpMyAdmin or remote connection)
+- PostgreSQL 14+ with pgvector extension (managed via cPanel's phpPgAdmin or remote connection)
 - Apache with `mod_rewrite` enabled (default on cPanel)
 - Composer (available via cPanel's Terminal or SSH)
 
@@ -72,7 +72,7 @@ docker compose exec app php artisan db:seed --force
 
 ## Local Development
 
-XAMPP is the recommended local development environment, providing PHP 8.2+, Apache, and MySQL — matching the cPanel production stack.
+XAMPP is the recommended local development environment, providing PHP 8.2+, Apache, and PostgreSQL — matching the cPanel production stack.
 
 1. Clone the repo into XAMPP's `htdocs/` directory
 2. Start Apache and MySQL via XAMPP Control Panel

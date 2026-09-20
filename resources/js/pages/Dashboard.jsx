@@ -3,29 +3,30 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import apiClient from '../api/axios';
 import StatCard from '../components/dashboard/StatCard';
+import { tokens } from '../design-tokens';
 
 const statusOptions = ['', 'PROPOSED', 'ACTIVE', 'COMPLETED', 'ARCHIVED'];
 const fundingOptions = ['', 'DONOR', 'GOVERNMENT', 'INTERNAL'];
 
 function statusBadgeColor(status) {
     const map = {
-        PROPOSED: { bg: '#fef3c7', color: '#92400e' },
-        ACTIVE: { bg: '#dbeafe', color: '#1e40af' },
-        COMPLETED: { bg: '#d1fae5', color: '#065f46' },
-        ARCHIVED: { bg: '#f1f5f9', color: '#475569' },
+        PROPOSED: { bg: tokens.colors.status.warning.light, color: tokens.colors.status.warning.dark },
+        ACTIVE: { bg: tokens.colors.status.info.light, color: tokens.colors.status.info.dark },
+        COMPLETED: { bg: tokens.colors.status.success.light, color: tokens.colors.status.success.dark },
+        ARCHIVED: { bg: tokens.colors.neutral[200], color: tokens.colors.neutral[600] },
     };
-    return map[status] || { bg: '#f1f5f9', color: '#475569' };
+    return map[status] || { bg: tokens.colors.neutral[200], color: tokens.colors.neutral[600] };
 }
 
 function reportBadgeColor(status) {
     const map = {
-        PENDING: { bg: '#fef3c7', color: '#92400e' },
-        APPROVED: { bg: '#d1fae5', color: '#065f46' },
-        RETURNED: { bg: '#fee2e2', color: '#991b1b' },
-        DRAFT: { bg: '#f1f5f9', color: '#475569' },
-        ESCALATED: { bg: '#fce7f3', color: '#9d174d' },
+        PENDING: { bg: tokens.colors.status.warning.light, color: tokens.colors.status.warning.dark },
+        APPROVED: { bg: tokens.colors.status.success.light, color: tokens.colors.status.success.dark },
+        RETURNED: { bg: tokens.colors.status.error.light, color: tokens.colors.status.error.dark },
+        DRAFT: { bg: tokens.colors.neutral[200], color: tokens.colors.neutral[600] },
+        ESCALATED: { bg: '#fce7f3', color: '#9d174d' }, // Keeping original for escalated as it's not in our tokens
     };
-    return map[status] || { bg: '#f1f5f9', color: '#475569' };
+    return map[status] || { bg: tokens.colors.neutral[200], color: tokens.colors.neutral[600] };
 }
 
 function SkeletonCard() {
@@ -34,36 +35,36 @@ function SkeletonCard() {
             style={{
                 flex: 1,
                 minWidth: '180px',
-                padding: '20px',
-                backgroundColor: 'white',
-                borderRadius: '8px',
-                border: '1px solid #e2e8f0',
+                padding: tokens.spacing[5],
+                backgroundColor: tokens.colors.background.main,
+                borderRadius: tokens.borderRadius.md,
+                border: `1px solid ${tokens.colors.neutral[200]}`,
             }}
         >
             <div
                 style={{
                     height: '16px',
                     width: '60%',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '4px',
-                    marginBottom: '12px',
+                    backgroundColor: tokens.colors.neutral[200],
+                    borderRadius: tokens.borderRadius.sm,
+                    marginBottom: tokens.spacing[3],
                 }}
             />
             <div
                 style={{
                     height: '32px',
                     width: '40%',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '4px',
+                    backgroundColor: tokens.colors.neutral[200],
+                    borderRadius: tokens.borderRadius.md,
                 }}
             />
             <div
                 style={{
                     height: '12px',
                     width: '80%',
-                    backgroundColor: '#e2e8f0',
-                    borderRadius: '4px',
-                    marginTop: '12px',
+                    backgroundColor: tokens.colors.neutral[200],
+                    borderRadius: tokens.borderRadius.sm,
+                    marginTop: tokens.spacing[3],
                 }}
             />
         </div>
@@ -72,47 +73,51 @@ function SkeletonCard() {
 
 function SkeletonTable({ rows = 3 }) {
     return (
-        <div style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+        <div style={{ 
+            backgroundColor: tokens.colors.background.main, 
+            borderRadius: tokens.borderRadius.md, 
+            border: `1px solid ${tokens.colors.neutral[200]}` 
+        }}>
             {Array.from({ length: rows }).map((_, i) => (
                 <div
                     key={i}
                     style={{
                         display: 'flex',
-                        gap: '16px',
-                        padding: '14px 20px',
-                        borderBottom: i < rows - 1 ? '1px solid #f1f5f9' : 'none',
+                        gap: tokens.spacing[4],
+                        padding: `${tokens.spacing[3.5]} ${tokens.spacing[5]}`,
+                        borderBottom: i < rows - 1 ? `1px solid ${tokens.colors.neutral[100]}` : 'none',
                     }}
                 >
                     <div
                         style={{
                             flex: 2,
                             height: '14px',
-                            backgroundColor: '#e2e8f0',
-                            borderRadius: '4px',
+                            backgroundColor: tokens.colors.neutral[200],
+                            borderRadius: tokens.borderRadius.sm,
                         }}
                     />
                     <div
                         style={{
                             flex: 1,
                             height: '14px',
-                            backgroundColor: '#e2e8f0',
-                            borderRadius: '4px',
+                            backgroundColor: tokens.colors.neutral[200],
+                            borderRadius: tokens.borderRadius.sm,
                         }}
                     />
                     <div
                         style={{
                             flex: 1,
                             height: '14px',
-                            backgroundColor: '#e2e8f0',
-                            borderRadius: '4px',
+                            backgroundColor: tokens.colors.neutral[200],
+                            borderRadius: tokens.borderRadius.sm,
                         }}
                     />
                     <div
                         style={{
                             width: '70px',
                             height: '22px',
-                            backgroundColor: '#e2e8f0',
-                            borderRadius: '4px',
+                            backgroundColor: tokens.colors.neutral[200],
+                            borderRadius: tokens.borderRadius.sm,
                         }}
                     />
                 </div>
@@ -123,32 +128,37 @@ function SkeletonTable({ rows = 3 }) {
 
 function SkeletonPanel() {
     return (
-        <div style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '20px' }}>
+        <div style={{ 
+            backgroundColor: tokens.colors.background.main, 
+            borderRadius: tokens.borderRadius.md, 
+            border: `1px solid ${tokens.colors.neutral[200]}`, 
+            padding: tokens.spacing[5] 
+        }}>
             {Array.from({ length: 3 }).map((_, i) => (
                 <div
                     key={i}
                     style={{
                         display: 'flex',
-                        gap: '12px',
-                        padding: '12px 0',
-                        borderBottom: i < 2 ? '1px solid #f1f5f9' : 'none',
+                        gap: tokens.spacing[3],
+                        padding: `${tokens.spacing[3]} 0`,
+                        borderBottom: i < 2 ? `1px solid ${tokens.colors.neutral[100]}` : 'none',
                     }}
                 >
                     <div style={{ flex: 1 }}>
                         <div
                             style={{
                                 height: '14px',
-                                backgroundColor: '#e2e8f0',
-                                borderRadius: '4px',
-                                marginBottom: '8px',
+                                backgroundColor: tokens.colors.neutral[200],
+                                borderRadius: tokens.borderRadius.sm,
+                                marginBottom: tokens.spacing[2],
                                 width: '90%',
                             }}
                         />
                         <div
                             style={{
                                 height: '12px',
-                                backgroundColor: '#e2e8f0',
-                                borderRadius: '4px',
+                                backgroundColor: tokens.colors.neutral[200],
+                                borderRadius: tokens.borderRadius.sm,
                                 width: '60%',
                             }}
                         />
@@ -309,43 +319,51 @@ export default function Dashboard() {
         return true;
     });
 
-    const cardContainer = {
-        display: 'flex',
-        gap: '16px',
-        marginBottom: '24px',
-        flexWrap: 'wrap',
-    };
+const cardContainer = {
+    display: 'flex',
+    gap: tokens.spacing[4],
+    marginBottom: tokens.spacing[6],
+    flexWrap: 'wrap',
+};
 
-    const sectionTitle = {
-        fontSize: '16px',
-        fontWeight: 700,
-        color: '#1e293b',
-        marginBottom: '16px',
-    };
+const sectionTitle = {
+    fontSize: tokens.typography.fontSize.lg,
+    fontWeight: tokens.typography.fontWeight.semiBold,
+    color: tokens.colors.neutral[900],
+    marginBottom: tokens.spacing[4],
+};
 
-    const tableHeaderStyle = {
-        display: 'flex',
-        gap: '16px',
-        padding: '12px 20px',
-        backgroundColor: '#f8fafc',
-        borderBottom: '2px solid #e2e8f0',
-        fontSize: '12px',
-        fontWeight: 600,
-        color: '#64748b',
-        textTransform: 'uppercase',
-        letterSpacing: '0.5px',
-    };
+const tableHeaderStyle = {
+    display: 'flex',
+    gap: tokens.spacing[4],
+    padding: `${tokens.spacing[3]} ${tokens.spacing[5]}`,
+    backgroundColor: tokens.colors.neutral[50],
+    borderBottom: `2px solid ${tokens.colors.neutral[100]}`,
+    fontSize: tokens.typography.fontSize.xs,
+    fontWeight: tokens.typography.fontWeight.semiBold,
+    color: tokens.colors.neutral[500],
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+};
 
     return (
         <div>
-            <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontSize: '22px', fontWeight: 700, color: '#1e293b', margin: '0 0 4px' }}>
-                    Welcome, {user?.fullName?.split(' ')[0] || 'User'}
-                </h1>
-                <div style={{ fontSize: '14px', color: '#64748b' }}>
-                    {today} — {user?.division || 'No division'}
-                </div>
-            </div>
+<div style={{ marginBottom: tokens.spacing[6] }}>
+    <h1 style={{ 
+        fontSize: tokens.typography.fontSize['2xl'], 
+        fontWeight: tokens.typography.fontWeight.bold, 
+        color: tokens.colors.neutral[900], 
+        margin: '0 0 4px' 
+    }}>
+        Welcome, {user?.fullName?.split(' ')[0] || 'User'}
+    </h1>
+    <div style={{ 
+        fontSize: tokens.typography.fontSize.base, 
+        color: tokens.colors.neutral[500] 
+    }}>
+        {today} — {user?.division || 'No division'}
+    </div>
+</div>
 
             {/* Stat Cards */}
             <div style={cardContainer}>

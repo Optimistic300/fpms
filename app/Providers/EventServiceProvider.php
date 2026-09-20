@@ -11,13 +11,13 @@ use App\Events\ReportApproved;
 use App\Events\ReportEscalated;
 use App\Events\ReportReturned;
 use App\Events\ReportSubmitted;
-use App\Listeners\IndexPublishedDocumentForAi;
+use App\Observers\DocumentObserver;
 use App\Listeners\NotifyProjectMembersOnActivity;
 use App\Listeners\SendAccessRequestNotification;
 use App\Listeners\SendDocumentForwardedNotification;
 use App\Listeners\SendProjectMemberNotification;
-use App\Listeners\SendReportStatusChangedNotification;
 use App\Listeners\SendReportSubmittedNotification;
+use App\Listeners\SendReportStatusChangedNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -44,11 +44,14 @@ class EventServiceProvider extends ServiceProvider
         ProjectMemberAdded::class => [
             SendProjectMemberNotification::class,
         ],
-        DocumentPublished::class => [
-            IndexPublishedDocumentForAi::class,
-        ],
         ActivityLogged::class => [
             NotifyProjectMembersOnActivity::class,
+        ],
+    ];
+
+    protected $observes = [
+        Document::class => [
+            DocumentObserver::class,
         ],
     ];
 
