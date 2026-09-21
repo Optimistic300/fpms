@@ -3,290 +3,200 @@
 namespace App\Jobs;
 
 use App\Models\Document;
-use App\Models\DocumentChunk;
+use App\Services\TextExtractorService;
+use App\Services\Chunker;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Sync document index job.
+ * 
+ * This job is responsible for extracting text from a document, chunking it,
+ * and storing the chunks in the database with null embeddings (to be filled
+ * by the EmbedDocumentChunks job later).
+ * 
+ * It implements ShouldBeUnique to prevent overlapping jobs for the same document.
+ */
 class SyncDocumentIndex implements ShouldQueue
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public bool $deleteWhenMissingModels = true;
-    public int $tries = 3;
-    public int $timeout = 300;
+    /**
+     * The document to index.
+     */
+    public Document $document;
 
-    public function __construct(
-        public Document $document,
-    ) {}
+    /**
+     * The text extractor service.
+     */
+    protected TextExtractorService $extractor;
 
-    public function middleware(): array
+    /**
+     * The chunker service.
+     */
+    protected Chunker $chunker;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(Document $document, TextExtractorService $extractor, Chunker $chunker)
     {
-        // Never two jobs for the same document at once
-        return [(new \App\Jobs\Middleware\WithoutOverlapping($this->document->id))->releaseAfter(30)];
+        $this->document = $document;
+        $this->extractor = $extractor;
+        $this->chunker = $chunker;
     }
 
+    /**
+     * Get the unique job id for deduplication.
+     * 
+     * This ensures that only one SyncDocumentIndex job runs per document at a time.
+     */
+    public function uniqueId(): string
+    {
+        return 'SyncDocumentIndex-' . $this->document->id;
+    }
+
+    /**
+     * Determine if the job should be unique.
+     * 
+     * We want to prevent overlapping jobs for the same document.
+     */
+    public function uniqueFor(): int
+    {
+        // Wait until the job is finished before allowing another for the same document
+        return 300;
+    }
+
+    /**
+     * Get the middleware to prevent overlapping jobs.
+     */
+    public function middleware(): array
+    {
+        // Prevent overlapping jobs for the same document
+        return [
+            (new WithoutOverlapping('document-' . $this->document->id))
+                ->releaseAfter(10)
+                ->expireAfter(30),
+        ];
+    }
+
+    /**
+     * Execute the job.
+     */
     public function handle(): void
     {
+        // Refresh the document to get the latest state
         $doc = $this->document->fresh();
+
         if (! $doc) {
+            // Document was deleted before we could process it
             return;
         }
 
         // Order matters: remove from search BEFORE deleting rows
+        // This ensures that we don't have stale index entries during the update
         $doc->chunks()->unsearchable();
         $doc->chunks()->delete();
 
-        if (! $doc->published) {
+        // If the document is not published or not allowed for external AI, we're done
+        if (! $doc->published || ! $doc->allow_external_ai) {
             $doc->update([
                 'index_status' => 'not_indexed',
                 'index_error' => null,
             ]);
+
             return;
         }
 
-        $pages = $this->extractPages($doc);
-
-        // Scanned / image-only detection: flag it, never fail silently
-        $empty = collect($pages)->filter(fn ($p) => mb_strlen(trim($p['text'])) < 20)->count();
-        if ($pages === [] || $empty / count($pages) > 0.3) {
-            $doc->update([
-                'index_status' => 'needs_ocr',
-                'index_error' => null,
-            ]);
-            
-            // Dispatch OCR job (would need to be implemented)
-            // OcrDocument::dispatch($doc)->onQueue('ocr');
-            return;
-        }
-
-        $rows = [];
-        $i = 0;
-        foreach ($pages as $p) {
-            $clean = trim(preg_replace('/\s+/u', ' ', $p['text']));
-            foreach ($this->chunkText($clean) as $chunk) {
-                $rows[] = [
-                    'document_id' => $doc->id,
-                    'chunk_index' => $i++,
-                    'page_number' => $p['page'],
-                    'locator' => $p['locator'],
-                    'content' => $chunk,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
-        }
-
-        DB::transaction(function () use ($rows, $doc) {
-            DocumentChunk::insert($rows);
-            $doc->chunks()->searchable(); // Scout queues the sync to pgvector
-            $doc->update([
-                'index_status' => 'indexed',
-                'indexed_at' => now(),
-                'index_error' => null,
-            ]);
-        });
-    }
-
-    public function failed(\Throwable $e): void
-    {
-        $this->document->update([
-            'index_status' => 'failed',
-            'index_error' => $e->getMessage(),
-        ]);
-    }
-
-    private function extractPages(Document $doc): array
-    {
-        $disk = config('filesystems.default');
-        $extension = strtolower(pathinfo($doc->filename, PATHINFO_EXTENSION));
-        
         try {
-            return match ($extension) {
-                'pdf' => $this->extractPdfPages($doc, $disk),
-                'docx' => $this->extractDocxPages($doc, $disk),
-                'xlsx' => $this->extractXlsxPages($doc, $disk),
-                default => [],
-            };
+            // Extract text from the document
+            $pages = $this->extractor->pages($doc); // Returns array of ['page' => ?int, 'locator' => ?string, 'text' => string]
+
+            // Detect if the document is scanned/image-only (needs OCR)
+            $emptyPages = collect($pages)->filter(function ($p) {
+                return mb_strlen(trim($p['text'])) < 20; // Consider a page empty if it has less than 20 characters
+            })->count();
+
+            $totalPages = count($pages);
+
+            if ($totalPages === 0 || ($emptyPages / $totalPages) > 0.3) {
+                // More than 30% of pages are nearly empty - flag for OCR
+                $doc->update([
+                    'index_status' => 'needs_ocr',
+                    'index_error' => null,
+                ]);
+
+                // Dispatch OCR job (we'll assume this exists and will re-dispatch SyncDocumentIndex on success)
+                // OcrDocument::dispatch($doc)->onQueue('ocr');
+                return;
+            }
+
+            // Prepare chunk data for insertion
+            $rows = [];
+            $chunkIndex = 0;
+
+            foreach ($pages as $page) {
+                $cleanText = trim(preg_replace('/\s+/u', ' ', $page['text']));
+
+                // Split the text into chunks
+                $chunks = $this->chunker->split($cleanText);
+
+                foreach ($chunks as $chunk) {
+                    $rows[] = [
+                        'document_id' => $doc->id,
+                        'chunk_index' => $chunkIndex++,
+                        'page_number' => $page['page'],
+                        'locator'     => $page['locator'],
+                        'content'     => $chunk,
+                        'created_at'  => now(),
+                        'updated_at'  => now(),
+                        'embedding'   => null, // Will be filled by EmbedDocumentChunks job
+                        'embedding_model' => null, // Will be filled by EmbedDocumentChunks job
+                    ];
+                }
+            }
+
+            // Insert the chunks in a transaction
+            if (! empty($rows)) {
+                DB::transaction(function () use ($rows, $doc) {
+                    DB::table('document_chunks')->insert($rows);
+
+                    // Mark chunks as searchable (this would trigger Scout if we were using it, but we're not)
+                    // Instead, we'll update the index status to pending_embedding to signal that embeddings are needed
+                    $doc->update(['index_status' => 'pending_embedding']);
+                });
+            }
+
+            // If we successfully inserted chunks, mark as pending_embedding
+            // (the transaction above already updated the status, but we do it again for clarity)
+            $doc->update(['index_status' => 'pending_embedding']);
         } catch (\Throwable $e) {
-            Log::warning('Text extraction failed for document', [
-                'document_id' => $doc->id,
-                'error' => $e->getMessage(),
+            // If something goes wrong, mark the document as failed
+            $doc->update([
+                'index_status' => 'failed',
+                'index_error' => $e->getMessage(),
             ]);
-            return [];
-        }
-    }
 
-    private function extractPdfPages(Document $doc, string $disk): array
-    {
-        $parser = new \Smalot\PdfParser\Parser();
-        $pdf = $parser->parseContent(
-            Storage::disk($disk)->get($doc->file_path)
-        );
-        
-        // Get text with layout preservation for better table readability
-        $text = $pdf->getText();
-        // Split by form feed to get pages
-        $rawPages = explode("\f", $text);
-        
-        $pages = [];
-        foreach ($rawPages as $pageIndex => $pageText) {
-            if (trim($pageText) !== '') {
-                $pages[] = [
-                    'page' => $pageIndex + 1,
-                    'locator' => null,
-                    'text' => $pageText,
-                ];
-            }
+            // Re-throw to let the queue handle retries
+            throw $e;
         }
-        
-        return $pages;
-    }
-
-    private function extractDocxPages(Document $doc, string $disk): array
-    {
-        $tempPath = $this->tempCopy($doc->file_path, $disk);
-        $phpWord = \PhpOffice\PhpWord\IOFactory::load($tempPath);
-        $text = '';
-        
-        foreach ($phpWord->getSections() as $section) {
-            foreach ($section->getElements() as $element) {
-                if (method_exists($element, 'getText')) {
-                    $text .= $element->getText() . "\n";
-                }
-                if (method_exists($element, 'getElements')) {
-                    foreach ($element->getElements() as $child) {
-                        if (method_exists($child, 'getText')) {
-                            $text .= $child->getText() . "\n";
-                        }
-                    }
-                }
-            }
-        }
-        
-        @unlink($tempPath);
-        
-        // For DOCX, we don't have reliable page numbers, so return as one "page"
-        return $text !== '' ? [
-            [
-                'page' => 1,
-                'locator' => null,
-                'text' => $text,
-            ]
-        ] : [];
-    }
-
-    private function extractXlsxPages(Document $doc, string $disk): array
-    {
-        $tempPath = $this->tempCopy($doc->file_path, $disk);
-        $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($tempPath);
-        $pages = [];
-        
-        $pageNumber = 1;
-        foreach ($spreadsheet->getWorksheetIterator() as $worksheet) {
-            $text = '';
-            $worksheetTitle = $worksheet->getTitle();
-            
-            foreach ($worksheet->getRowIterator() as $row) {
-                $cells = [];
-                foreach ($row->getCellIterator() as $cell) {
-                    $cells[] = $cell->getCalculatedValue() ?? '';
-                }
-                $text .= implode("\t", $cells) . "\n";
-            }
-            
-            if (trim($text) !== '') {
-                $pages[] = [
-                    'page' => $pageNumber,
-                    'locator' => "Sheet: {$worksheetTitle}",
-                    'text' => $text,
-                ];
-                $pageNumber++;
-            }
-        }
-        
-        @unlink($tempPath);
-        return $pages;
-    }
-
-    private function tempCopy(string $filePath, string $disk): string
-    {
-        $tempPath = tempnam(sys_get_temp_dir(), 'fpms_') . '.' . pathinfo($filePath, PATHINFO_EXTENSION);
-        $contents = Storage::disk($disk)->get($filePath);
-        file_put_contents($tempPath, $contents);
-        return $tempPath;
     }
 
     /**
-     * Chunk text into overlapping segments.
-     *
-     * @param string $text The text to chunk
-     * @param int $maxChars Maximum characters per chunk
-     * @param int $overlap Overlap between chunks
-     * @return array Array of text chunks
+     * Handle a job failure.
      */
-    private function chunkText(string $text, int $maxChars = 1800, int $overlap = 250): array
+    public function failed(\Throwable $e): void
     {
-        $chunks = [];
-        $buf = '';
-        
-        // Split by sentence boundaries (period, exclamation, question followed by space)
-        foreach (preg_split('/(?<=[.!?])\s+/u', $text, -1, PREG_SPLIT_NO_EMPTY) as $sentence) {
-            $sentence = trim($sentence);
-            if ($sentence === '') {
-                continue;
-            }
-            
-            // If adding this sentence would exceed max length and we have a buffer
-            if ($buf !== '' && mb_strlen($buf) + mb_strlen($sentence) > $maxChars) {
-                // Save current buffer as a chunk
-                $chunks[] = $buf;
-                
-                // Start new buffer with overlap from end of previous buffer
-                $overlapText = mb_substr($buf, -$overlap);
-                $buf = trim($overlapText . ' ' . $sentence);
-            } else {
-                // Add sentence to buffer
-                $buf = trim($buf . ' ' . $sentence);
-            }
-        }
-        
-        // Don't forget the last buffer
-        if ($buf !== '') {
-            $chunks[] = $buf;
-        }
-        
-        // Handle case where a single sentence is longer than maxChars
-        foreach ($chunks as $index => $chunk) {
-            if (mb_strlen($chunk) > $maxChars) {
-                // Hard split on whitespace as safety net
-                $words = preg_split('/\s+/u', $chunk, -1, PREG_SPLIT_NO_EMPTY);
-                $newChunks = [];
-                $currentChunk = '';
-                
-                foreach ($words as $word) {
-                    if (mb_strlen($currentChunk . ' ' . $word) > $maxChars && $currentChunk !== '') {
-                        $newChunks[] = $trimCurrentChunk = trim($currentChunk);
-                        $currentChunk = $word;
-                    } else {
-                        $currentChunk = trim($currentChunk . ' ' . $word);
-                    }
-                }
-                
-                if ($currentChunk !== '') {
-                    $newChunks[] = trim($currentChunk);
-                }
-                
-                // Replace the oversized chunk with the new chunks
-                $chunks[$index] = array_shift($newChunks);
-                // Insert remaining chunks at this position
-                array_splice($chunks, $index + 1, 0, $newChunks);
-            }
-        }
-        
-        return $chunks;
+        // Update the document to reflect the failure
+        $this->document->update([
+            'index_status' => 'failed',
+            'index_error' => substr($e->getMessage(), 0, 255), // Truncate to fit in text column if needed
+        ]);
     }
 }

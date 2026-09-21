@@ -10,6 +10,7 @@ use App\Models\Document;
 use App\Models\DocumentChunk;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Log;
 use Illuminate\Support\Str;
 
 class PgVectorAiRetrievalService implements AiRetrievalInterface
@@ -21,13 +22,29 @@ class PgVectorAiRetrievalService implements AiRetrievalInterface
     public function query(string $query, array $conversationHistory = []): AiQueryResult
     {
         try {
+            // Log the incoming request
+            Log::info('PgVectorAiRetrievalService: Processing query', [
+                'query' => $query,
+                'conversationHistory_count' => count($conversationHistory),
+            ]);
+
             // Step 1: Query rewrite using conversation history
+            Log::info('PgVectorAiRetrievalService: Step 1 - Rewriting query');
             $standaloneQuery = $this->rewriteQuery($query, $conversationHistory);
+            Log::info('PgVectorAiRetrievalService: Query rewritten', [
+                'original' => $query,
+                'rewritten' => $standaloneQuery,
+            ]);
 
             // Step 2: Hybrid retrieval using pgvector
+            Log::info('PgVectorAiRetrievalService: Step 2 - Retrieving chunks');
             $chunks = $this->retrieve($standaloneQuery);
+            Log::info('PgVectorAiRetrievalService: Retrieval complete', [
+                'chunks_count' => $chunks->count(),
+            ]);
 
             if ($chunks->isEmpty()) {
+                Log::warning('PgVectorAiRetrievalService: No chunks found for query');
                 return new AiQueryResult(
                     canAnswer: false,
                     answer: 'The library does not contain enough information to answer this.',
@@ -37,9 +54,15 @@ class PgVectorAiRetrievalService implements AiRetrievalInterface
             }
 
             // Step 3: Synthesize answer using LLM
+            Log::info('PgVectorAiRetrievalService: Step 3 - Synthesizing answer with LLM');
             $draft = $this->llmClient->synthesise($standaloneQuery, $chunks);
+            Log::info('PgVectorAiRetrievalService: LLM synthesis complete', [
+                'canAnswer' => $draft['canAnswer'] ?? false,
+                'answer_length' => strlen($draft['answer'] ?? ''),
+            ]);
 
             if (!$draft['canAnswer']) {
+                Log::info('PgVectorAiRetrievalService: LLM indicated cannot answer');
                 return new AiQueryResult(
                     canAnswer: false,
                     answer: 'The library does not contain enough information to answer this.',
@@ -49,16 +72,34 @@ class PgVectorAiRetrievalService implements AiRetrievalInterface
             }
 
             // Step 4: Verify citations and quotes
+            Log::info('PgVectorAiRetrievalService: Step 4 - Verifying citations');
             $result = $this->verifyCitations($draft, $chunks);
 
-            return $result ?? new AiQueryResult(
-                canAnswer: false,
-                answer: 'The library does not contain enough information to answer this.',
-                citations: [],
-                followUpPrompts: ['Browse the library', 'Try different terms'],
-            );
+            if ($result === null) {
+                Log::warning('PgVectorAiRetrievalService: Citation verification failed, no valid markers');
+                return new AiQueryResult(
+                    canAnswer: false,
+                    answer: 'The library does not contain enough information to answer this.',
+                    citations: [],
+                    followUpPrompts: ['Browse the library', 'Try different terms'],
+                );
+            }
+
+            Log::info('PgVectorAiRetrievalService: Successfully processed query', [
+                'canAnswer' => $result->canAnswer,
+                'answer_length' => strlen($result->answer),
+                'citations_count' => count($result->citations),
+            ]);
+
+            return $result;
         } catch (\Throwable $e) {
             // Log the error in a real implementation
+            Log::error('PgVectorAiRetrievalService: Exception occurred', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'query' => $query,
+            ]);
+            
             throw new LlmUnavailable('The assistant took too long to respond. Please try again.');
         }
     }

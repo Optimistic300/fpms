@@ -382,7 +382,7 @@ class SyncDocumentIndex implements ShouldQueue
         return [(new WithoutOverlapping($this->document->id))->releaseAfter(30)];
     }
 
-    public function handle(TextExtractor $extractor, Chunker $chunker): void
+    public function handle(TextExtractorService $extractor, Chunker $chunker): void
     {
         $doc = $this->document->fresh();
         if (! $doc) return;
