@@ -4,18 +4,14 @@ namespace App\Services;
 
 use App\Contracts\AiQueryResult;
 use App\Contracts\AiRetrievalInterface;
-use App\Contracts\LlmClient;
 use App\Exceptions\LlmUnavailable;
-use App\Models\Document;
-use App\Models\DocumentChunk;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class PgVectorAiRetrievalService implements AiRetrievalInterface
 {
     public function __construct(
-        private LlmClient $llmClient,
+        private GeminiClient $llmClient,
     ) {}
 
     public function query(string $query, array $conversationHistory = []): AiQueryResult
@@ -79,26 +75,35 @@ class PgVectorAiRetrievalService implements AiRetrievalInterface
 
     private function retrieve(string $query): Collection
     {
-        // Hybrid retrieval using pgvector
-        return DocumentChunk::search($query, function ($index, $query, $opts) {
-                $opts['filter'] = 'published = true'; // Layer 1: filter at index level
-                $opts['limit'] = 20;
-                $opts['rankingScoreThreshold'] = config('ai.min_score', 0.5);
-                $opts['showRankingScore'] = true;
-                $opts['hybrid'] = [
-                    'embedder' => 'default',
-                    'semanticRatio' => config('ai.semantic_ratio', 0.6)
-                ];
-                return $index->search($query, $opts);
-            })
-            ->query(fn ($eloquent) => $eloquent->with('document')
-                ->whereHas('document', fn ($d) => $d->where('published', true))) // Layer 2: DB re-check
-            ->get()
-            // Apply light boost and diversification
-            ->groupBy('document_id')
-            ->flatMap(fn ($g) => $g->take(config('ai.max_chunks_per_doc', 2)))
-            ->take(config('ai.top_n', 6))
-            ->values();
+        $vector = '[' . implode(',', $this->llmClient->embed($query)) . ']';
+
+        $rows = DB::select(
+            "SELECT d.id as document_id, dt.content as content, d.filename, d.type,
+                    u.full_name as author_name, dv.name as division_name
+             FROM document_embeddings de
+             JOIN documents d ON d.id = de.document_id
+             JOIN document_texts dt ON dt.document_id = d.id
+             LEFT JOIN users u ON u.id = d.uploaded_by
+             LEFT JOIN projects p ON p.id = d.project_id
+             LEFT JOIN divisions dv ON dv.id = p.division_id
+             WHERE d.published = true
+             ORDER BY de.embedding <=> ?::vector
+             LIMIT 6",
+            [$vector]
+        );
+
+        return collect($rows)->map(fn ($row) => (object) [
+            'document_id' => $row->document_id,
+            'content' => $row->content,
+            'page_number' => null,
+            'locator' => null,
+            'document' => (object) [
+                'title' => $row->filename,
+                'author_name' => $row->author_name,
+                'division' => $row->division_name,
+                'type' => $row->type,
+            ],
+        ]);
     }
 
     private function verifyCitations(array $draft, Collection $chunks): ?AiQueryResult

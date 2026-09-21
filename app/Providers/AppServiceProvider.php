@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(FileStorageInterface::class, FileStorageService::class);
         $this->app->bind(AiRetrievalInterface::class, PgVectorAiRetrievalService::class);
-        $this->app->bind(LlmClient::class, LlmService::class);
+        $this->app->bind(LlmClient::class, \App\Services\GeminiClient::class);
         $this->app->bind(ReportRepositoryInterface::class, ReportRepository::class);
     }
 
