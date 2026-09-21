@@ -63,6 +63,12 @@ class ReportPolicy
 
     public function update(User $user, Report $report): bool
     {
-        return $user->id === $report->project->lead_researcher_id;
+        // 1. Allow Scientific Secretary to approve/update
+        if ($user->isSecretary()) {
+            return true;
+        }
+
+        // 2. Allow the project's Lead Researcher
+        return $report->project && $user->id === $report->project->lead_researcher_id;
     }
 }

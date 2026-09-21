@@ -26,6 +26,7 @@ const Publications = lazy(() => import('./pages/Publications'));
 const Inbox = lazy(() => import('./pages/Inbox'));
 const UserManagement = lazy(() => import('./pages/UserManagement'));
 const Settings = lazy(() => import('./pages/Settings'));
+const ReportDetail = lazy(() => import('./pages/ReportDetail'));
 
 function App() {
     return (
@@ -42,6 +43,7 @@ function App() {
                                 </PublicRoute>
                             }
                         />
+                        {/* Parent layout route opens here */}
                         <Route
                             element={
                                 <ProtectedRoute>
@@ -66,66 +68,74 @@ function App() {
                                 }
                             />
                             <Route path="/projects/new" element={<NewProjectPage />} />
-                            <Route path="/projects/:id" element={<ProjectDetail />} />
-                            <Route path="/projects/:id/preview" element={<ProjectPreview />} />
                             <Route
-                                path="/log-activity"
+                                path="/projects/:id"
                                 element={
-                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
+                                        <ProjectDetail />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/projects/:id/preview"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
+                                        <ProjectPreview />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/projects/:id/log-activity"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
                                         <LogActivity />
                                     </ProtectedRoute>
                                 }
                             />
+                            <Route path="/my-activities" element={<MyActivities />} />
                             <Route
-                                path="/activities"
+                                path="/submit-report"
                                 element={
-                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
-                                        <MyActivities />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/reports/new"
-                                element={
-                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT']}>
                                         <SubmitReport />
                                     </ProtectedRoute>
                                 }
                             />
+                            <Route path="/my-reports" element={<MyReports />} />
                             <Route
-                                path="/reports"
+                                path="/report-queue"
                                 element={
-                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
-                                        <MyReports />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/queue/:reportId"
-                                element={
-                                    <ProtectedRoute allowedRoles={['SECRETARY', 'RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
-                                        <ReportReview />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/queue"
-                                element={
-                                    <ProtectedRoute allowedRoles={['SECRETARY', 'RESEARCHER', 'STUDENT', 'DIVISION_HEAD']}>
+                                    <ProtectedRoute allowedRoles={['SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
                                         <ReportQueue />
                                     </ProtectedRoute>
                                 }
                             />
                             <Route
-                                path="/division"
+                                path="/report-review/:id"
                                 element={
-                                    <ProtectedRoute allowedRoles={['DIVISION_HEAD']}>
+                                    <ProtectedRoute allowedRoles={['SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
+                                        <ReportReview />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/reports/:id"
+                                element={
+                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT', 'SECRETARY', 'DIVISION_HEAD', 'MANAGEMENT']}>
+                                        <ReportDetail />
+                                    </ProtectedRoute>
+                                }
+                            />
+                            <Route
+                                path="/division-dashboard"
+                                element={
+                                    <ProtectedRoute allowedRoles={['DIVISION_HEAD', 'MANAGEMENT']}>
                                         <DivisionDashboard />
                                     </ProtectedRoute>
                                 }
                             />
                             <Route
-                                path="/executive"
+                                path="/executive-dashboard"
                                 element={
                                     <ProtectedRoute allowedRoles={['MANAGEMENT']}>
                                         <ExecutiveDashboard />
@@ -136,7 +146,7 @@ function App() {
                             <Route path="/publications" element={<Publications />} />
                             <Route path="/inbox" element={<Inbox />} />
                             <Route
-                                path="/users"
+                                path="/user-management"
                                 element={
                                     <ProtectedRoute allowedRoles={['ADMIN']}>
                                         <UserManagement />
@@ -151,15 +161,7 @@ function App() {
                                     </ProtectedRoute>
                                 }
                             />
-                            <Route
-                                path="/"
-                                element={
-                                    <ProtectedRoute allowedRoles={['RESEARCHER', 'STUDENT']}>
-                                        <Dashboard />
-                                    </ProtectedRoute>
-                                }
-                            />
-                        </Route>
+                        </Route>{/* <-- Closing tag added here */}
                     </Routes>
                 </ErrorBoundary>
             </AuthProvider>
