@@ -12,6 +12,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ProjectDirectory = lazy(() => import('./pages/ProjectDirectory'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const ProjectPreview = lazy(() => import('./pages/ProjectPreview'));
+const NewProjectPage = lazy(() => import('./pages/NewProjectPage'));
 const LogActivity = lazy(() => import('./pages/LogActivity'));
 const MyActivities = lazy(() => import('./pages/MyActivities'));
 const SubmitReport = lazy(() => import('./pages/SubmitReport'));
@@ -64,6 +65,7 @@ function App() {
                                     </ProtectedRoute>
                                 }
                             />
+                            <Route path="/projects/new" element={<NewProjectPage />} />
                             <Route path="/projects/:id" element={<ProjectDetail />} />
                             <Route path="/projects/:id/preview" element={<ProjectPreview />} />
                             <Route
