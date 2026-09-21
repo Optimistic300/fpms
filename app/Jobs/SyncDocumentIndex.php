@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Document;
-use App\Services\TextExtractorService;
 use App\Services\Chunker;
+use App\Services\TextExtractorService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -17,13 +17,10 @@ use Illuminate\Support\Facades\DB;
 /**
  * Sync document index job.
  * 
- * This job is responsible for extracting text from a document, chunking it,
- * and storing the chunks in the database with null embeddings (to be filled
- * by the EmbedDocumentChunks job later).
- * 
- * It implements ShouldBeUnique to prevent overlapping jobs for the same document.
+ * This job extracts text from a document, chunks it, and stores the chunks
+ * in the database with null embeddings to be processed by EmbedDocumentChunks.
  */
-class SyncDocumentIndex implements ShouldQueue
+class SyncDocumentIndex implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -33,29 +30,15 @@ class SyncDocumentIndex implements ShouldQueue
     public Document $document;
 
     /**
-     * The text extractor service.
-     */
-    protected TextExtractorService $extractor;
-
-    /**
-     * The chunker service.
-     */
-    protected Chunker $chunker;
-
-    /**
      * Create a new job instance.
      */
-    public function __construct(Document $document, TextExtractorService $extractor, Chunker $chunker)
+    public function __construct(Document $document)
     {
         $this->document = $document;
-        $this->extractor = $extractor;
-        $this->chunker = $chunker;
     }
 
     /**
      * Get the unique job id for deduplication.
-     * 
-     * This ensures that only one SyncDocumentIndex job runs per document at a time.
      */
     public function uniqueId(): string
     {
@@ -63,22 +46,18 @@ class SyncDocumentIndex implements ShouldQueue
     }
 
     /**
-     * Determine if the job should be unique.
-     * 
-     * We want to prevent overlapping jobs for the same document.
+     * Lock duration for unique job prevention.
      */
     public function uniqueFor(): int
     {
-        // Wait until the job is finished before allowing another for the same document
         return 300;
     }
 
     /**
-     * Get the middleware to prevent overlapping jobs.
+     * Middleware to prevent overlapping executions.
      */
     public function middleware(): array
     {
-        // Prevent overlapping jobs for the same document
         return [
             (new WithoutOverlapping('document-' . $this->document->id))
                 ->releaseAfter(10)
@@ -89,22 +68,22 @@ class SyncDocumentIndex implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle(TextExtractorService $extractor, Chunker $chunker): void
     {
         // Refresh the document to get the latest state
         $doc = $this->document->fresh();
 
         if (! $doc) {
-            // Document was deleted before we could process it
             return;
         }
 
-        // Order matters: remove from search BEFORE deleting rows
-        // This ensures that we don't have stale index entries during the update
-        $doc->chunks()->unsearchable();
+        // Clean up previous chunks
+        if (method_exists($doc->chunks(), 'unsearchable')) {
+            $doc->chunks()->unsearchable();
+        }
         $doc->chunks()->delete();
 
-        // If the document is not published or not allowed for external AI, we're done
+        // If not published or external AI is disallowed, mark as not indexed and stop
         if (! $doc->published || ! $doc->allow_external_ai) {
             $doc->update([
                 'index_status' => 'not_indexed',
@@ -115,37 +94,33 @@ class SyncDocumentIndex implements ShouldQueue
         }
 
         try {
-            // Extract text from the document
-            $pages = $this->extractor->pages($doc); // Returns array of ['page' => ?int, 'locator' => ?string, 'text' => string]
+            // Extract text pages
+            $pages = $extractor->pages($doc);
 
-            // Detect if the document is scanned/image-only (needs OCR)
+            // Detect scanned / image-only PDFs
             $emptyPages = collect($pages)->filter(function ($p) {
-                return mb_strlen(trim($p['text'])) < 20; // Consider a page empty if it has less than 20 characters
+                return mb_strlen(trim($p['text'] ?? '')) < 20;
             })->count();
 
             $totalPages = count($pages);
 
             if ($totalPages === 0 || ($emptyPages / $totalPages) > 0.3) {
-                // More than 30% of pages are nearly empty - flag for OCR
                 $doc->update([
                     'index_status' => 'needs_ocr',
                     'index_error' => null,
                 ]);
 
-                // Dispatch OCR job (we'll assume this exists and will re-dispatch SyncDocumentIndex on success)
                 // OcrDocument::dispatch($doc)->onQueue('ocr');
                 return;
             }
 
-            // Prepare chunk data for insertion
+            // Prepare chunk rows
             $rows = [];
             $chunkIndex = 0;
 
             foreach ($pages as $page) {
                 $cleanText = trim(preg_replace('/\s+/u', ' ', $page['text']));
-
-                // Split the text into chunks
-                $chunks = $this->chunker->split($cleanText);
+                $chunks = $chunker->split($cleanText);
 
                 foreach ($chunks as $chunk) {
                     $rows[] = [
@@ -156,34 +131,40 @@ class SyncDocumentIndex implements ShouldQueue
                         'content'     => $chunk,
                         'created_at'  => now(),
                         'updated_at'  => now(),
-                        'embedding'   => null, // Will be filled by EmbedDocumentChunks job
-                        'embedding_model' => null, // Will be filled by EmbedDocumentChunks job
+                        'embedding'   => null,
+                        'embedding_model' => null,
                     ];
                 }
             }
 
-            // Insert the chunks in a transaction
+            // Batch insert chunks inside a transaction
             if (! empty($rows)) {
                 DB::transaction(function () use ($rows, $doc) {
-                    DB::table('document_chunks')->insert($rows);
+                    // Chunk inserts to avoid SQL placeholder limits
+                    foreach (array_chunk($rows, 100) as $batch) {
+                        DB::table('document_chunks')->insert($batch);
+                    }
 
-                    // Mark chunks as searchable (this would trigger Scout if we were using it, but we're not)
-                    // Instead, we'll update the index status to pending_embedding to signal that embeddings are needed
-                    $doc->update(['index_status' => 'pending_embedding']);
+                    $doc->update([
+                        'index_status' => 'pending_embedding',
+                        'index_error'  => null,
+                    ]);
                 });
-            }
 
-            // If we successfully inserted chunks, mark as pending_embedding
-            // (the transaction above already updated the status, but we do it again for clarity)
-            $doc->update(['index_status' => 'pending_embedding']);
+                // Dispatch the embedding job
+                EmbedDocumentChunks::dispatch($doc);
+            } else {
+                $doc->update([
+                    'index_status' => 'not_indexed',
+                    'index_error'  => 'No text content found to chunk.',
+                ]);
+            }
         } catch (\Throwable $e) {
-            // If something goes wrong, mark the document as failed
             $doc->update([
                 'index_status' => 'failed',
-                'index_error' => $e->getMessage(),
+                'index_error'  => substr($e->getMessage(), 0, 255),
             ]);
 
-            // Re-throw to let the queue handle retries
             throw $e;
         }
     }
@@ -193,10 +174,9 @@ class SyncDocumentIndex implements ShouldQueue
      */
     public function failed(\Throwable $e): void
     {
-        // Update the document to reflect the failure
-        $this->document->update([
+        $this->document->fresh()?->update([
             'index_status' => 'failed',
-            'index_error' => substr($e->getMessage(), 0, 255), // Truncate to fit in text column if needed
+            'index_error'  => substr($e->getMessage(), 0, 255),
         ]);
     }
 }

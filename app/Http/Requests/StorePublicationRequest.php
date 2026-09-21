@@ -19,7 +19,10 @@ class StorePublicationRequest extends ApiRequest
             'journal_name' => 'nullable|string|max:255',
             'linked_project_id' => 'nullable|exists:projects,id',
             'doi' => 'nullable|string|max:255',
-            'manuscript_file' => 'nullable|string',
+            
+            //  Change from 'string' / 'array' to 'file'
+            'manuscript_file' => 'nullable|file|mimes:pdf,doc,docx|max:20480', 
+
             'student_name' => 'nullable|string|max:255',
             'supervisor' => 'nullable|string|max:255',
             'degree_programme' => 'nullable|string|max:255',

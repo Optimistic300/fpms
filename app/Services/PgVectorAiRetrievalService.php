@@ -21,6 +21,7 @@ class PgVectorAiRetrievalService implements AiRetrievalInterface
 
     public function query(string $query, array $conversationHistory = []): AiQueryResult
     {
+        
         try {
             // Log the incoming request
             Log::info('PgVectorAiRetrievalService: Processing query', [

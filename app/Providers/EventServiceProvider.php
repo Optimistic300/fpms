@@ -19,6 +19,8 @@ use App\Listeners\SendProjectMemberNotification;
 use App\Listeners\SendReportSubmittedNotification;
 use App\Listeners\SendReportStatusChangedNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use App\Events\PublicationCreated;
+use App\Listeners\IndexPublicationInSearch;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -46,6 +48,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ActivityLogged::class => [
             NotifyProjectMembersOnActivity::class,
+        ],
+        PublicationCreated::class => [
+            IndexPublicationInSearch::class,
         ],
     ];
 

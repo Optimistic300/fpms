@@ -7,13 +7,14 @@ use App\Services\Extractors\PdfExtractor;
 use App\Services\Extractors\XlsxExtractor;
 use App\Models\Document;
 use Illuminate\Support\Str;
+use \App\Contracts\TextExtractor;
 
 /**
  * Text Extractor service.
  * 
  * This service selects the appropriate extractor based on the document's MIME type or file extension.
  */
-class TextExtractorService implements \App\Contracts\TextExtractor
+class TextExtractorService implements TextExtractor
 {
     /**
      * The extractors indexed by MIME type.

@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Publication extends Model
 {
-    /** @use HasFactory<\Database\Factories\PublicationFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -34,6 +34,14 @@ class Publication extends Model
             'submission_date' => 'date',
             'revision_due_date' => 'date',
         ];
+    }
+
+    /**
+     * All documents (manuscript + supplementary files) linked to this publication.
+     */
+    public function documents(): BelongsToMany
+    {
+        return $this->belongsToMany(Document::class);
     }
 
     public function linkedProject(): BelongsTo

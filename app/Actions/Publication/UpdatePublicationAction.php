@@ -13,7 +13,8 @@ class UpdatePublicationAction
             if ($publication->manuscript_file_path) {
                 $this->deleteFile($publication->manuscript_file_path);
             }
-            $data['manuscript_file_path'] = $this->storeBase64File($data['manuscript_file']);
+            $base64 = is_array($data['manuscript_file']) ? ($data['manuscript_file']['content'] ?? $data['manuscript_file']['data'] ?? '') : $data['manuscript_file'];
+            $data['manuscript_file_path'] = $this->storeBase64File($base64);
         }
         unset($data['manuscript_file']);
 
@@ -30,7 +31,11 @@ class UpdatePublicationAction
 
     private function storeBase64File(string $base64): string
     {
-        $decoded = base64_decode($base64);
+        $decoded = base64_decode(preg_replace('#^data:[^;]+;base64,#', '', $base64));
+        // enforce size limit 50MB
+        if (strlen($decoded) > 50 * 1024 * 1024) {
+            throw new \Exception('Manuscript exceeds 50MB limit.');
+        }
         $filename = 'publications/' . uniqid() . '.pdf';
         $path = storage_path('app/public/' . $filename);
 
