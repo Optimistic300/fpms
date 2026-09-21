@@ -9,6 +9,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/projects', [ProjectController::class, 'store']);
     Route::get('/projects/{project}', [ProjectController::class, 'show']);
     Route::put('/projects/{project}', [ProjectController::class, 'update']);
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy']);
     Route::get('/projects/{project}/members', [ProjectController::class, 'members']);
     Route::post('/projects/{project}/members', [ProjectController::class, 'addMember']);
     Route::post('/projects/{project}/access-requests', [ProjectController::class, 'requestAccess']);

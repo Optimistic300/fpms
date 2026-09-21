@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\Project\AddMemberAction;
 use App\Actions\Project\CreateProjectAction;
+use App\Actions\Project\DeleteProjectAction;
 use App\Actions\Project\ListProjectsAction;
 use App\Actions\Project\RequestAccessAction;
 use App\Actions\Project\ShowProjectAction;
@@ -120,5 +121,16 @@ class ProjectController extends Controller
         return response()->json([
             'message' => 'Access request sent.',
         ], 201);
+    }
+
+    public function destroy(Project $project, DeleteProjectAction $action): JsonResponse
+    {
+        $this->authorize('delete', $project);
+
+        $action->execute($project);
+
+        return response()->json([
+            'message' => 'Project deleted.',
+        ]);
     }
 }

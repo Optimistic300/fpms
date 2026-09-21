@@ -53,7 +53,10 @@ class ProjectPolicy
 
     public function delete(User $user, Project $project): bool
     {
-        return $this->isOwner($user, $project);
+        // TEMPORARY: anyone can delete a project for now. Later, deletion
+        // should become a request that the project's team lead must approve
+        // before it actually happens, rather than an immediate action.
+        return true;
     }
 
     public function manageMembers(User $user, Project $project): bool

@@ -32,6 +32,7 @@ export default function ProjectDetail() {
     const [activeTab, setActiveTab] = useState('activities');
     const [showEditModal, setShowEditModal] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -54,6 +55,22 @@ export default function ProjectDetail() {
 
     function handleProjectUpdated(updated) {
         setProject(updated);
+    }
+
+    async function handleDelete() {
+        const confirmed = window.confirm(
+            `Delete "${project.title}"? This permanently removes the project along with all of its activities, documents, and reports. This cannot be undone.`
+        );
+        if (!confirmed) return;
+
+        setDeleting(true);
+        try {
+            await apiClient.delete(`/projects/${id}`);
+            navigate('/projects', { replace: true });
+        } catch (err) {
+            setError(err.response?.data?.message || 'Failed to delete project.');
+            setDeleting(false);
+        }
     }
 
     if (loading) {
@@ -159,46 +176,69 @@ export default function ProjectDetail() {
                                     {project.status}
                                 </span>
                             </div>
-                            {project.isOwner && (
-                                <div style={{ display: 'flex', gap: '8px' }}>
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowEditModal(true)}
-                                        style={{
-                                            padding: '8px 16px',
-                                            fontSize: '13px',
-                                            fontWeight: 600,
-                                            color: '#475569',
-                                            backgroundColor: 'white',
-                                            border: '1px solid #e2e8f0',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontFamily: 'inherit',
-                                        }}
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            navigate(`/log-activity?projectId=${id}`)
-                                        }
-                                        style={{
-                                            padding: '8px 16px',
-                                            fontSize: '13px',
-                                            fontWeight: 600,
-                                            color: 'white',
-                                            backgroundColor: '#2563eb',
-                                            border: 'none',
-                                            borderRadius: '6px',
-                                            cursor: 'pointer',
-                                            fontFamily: 'inherit',
-                                        }}
-                                    >
-                                        Log Activity
-                                    </button>
-                                </div>
-                            )}
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                {project.isOwner && (
+                                    <>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowEditModal(true)}
+                                            style={{
+                                                padding: '8px 16px',
+                                                fontSize: '13px',
+                                                fontWeight: 600,
+                                                color: '#475569',
+                                                backgroundColor: 'white',
+                                                border: '1px solid #e2e8f0',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontFamily: 'inherit',
+                                            }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                navigate(`/log-activity?projectId=${id}`)
+                                            }
+                                            style={{
+                                                padding: '8px 16px',
+                                                fontSize: '13px',
+                                                fontWeight: 600,
+                                                color: 'white',
+                                                backgroundColor: '#2563eb',
+                                                border: 'none',
+                                                borderRadius: '6px',
+                                                cursor: 'pointer',
+                                                fontFamily: 'inherit',
+                                            }}
+                                        >
+                                            Log Activity
+                                        </button>
+                                    </>
+                                )}
+                                {/* TEMPORARY: anyone can delete for now. Later, this
+                                    should become a request that the project's team
+                                    lead must approve before deletion actually happens. */}
+                                <button
+                                    type="button"
+                                    onClick={handleDelete}
+                                    disabled={deleting}
+                                    style={{
+                                        padding: '8px 16px',
+                                        fontSize: '13px',
+                                        fontWeight: 600,
+                                        color: '#dc2626',
+                                        backgroundColor: 'white',
+                                        border: '1px solid #fecaca',
+                                        borderRadius: '6px',
+                                        cursor: deleting ? 'not-allowed' : 'pointer',
+                                        fontFamily: 'inherit',
+                                    }}
+                                >
+                                    {deleting ? 'Deleting...' : 'Delete'}
+                                </button>
+                            </div>
                         </div>
 
                         <div
