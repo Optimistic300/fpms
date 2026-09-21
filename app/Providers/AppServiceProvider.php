@@ -4,9 +4,12 @@ namespace App\Providers;
 
 use App\Contracts\AiRetrievalInterface;
 use App\Contracts\FileStorageInterface;
+use App\Contracts\LlmClient;
 use App\Contracts\ReportRepositoryInterface;
 use App\Services\AiAssistantService;
 use App\Services\FileStorageService;
+use App\Services\GeminiClient;
+use App\Services\PgVectorAiRetrievalService;
 use App\Repositories\ReportRepository;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -21,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(FileStorageInterface::class, FileStorageService::class);
         $this->app->bind(AiRetrievalInterface::class, PgVectorAiRetrievalService::class);
-        $this->app->bind(LlmClient::class, \App\Services\GeminiClient::class);
+        $this->app->bind(LlmClient::class, GeminiClient::class);
         $this->app->bind(ReportRepositoryInterface::class, ReportRepository::class);
     }
 
