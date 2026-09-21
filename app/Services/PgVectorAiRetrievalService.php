@@ -54,7 +54,10 @@ class PgVectorAiRetrievalService implements AiRetrievalInterface
                 followUpPrompts: ['Browse the library', 'Try different terms'],
             );
         } catch (\Throwable $e) {
-            // Log the error in a real implementation
+            \Illuminate\Support\Facades\Log::channel('stderr')->error(
+                $e->getMessage(),
+                ['exception' => get_class($e), 'trace' => $e->getTraceAsString()]
+            );
             throw new LlmUnavailable('The assistant took too long to respond. Please try again.');
         }
     }
