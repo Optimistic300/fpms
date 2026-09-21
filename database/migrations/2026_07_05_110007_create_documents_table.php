@@ -20,8 +20,6 @@ return new class extends Migration
             $table->string('type');
             $table->boolean('published')->default(false);
             $table->timestamps();
-
-            $table->fullText('filename');
         });
     }
 
