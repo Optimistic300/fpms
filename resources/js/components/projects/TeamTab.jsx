@@ -55,8 +55,8 @@ export default function TeamTab({ projectId, selected }) {
                         padding: '8px 16px',
                         fontSize: '13px',
                         fontWeight: 600,
-                        color: '#2563eb',
-                        backgroundColor: '#dbeafe',
+                        color: 'var(--color-primary)',
+                        backgroundColor: 'var(--color-primary-bg)',
                         border: 'none',
                         borderRadius: '6px',
                         cursor: 'pointer',
@@ -92,8 +92,8 @@ export default function TeamTab({ projectId, selected }) {
                         padding: '8px 16px',
                         fontSize: '13px',
                         fontWeight: 600,
-                        color: '#2563eb',
-                        backgroundColor: '#dbeafe',
+                        color: 'var(--color-primary)',
+                        backgroundColor: 'var(--color-primary-bg)',
                         border: 'none',
                         borderRadius: '6px',
                         cursor: 'pointer',
@@ -146,10 +146,10 @@ export default function TeamTab({ projectId, selected }) {
                             fontWeight: 600,
                             color:
                                 member.role === 'LEAD'
-                                    ? '#1e40af'
+                                    ? 'var(--color-primary-dark)'
                                     : '#065f46',
                             backgroundColor:
-                                member.role === 'LEAD' ? '#dbeafe' : '#d1fae5',
+                                member.role === 'LEAD' ? 'var(--color-primary-bg)' : '#d1fae5',
                             padding: '2px 8px',
                             borderRadius: '4px',
                         }}

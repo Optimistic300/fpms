@@ -110,7 +110,7 @@ export default function Publications() {
 
     const addBtnStyle = {
         padding: '9px 20px', fontSize: '14px', fontWeight: 600,
-        color: 'white', backgroundColor: '#2563eb', border: 'none',
+        color: 'white', backgroundColor: 'var(--color-primary)', border: 'none',
         borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit',
     };
 
@@ -140,9 +140,9 @@ export default function Publications() {
 
     const tabStyle = (isActive) => ({
         padding: '10px 16px', fontSize: '13px', fontWeight: 500,
-        color: isActive ? '#2563eb' : '#64748b',
+        color: isActive ? 'var(--color-primary)' : '#64748b',
         backgroundColor: 'transparent', border: 'none',
-        borderBottom: `2px solid ${isActive ? '#2563eb' : 'transparent'}`,
+        borderBottom: `2px solid ${isActive ? 'var(--color-primary)' : 'transparent'}`,
         cursor: 'pointer', fontFamily: 'inherit',
         marginBottom: '-2px',
     });
@@ -200,7 +200,7 @@ export default function Publications() {
             {!loading && !error && (
                 <>
                     <div style={statRowStyle}>
-                        <div style={statCardStyle('#3b82f6')}>
+                        <div style={statCardStyle('var(--color-primary-mid)')}>
                             <div style={statValueStyle}>{stats.total}</div>
                             <div style={statLabelStyle}>Total tracked</div>
                         </div>
@@ -212,7 +212,7 @@ export default function Publications() {
                             <div style={statValueStyle}>{stats.inProgress}</div>
                             <div style={statLabelStyle}>In progress</div>
                         </div>
-                        <div style={statCardStyle('#3b82f6')}>
+                        <div style={statCardStyle('var(--color-primary-mid)')}>
                             <div style={statValueStyle}>{stats.publishedThisYear}</div>
                             <div style={statLabelStyle}>Published this year</div>
                         </div>

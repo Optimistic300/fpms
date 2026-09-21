@@ -83,7 +83,7 @@ export default function ResetPassword() {
     const btnStyle = {
         width: '100%',
         padding: '10px',
-        backgroundColor: submitting ? '#93c5fd' : '#2563eb',
+        backgroundColor: submitting ? 'var(--color-primary-lighter)' : 'var(--color-primary)',
         color: 'white',
         border: 'none',
         borderRadius: '6px',
@@ -97,7 +97,7 @@ export default function ResetPassword() {
             <div style={cardStyle}>
                 {done ? (
                     <div style={{ textAlign: 'center' }}>
-                        <p style={{ fontSize: '16px', color: '#2563eb', marginBottom: '16px' }}>
+                        <p style={{ fontSize: '16px', color: 'var(--color-primary)', marginBottom: '16px' }}>
                             Password reset successful.
                         </p>
                         <p style={{ fontSize: '14px', color: '#718096', marginBottom: '24px' }}>
@@ -108,7 +108,7 @@ export default function ResetPassword() {
                             style={{
                                 display: 'inline-block',
                                 color: 'white',
-                                backgroundColor: '#2563eb',
+                                backgroundColor: 'var(--color-primary)',
                                 padding: '10px 24px',
                                 borderRadius: '6px',
                                 textDecoration: 'none',
@@ -182,7 +182,7 @@ export default function ResetPassword() {
                                 style={{
                                     background: 'none',
                                     border: 'none',
-                                    color: '#2563eb',
+                                    color: 'var(--color-primary)',
                                     cursor: 'pointer',
                                     fontSize: '14px',
                                     textDecoration: 'underline',

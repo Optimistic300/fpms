@@ -230,7 +230,7 @@ export default function AIPanel() {
                             <line x1="12" y1="17" x2="12.01" y2="17" />
                         </svg>
                         <div>
-                            <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#1a365d', margin: 0, lineHeight: 1.2 }}>
+                            <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-brand-dark)', margin: 0, lineHeight: 1.2 }}>
                                 Ask SKMS
                             </h2>
                             <p style={{ fontSize: '11px', color: '#718096', margin: 0, lineHeight: 1.3, maxWidth: '220px' }}>

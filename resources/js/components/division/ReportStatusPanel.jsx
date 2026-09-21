@@ -106,7 +106,7 @@ export default function ReportStatusPanel({ reports, loading, error, divisionId 
                     })}
                     <Link
                         to={`/reports?division=${divisionId}`}
-                        style={{ display: 'block', padding: '10px 20px', fontSize: '13px', fontWeight: 500, color: '#2563eb', textDecoration: 'none', textAlign: 'center', borderTop: '1px solid #f1f5f9' }}
+                        style={{ display: 'block', padding: '10px 20px', fontSize: '13px', fontWeight: 500, color: 'var(--color-primary)', textDecoration: 'none', textAlign: 'center', borderTop: '1px solid #f1f5f9' }}
                     >
                         All reports →
                     </Link>

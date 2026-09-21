@@ -272,8 +272,8 @@ export default function SubmitReport() {
                                     gap: '8px',
                                     padding: '8px 12px',
                                     borderRadius: '8px',
-                                    backgroundColor: isActive ? '#2563eb' : isCompleted ? '#dbeafe' : '#f1f5f9',
-                                    color: isActive ? 'white' : isCompleted ? '#2563eb' : '#94a3b8',
+                                    backgroundColor: isActive ? 'var(--color-primary)' : isCompleted ? 'var(--color-primary-bg)' : '#f1f5f9',
+                                    color: isActive ? 'white' : isCompleted ? 'var(--color-primary)' : '#94a3b8',
                                     fontSize: '13px',
                                     fontWeight: isActive || isCompleted ? 600 : 400,
                                     flex: 1,
@@ -289,7 +289,7 @@ export default function SubmitReport() {
                                         justifyContent: 'center',
                                         fontSize: '11px',
                                         fontWeight: 700,
-                                        backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : isCompleted ? '#2563eb' : '#e2e8f0',
+                                        backgroundColor: isActive ? 'rgba(255,255,255,0.2)' : isCompleted ? 'var(--color-primary)' : '#e2e8f0',
                                         color: isActive ? 'white' : isCompleted ? 'white' : '#94a3b8',
                                     }}
                                 >
@@ -302,7 +302,7 @@ export default function SubmitReport() {
                                     style={{
                                         width: '16px',
                                         height: '2px',
-                                        backgroundColor: isCompleted ? '#2563eb' : '#e2e8f0',
+                                        backgroundColor: isCompleted ? 'var(--color-primary)' : '#e2e8f0',
                                         margin: '0 2px',
                                     }}
                                 />
@@ -363,7 +363,7 @@ export default function SubmitReport() {
                                     style={{
                                         background: 'none',
                                         border: 'none',
-                                        color: '#2563eb',
+                                        color: 'var(--color-primary)',
                                         cursor: 'pointer',
                                         fontSize: '14px',
                                         fontFamily: 'inherit',
@@ -431,11 +431,11 @@ export default function SubmitReport() {
                                             gap: '6px',
                                             padding: '8px 14px',
                                             borderRadius: '6px',
-                                            border: `1px solid ${type === t ? '#2563eb' : '#e2e8f0'}`,
-                                            backgroundColor: type === t ? '#dbeafe' : 'white',
+                                            border: `1px solid ${type === t ? 'var(--color-primary)' : '#e2e8f0'}`,
+                                            backgroundColor: type === t ? 'var(--color-primary-bg)' : 'white',
                                             cursor: 'pointer',
                                             fontSize: '14px',
-                                            color: type === t ? '#1e40af' : '#475569',
+                                            color: type === t ? 'var(--color-primary-dark)' : '#475569',
                                             fontWeight: type === t ? 600 : 400,
                                         }}
                                     >
@@ -445,7 +445,7 @@ export default function SubmitReport() {
                                             value={t}
                                             checked={type === t}
                                             onChange={(e) => setType(e.target.value)}
-                                            style={{ accentColor: '#2563eb' }}
+                                            style={{ accentColor: 'var(--color-primary)' }}
                                         />
                                         {t === 'QUARTERLY' ? 'Quarterly' : t === 'MID_YEAR' ? 'Mid-year' : 'Annual'}
                                     </label>
@@ -617,7 +617,7 @@ export default function SubmitReport() {
                                             fontSize: '14px',
                                             fontWeight: 600,
                                             color: 'white',
-                                            backgroundColor: '#2563eb',
+                                            backgroundColor: 'var(--color-primary)',
                                             borderRadius: '6px',
                                             cursor: 'pointer',
                                             fontFamily: 'inherit',
@@ -778,7 +778,7 @@ export default function SubmitReport() {
                                 fontSize: '14px',
                                 fontWeight: 600,
                                 color: 'white',
-                                backgroundColor: '#2563eb',
+                                backgroundColor: 'var(--color-primary)',
                                 border: 'none',
                                 borderRadius: '6px',
                                 cursor: 'pointer',
@@ -797,7 +797,7 @@ export default function SubmitReport() {
                                 fontSize: '14px',
                                 fontWeight: 600,
                                 color: 'white',
-                                backgroundColor: submitting ? '#93c5fd' : '#2563eb',
+                                backgroundColor: submitting ? 'var(--color-primary-lighter)' : 'var(--color-primary)',
                                 border: 'none',
                                 borderRadius: '6px',
                                 cursor: submitting ? 'not-allowed' : 'pointer',

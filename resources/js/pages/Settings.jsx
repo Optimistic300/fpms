@@ -23,9 +23,9 @@ export default function Settings() {
 
     const tabStyle = (isActive) => ({
         padding: '10px 16px', fontSize: '13px', fontWeight: 500,
-        color: isActive ? '#2563eb' : '#64748b',
+        color: isActive ? 'var(--color-primary)' : '#64748b',
         backgroundColor: 'transparent', border: 'none',
-        borderBottom: `2px solid ${isActive ? '#2563eb' : 'transparent'}`,
+        borderBottom: `2px solid ${isActive ? 'var(--color-primary)' : 'transparent'}`,
         cursor: 'pointer', fontFamily: 'inherit',
         marginBottom: '-2px',
     });

@@ -116,7 +116,7 @@ export default function Login() {
     const btnStyle = {
         width: '100%',
         padding: '10px',
-        backgroundColor: '#2b6cb0',
+        backgroundColor: 'var(--color-primary)',
         color: 'white',
         border: 'none',
         borderRadius: '6px',
@@ -128,7 +128,7 @@ export default function Login() {
     const linkStyle = {
         background: 'none',
         border: 'none',
-        color: '#2b6cb0',
+        color: 'var(--color-primary)',
         cursor: 'pointer',
         fontSize: '14px',
         textDecoration: 'underline',
@@ -141,7 +141,7 @@ export default function Login() {
                 className="login-brand-panel"
                 style={{
                     flex: 1,
-                    background: 'linear-gradient(135deg, #1a365d 0%, #2d3748 100%)',
+                    background: 'linear-gradient(135deg, var(--color-brand-dark) 0%, var(--color-brand-darker) 100%)',
                     color: 'white',
                     display: 'flex',
                     flexDirection: 'column',

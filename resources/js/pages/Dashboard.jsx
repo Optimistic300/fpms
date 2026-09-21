@@ -472,8 +472,8 @@ const tableHeaderStyle = {
                                         fontSize: '13px',
                                         border: '1px solid #e2e8f0',
                                         borderRadius: '6px',
-                                        backgroundColor: statusFilter ? '#dbeafe' : '#f1f5f9',
-                                        color: statusFilter ? '#1e40af' : '#475569',
+                                        backgroundColor: statusFilter ? 'var(--color-primary-bg)' : '#f1f5f9',
+                                        color: statusFilter ? 'var(--color-primary-dark)' : '#475569',
                                         fontWeight: 500,
                                         outline: 'none',
                                         fontFamily: 'inherit',
@@ -492,8 +492,8 @@ const tableHeaderStyle = {
                                         padding: '8px 14px',
                                         fontSize: '13px',
                                         fontWeight: 500,
-                                        color: showAdvanced ? '#1e40af' : '#475569',
-                                        backgroundColor: showAdvanced ? '#dbeafe' : '#f1f5f9',
+                                        color: showAdvanced ? 'var(--color-primary-dark)' : '#475569',
+                                        backgroundColor: showAdvanced ? 'var(--color-primary-bg)' : '#f1f5f9',
                                         border: 'none',
                                         borderRadius: '6px',
                                         cursor: 'pointer',
@@ -593,7 +593,7 @@ const tableHeaderStyle = {
                                             fontSize: '14px',
                                             fontWeight: 600,
                                             color: 'white',
-                                            backgroundColor: '#2563eb',
+                                            backgroundColor: 'var(--color-primary)',
                                             borderRadius: '6px',
                                             textDecoration: 'none',
                                         }}
@@ -691,7 +691,7 @@ const tableHeaderStyle = {
                                                     (p.progress || 0) >= 80
                                                         ? '#22c55e'
                                                         : (p.progress || 0) >= 40
-                                                          ? '#3b82f6'
+                                                          ? 'var(--color-primary-mid)'
                                                           : '#f59e0b',
                                                 borderRadius: '3px',
                                                 transition: 'width 0.3s',
@@ -797,7 +797,7 @@ const tableHeaderStyle = {
                                     padding: '10px 20px',
                                     fontSize: '13px',
                                     fontWeight: 500,
-                                    color: '#2563eb',
+                                    color: 'var(--color-primary)',
                                     textDecoration: 'none',
                                     textAlign: 'center',
                                     borderTop: '1px solid #f1f5f9',
@@ -910,7 +910,7 @@ const tableHeaderStyle = {
                                     padding: '10px 20px',
                                     fontSize: '13px',
                                     fontWeight: 500,
-                                    color: '#2563eb',
+                                    color: 'var(--color-primary)',
                                     textDecoration: 'none',
                                     textAlign: 'center',
                                     borderTop: '1px solid #f1f5f9',

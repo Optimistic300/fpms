@@ -117,7 +117,7 @@ export default function ReportReview() {
                     <Link
                         to="/queue"
                         style={{
-                            color: '#2563eb',
+                            color: 'var(--color-primary)',
                             fontSize: '14px',
                             textDecoration: 'none',
                             fontWeight: 600,
@@ -165,7 +165,7 @@ export default function ReportReview() {
                 alignItems: 'center',
                 gap: '6px',
             }}>
-                <Link to="/queue" style={{ color: '#2563eb', textDecoration: 'none' }}>Report queue</Link>
+                <Link to="/queue" style={{ color: 'var(--color-primary)', textDecoration: 'none' }}>Report queue</Link>
                 <span>›</span>
                 <span style={{ color: '#64748b', fontWeight: 500 }}>{report.reportName || `Report #${report.id}`}</span>
             </div>
@@ -303,7 +303,7 @@ export default function ReportReview() {
                                     borderRadius: '6px',
                                     border: '1px solid #e2e8f0',
                                     backgroundColor: 'white',
-                                    color: '#2563eb',
+                                    color: 'var(--color-primary)',
                                     fontSize: '13px',
                                     fontWeight: 600,
                                     textDecoration: 'none',
@@ -371,7 +371,7 @@ export default function ReportReview() {
                                                 borderRadius: '4px',
                                                 border: '1px solid #e2e8f0',
                                                 backgroundColor: 'white',
-                                                color: '#2563eb',
+                                                color: 'var(--color-primary)',
                                                 fontSize: '12px',
                                                 fontWeight: 600,
                                                 textDecoration: 'none',

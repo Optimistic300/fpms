@@ -56,7 +56,7 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
                     disabled={!query.trim() || searching}
                     style={{
                         padding: '10px 20px', fontSize: '14px', fontWeight: 600,
-                        color: 'white', backgroundColor: !query.trim() ? '#a0aec0' : '#2b6cb0',
+                        color: 'white', backgroundColor: !query.trim() ? '#a0aec0' : 'var(--color-primary)',
                         border: 'none', borderRadius: '8px',
                         cursor: !query.trim() ? 'not-allowed' : 'pointer',
                     }}
@@ -104,7 +104,7 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
                             onClick={onOpenAiPanel}
                             style={{
                                 padding: '8px 16px', fontSize: '13px', fontWeight: 600,
-                                color: '#2b6cb0', backgroundColor: '#ebf4ff',
+                                color: 'var(--color-primary)', backgroundColor: '#ebf4ff',
                                 border: '1px solid #bee3f8', borderRadius: '6px',
                                 cursor: 'pointer', marginTop: '8px',
                             }}
@@ -132,7 +132,7 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                                 <span style={{
-                                    fontSize: '11px', fontWeight: 600, color: '#2b6cb0',
+                                    fontSize: '11px', fontWeight: 600, color: 'var(--color-primary)',
                                     backgroundColor: '#ebf4ff', padding: '2px 6px', borderRadius: '4px',
                                     textTransform: 'uppercase',
                                 }}>
@@ -202,7 +202,7 @@ export default function SearchPanel({ onPreview, onDownload, onForward, onOpenAi
 
 const actionBtnStyle = {
     padding: '6px 12px', fontSize: '12px', fontWeight: 500,
-    color: '#2b6cb0', backgroundColor: 'white',
+    color: 'var(--color-primary)', backgroundColor: 'white',
     border: '1px solid #e2e8f0', borderRadius: '6px',
     cursor: 'pointer',
 };

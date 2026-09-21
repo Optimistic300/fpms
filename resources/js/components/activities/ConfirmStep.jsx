@@ -19,7 +19,7 @@ export default function ConfirmStep({ formData, files, submitting, uploadProgres
         width: '100%', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden', marginTop: '4px',
     };
     const progressBarInner = (pct) => ({
-        width: `${pct}%`, height: '100%', backgroundColor: '#2563eb', borderRadius: '3px', transition: 'width 0.3s',
+        width: `${pct}%`, height: '100%', backgroundColor: 'var(--color-primary)', borderRadius: '3px', transition: 'width 0.3s',
     });
 
     return (

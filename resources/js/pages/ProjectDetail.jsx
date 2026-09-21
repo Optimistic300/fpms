@@ -10,7 +10,7 @@ import AddMemberModal from '../components/projects/AddMemberModal';
 
 const statusBadge = {
     PROPOSED: { bg: '#fef3c7', color: '#92400e' },
-    ACTIVE: { bg: '#dbeafe', color: '#1e40af' },
+    ACTIVE: { bg: 'var(--color-primary-bg)', color: 'var(--color-primary-dark)' },
     COMPLETED: { bg: '#d1fae5', color: '#065f46' },
     ARCHIVED: { bg: '#f1f5f9', color: '#475569' },
 };
@@ -116,7 +116,7 @@ export default function ProjectDetail() {
             >
                 <Link
                     to="/projects"
-                    style={{ color: '#2563eb', textDecoration: 'none' }}
+                    style={{ color: 'var(--color-primary)', textDecoration: 'none' }}
                 >
                     Projects
                 </Link>
@@ -206,7 +206,7 @@ export default function ProjectDetail() {
                                                 fontSize: '13px',
                                                 fontWeight: 600,
                                                 color: 'white',
-                                                backgroundColor: '#2563eb',
+                                                backgroundColor: 'var(--color-primary)',
                                                 border: 'none',
                                                 borderRadius: '6px',
                                                 cursor: 'pointer',
@@ -301,7 +301,7 @@ export default function ProjectDetail() {
                                         height: '100%',
                                         width: `${Math.min(progress, 100)}%`,
                                         backgroundColor:
-                                            progress === 100 ? '#10b981' : '#2563eb',
+                                            progress === 100 ? '#10b981' : 'var(--color-primary)',
                                         borderRadius: '4px',
                                         transition: 'width 0.3s',
                                     }}
@@ -335,12 +335,12 @@ export default function ProjectDetail() {
                                         padding: '12px 20px',
                                         fontSize: '14px',
                                         fontWeight: activeTab === tab.key ? 600 : 500,
-                                        color: activeTab === tab.key ? '#1e40af' : '#64748b',
+                                        color: activeTab === tab.key ? 'var(--color-primary-dark)' : '#64748b',
                                         backgroundColor: 'transparent',
                                         border: 'none',
                                         borderBottom:
                                             activeTab === tab.key
-                                                ? '2px solid #2563eb'
+                                                ? '2px solid var(--color-primary)'
                                                 : '2px solid transparent',
                                         cursor: 'pointer',
                                         fontFamily: 'inherit',
@@ -502,7 +502,7 @@ export default function ProjectDetail() {
                                                     fontSize: '14px',
                                                     cursor: 'pointer',
                                                     padding: '2px',
-                                                    color: '#2563eb',
+                                                    color: 'var(--color-primary)',
                                                 }}
                                                 title="Download"
                                                 aria-label="Download"
@@ -526,7 +526,7 @@ export default function ProjectDetail() {
                                     fontSize: '13px',
                                     fontWeight: 600,
                                     color: 'white',
-                                    backgroundColor: '#2563eb',
+                                    backgroundColor: 'var(--color-primary)',
                                     border: 'none',
                                     borderRadius: '6px',
                                     cursor: 'pointer',

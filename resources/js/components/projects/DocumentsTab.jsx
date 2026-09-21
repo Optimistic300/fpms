@@ -72,8 +72,8 @@ export default function DocumentsTab({ projectId, selected }) {
                             style={{
                                 fontSize: '11px',
                                 fontWeight: 600,
-                                color: '#1e40af',
-                                backgroundColor: '#dbeafe',
+                                color: 'var(--color-primary-dark)',
+                                backgroundColor: 'var(--color-primary-bg)',
                                 padding: '2px 8px',
                                 borderRadius: '4px',
                                 textTransform: 'uppercase',

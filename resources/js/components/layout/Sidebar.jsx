@@ -24,9 +24,9 @@ export default function Sidebar({ isOpen, onClose }) {
 
     const activeStyle = {
         backgroundColor: 'white',
-        color: '#1a365d',
+        color: 'var(--color-brand-dark)',
         fontWeight: 700,
-        borderLeft: '3px solid #2b6cb0',
+        borderLeft: '3px solid var(--color-primary)',
         paddingLeft: '13px',
     };
 

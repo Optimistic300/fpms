@@ -172,7 +172,7 @@ export default function AddPublicationModal({ isOpen, onClose, onCreated }) {
 
                     <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
                         <button type="button" onClick={onClose} style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 500, color: '#475569', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
-                        <button type="submit" disabled={submitting} style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 600, color: 'white', backgroundColor: submitting ? '#93c5fd' : '#2563eb', border: 'none', borderRadius: '6px', cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'inherit' }}>{submitting ? 'Saving...' : 'Create Publication'}</button>
+                        <button type="submit" disabled={submitting} style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 600, color: 'white', backgroundColor: submitting ? 'var(--color-primary-lighter)' : 'var(--color-primary)', border: 'none', borderRadius: '6px', cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'inherit' }}>{submitting ? 'Saving...' : 'Create Publication'}</button>
                     </div>
                 </form>
             </div>

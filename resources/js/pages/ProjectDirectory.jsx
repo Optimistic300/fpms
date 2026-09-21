@@ -6,7 +6,7 @@ import NewProjectModal from '../components/projects/NewProjectModal';
 
 const statusBadge = {
     PROPOSED: { bg: '#fef3c7', color: '#92400e' },
-    ACTIVE: { bg: '#dbeafe', color: '#1e40af' },
+    ACTIVE: { bg: 'var(--color-primary-bg)', color: 'var(--color-primary-dark)' },
     COMPLETED: { bg: '#d1fae5', color: '#065f46' },
     ARCHIVED: { bg: '#f1f5f9', color: '#475569' },
 };
@@ -181,7 +181,7 @@ export default function ProjectDirectory() {
                         fontSize: '14px',
                         fontWeight: 600,
                         color: 'white',
-                        backgroundColor: '#2563eb',
+                        backgroundColor: 'var(--color-primary)',
                         border: 'none',
                         borderRadius: '6px',
                         cursor: 'pointer',
@@ -210,10 +210,10 @@ export default function ProjectDirectory() {
                             padding: '10px 20px',
                             fontSize: '14px',
                             fontWeight: activeTab === tab.key ? 600 : 500,
-                            color: activeTab === tab.key ? '#1e40af' : '#64748b',
+                            color: activeTab === tab.key ? 'var(--color-primary-dark)' : '#64748b',
                             backgroundColor: 'transparent',
                             border: 'none',
-                            borderBottom: activeTab === tab.key ? '2px solid #2563eb' : '2px solid transparent',
+                            borderBottom: activeTab === tab.key ? '2px solid var(--color-primary)' : '2px solid transparent',
                             cursor: 'pointer',
                             fontFamily: 'inherit',
                             transition: 'all 0.15s',
@@ -381,8 +381,8 @@ export default function ProjectDirectory() {
                                             style={{
                                                 fontSize: '11px',
                                                 fontWeight: 600,
-                                                color: '#1e40af',
-                                                backgroundColor: '#dbeafe',
+                                                color: 'var(--color-primary-dark)',
+                                                backgroundColor: 'var(--color-primary-bg)',
                                                 padding: '1px 6px',
                                                 borderRadius: '4px',
                                                 whiteSpace: 'nowrap',

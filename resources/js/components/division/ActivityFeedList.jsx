@@ -101,7 +101,7 @@ export default function ActivityFeedList({ activities, loading, error }) {
                             {a.link && (
                                 <Link
                                     to={a.link}
-                                    style={{ fontSize: '12px', color: '#2563eb', textDecoration: 'none', flexShrink: 0, marginTop: '2px' }}
+                                    style={{ fontSize: '12px', color: 'var(--color-primary)', textDecoration: 'none', flexShrink: 0, marginTop: '2px' }}
                                 >
                                     View
                                 </Link>
@@ -110,7 +110,7 @@ export default function ActivityFeedList({ activities, loading, error }) {
                     ))}
                     <Link
                         to={`/activities`}
-                        style={{ display: 'block', padding: '10px 20px', fontSize: '13px', fontWeight: 500, color: '#2563eb', textDecoration: 'none', textAlign: 'center', borderTop: '1px solid #f1f5f9' }}
+                        style={{ display: 'block', padding: '10px 20px', fontSize: '13px', fontWeight: 500, color: 'var(--color-primary)', textDecoration: 'none', textAlign: 'center', borderTop: '1px solid #f1f5f9' }}
                     >
                         View all →
                     </Link>

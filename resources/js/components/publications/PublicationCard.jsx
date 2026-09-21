@@ -132,7 +132,7 @@ export default function PublicationCard({ publication, onEdit, onDelete, user })
                         href={`https://doi.org/${publication.doi}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={btnStyle('#2563eb', '#eff6ff')}
+                        style={btnStyle('var(--color-primary)', '#eff6ff')}
                     >
                         DOI
                     </a>
@@ -162,7 +162,7 @@ export default function PublicationCard({ publication, onEdit, onDelete, user })
                     <button
                         type="button"
                         onClick={() => onEdit(publication)}
-                        style={btnStyle('#2563eb', '#eff6ff')}
+                        style={btnStyle('var(--color-primary)', '#eff6ff')}
                     >
                         {isDraft ? 'Update Record' : 'Edit Record'}
                     </button>

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 function statusBadgeColor(status) {
     const map = {
         PROPOSED: { bg: '#fef3c7', color: '#92400e' },
-        ACTIVE: { bg: '#dbeafe', color: '#1e40af' },
+        ACTIVE: { bg: 'var(--color-primary-bg)', color: 'var(--color-primary-dark)' },
         COMPLETED: { bg: '#d1fae5', color: '#065f46' },
         ARCHIVED: { bg: '#f1f5f9', color: '#475569' },
     };
@@ -106,7 +106,7 @@ export default function DivisionProjectsTable({ projects, loading, error, divisi
                             </div>
                             <div style={{ width: '120px' }}>
                                 <div style={{ height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-                                    <div style={{ height: '100%', width: `${p.progress || 0}%`, backgroundColor: (p.progress || 0) >= 80 ? '#22c55e' : (p.progress || 0) >= 40 ? '#3b82f6' : '#f59e0b', borderRadius: '3px', transition: 'width 0.3s' }} />
+                                    <div style={{ height: '100%', width: `${p.progress || 0}%`, backgroundColor: (p.progress || 0) >= 80 ? '#22c55e' : (p.progress || 0) >= 40 ? 'var(--color-primary-mid)' : '#f59e0b', borderRadius: '3px', transition: 'width 0.3s' }} />
                                 </div>
                                 <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px', textAlign: 'right' }}>{p.progress || 0}%</div>
                             </div>
@@ -114,7 +114,7 @@ export default function DivisionProjectsTable({ projects, loading, error, divisi
                     ))}
                     <Link
                         to={`/projects?division=${divisionId}`}
-                        style={{ display: 'block', padding: '10px 20px', fontSize: '13px', fontWeight: 500, color: '#2563eb', textDecoration: 'none', textAlign: 'center', borderTop: '1px solid #f1f5f9' }}
+                        style={{ display: 'block', padding: '10px 20px', fontSize: '13px', fontWeight: 500, color: 'var(--color-primary)', textDecoration: 'none', textAlign: 'center', borderTop: '1px solid #f1f5f9' }}
                     >
                         View all {projects.length} →
                     </Link>

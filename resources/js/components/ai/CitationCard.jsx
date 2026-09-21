@@ -38,7 +38,7 @@ export default function CitationCard({ citation, index, onClick }) {
                 {index}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#2d3748', marginBottom: '2px' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-brand-darker)', marginBottom: '2px' }}>
                     {citation.title}
                 </div>
                 <div style={{ fontSize: '11px', color: '#718096', lineHeight: 1.4 }}>

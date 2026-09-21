@@ -4,7 +4,7 @@ import apiClient from '../api/axios';
 
 const statusBadge = {
     PROPOSED: { bg: '#fef3c7', color: '#92400e' },
-    ACTIVE: { bg: '#dbeafe', color: '#1e40af' },
+    ACTIVE: { bg: 'var(--color-primary-bg)', color: 'var(--color-primary-dark)' },
     COMPLETED: { bg: '#d1fae5', color: '#065f46' },
     ARCHIVED: { bg: '#f1f5f9', color: '#475569' },
 };
@@ -237,8 +237,8 @@ export default function ProjectPreview() {
                             backgroundColor: requested
                                 ? '#94a3b8'
                                 : requesting
-                                  ? '#93c5fd'
-                                  : '#2563eb',
+                                  ? 'var(--color-primary-lighter)'
+                                  : 'var(--color-primary)',
                             border: 'none',
                             borderRadius: '8px',
                             cursor:

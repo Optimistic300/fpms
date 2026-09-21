@@ -42,7 +42,7 @@ export default function MessageBubble({ message, onCitationClick, onFollowUpClic
 
     const userStyle = {
         alignSelf: 'flex-end',
-        backgroundColor: '#2d3748',
+        backgroundColor: 'var(--color-brand-darker)',
         color: '#fff',
         borderTopRightRadius: '4px',
     };

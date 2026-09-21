@@ -321,7 +321,7 @@ export default function NewProjectModal({ isOpen, onClose, divisions = [] }) {
                                 fontSize: '14px',
                                 fontWeight: 600,
                                 color: 'white',
-                                backgroundColor: submitting ? '#93c5fd' : '#2563eb',
+                                backgroundColor: submitting ? 'var(--color-primary-lighter)' : 'var(--color-primary)',
                                 border: 'none',
                                 borderRadius: '6px',
                                 cursor: submitting ? 'not-allowed' : 'pointer',

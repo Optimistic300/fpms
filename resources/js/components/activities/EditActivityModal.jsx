@@ -93,7 +93,7 @@ export default function EditActivityModal({ isOpen, onClose, activity, onUpdated
                         <button type="button" onClick={onClose} disabled={submitting} style={{ padding: '9px 20px', fontSize: '14px', fontWeight: 500, color: '#475569', backgroundColor: 'white', border: '1px solid #e2e8f0', borderRadius: '6px', cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'inherit' }}>
                             Cancel
                         </button>
-                        <button type="submit" disabled={submitting} style={{ padding: '9px 20px', fontSize: '14px', fontWeight: 600, color: 'white', backgroundColor: submitting ? '#93c5fd' : '#2563eb', border: 'none', borderRadius: '6px', cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'inherit' }}>
+                        <button type="submit" disabled={submitting} style={{ padding: '9px 20px', fontSize: '14px', fontWeight: 600, color: 'white', backgroundColor: submitting ? 'var(--color-primary-lighter)' : 'var(--color-primary)', border: 'none', borderRadius: '6px', cursor: submitting ? 'not-allowed' : 'pointer', fontFamily: 'inherit' }}>
                             {submitting ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>

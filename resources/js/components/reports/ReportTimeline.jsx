@@ -2,7 +2,7 @@ export default function ReportTimeline({ history = [] }) {
     if (!history || history.length === 0) return null;
 
     const eventConfig = {
-        SUBMITTED: { label: 'Submitted', color: '#2563eb', bg: '#dbeafe' },
+        SUBMITTED: { label: 'Submitted', color: 'var(--color-primary)', bg: 'var(--color-primary-bg)' },
         RETURNED: { label: 'Returned with comments', color: '#dc2626', bg: '#fee2e2' },
         RESUBMITTED: { label: 'Resubmitted', color: '#7c3aed', bg: '#ede9fe' },
         APPROVED: { label: 'Approved', color: '#16a34a', bg: '#dcfce7' },
