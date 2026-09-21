@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../api/axios';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,6 +10,7 @@ export default function NewProjectPage() {
   const { user } = useAuth();
   const userDivision = user?.division;
 
+  const [divisions, setDivisions] = useState([]);
   const [form, setForm] = useState({
     title: '',
     divisionId: userDivision ? userDivision.id : '',
@@ -23,6 +24,19 @@ export default function NewProjectPage() {
   const [errors, setErrors] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState('');
+
+  // Fetch divisions from API on mount
+  useEffect(() => {
+    async function fetchDivisions() {
+      try {
+        const response = await apiClient.get('/divisions');
+        setDivisions(response.data.data);
+      } catch (err) {
+        console.error('Failed to fetch divisions:', err);
+      }
+    }
+    fetchDivisions();
+  }, []);
 
   function handleChange(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -57,7 +71,6 @@ export default function NewProjectPage() {
     setSubmitting(true);
     try {
       const response = await apiClient.post('/projects', form);
-      // Navigate to the new project detail page
       navigate(`/projects/${response.data.data.id}`);
     } catch (err) {
       if (err.response && err.response.data) {
@@ -109,15 +122,11 @@ export default function NewProjectPage() {
             }}
           >
             <option value="">Select a division</option>
-            {/* In a real app, we would fetch divisions from an API */}
-            {/* For now, we'll use a placeholder if the user has a division */}
-            {userDivision && (
-              <>
-                <option value={userDivision.id} key={userDivision.id}>
-                  {userDivision.name}
-                </option>
-              </>
-            )}
+            {divisions.map((division) => (
+              <option key={division.id} value={division.id}>
+                {division.name}
+              </option>
+            ))}
           </select>
           {errors?.divisionId && (
             <p style={{ color: '#ef4444', fontSize: '14px', marginTop: '4px' }}>

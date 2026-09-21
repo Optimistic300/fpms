@@ -74,7 +74,7 @@ export default function SubmitReport() {
         async function init() {
             try {
                 const projRes = await apiClient.get('/projects', {
-                    params: { owner: 'me', status: 'ACTIVE' },
+                    params: { owner: 'me',},
                 });
                 if (cancelled) return;
                 const projectList = projRes.data.data || [];
