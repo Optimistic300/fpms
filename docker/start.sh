@@ -6,6 +6,7 @@ chmod -R 777 /var/www/html/bootstrap/cache
 
 php artisan migrate --force
 php artisan db:seed --force
+php artisan ai:embed-documents || true
 
 php artisan config:cache
 php artisan route:cache
