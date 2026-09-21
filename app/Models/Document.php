@@ -2,16 +2,24 @@
 
 namespace App\Models;
 
+use App\Observers\DocumentObserver;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
+/**
+ * Document model.
+ */
 class Document extends Model
 {
-    /** @use HasFactory<\Database\Factories\DocumentFactory> */
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     */
     protected $fillable = [
         'project_id',
         'activity_id',
@@ -21,70 +29,87 @@ class Document extends Model
         'mime_type',
         'size',
         'type',
+        'title',
+        'author_name',
+        'division',
         'published',
+        'allow_external_ai',
         'index_status',
         'indexed_at',
         'index_error',
     ];
 
+    /**
+     * The attributes that should be cast.
+     */
     protected $casts = [
-        'size' => 'integer',
         'published' => 'boolean',
+        'allow_external_ai' => 'boolean',
         'indexed_at' => 'datetime',
+        'size' => 'integer',
     ];
 
-    // Valid index status values
-    const INDEX_STATUS_NOT_INDEXED = 'not_indexed';
-    const INDEX_STATUS_PENDING = 'pending';
-    const INDEX_STATUS_INDEXED = 'indexed';
-    const INDEX_STATUS_NEEDS_OCR = 'needs_ocr';
-    const INDEX_STATUS_FAILED = 'failed';
-
+    /**
+     * Get the project that owns the document.
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
+    /**
+     * Get the activity that owns the document.
+     */
     public function activity(): BelongsTo
     {
         return $this->belongsTo(Activity::class);
     }
 
-    public function uploader(): BelongsTo
+    /**
+     * Get the user that uploaded the document.
+     */
+    public function uploadedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'uploaded_by');
     }
 
-    public function texts(): HasMany
-    {
-        return $this->hasMany(DocumentText::class);
-    }
-
+    /**
+     * Get the chunks for the document.
+     */
     public function chunks(): HasMany
     {
         return $this->hasMany(DocumentChunk::class);
     }
 
-    // Scope for published documents
-    public function scopePublished($query)
+    /**
+     * Get the reports associated with the document.
+     */
+    public function reports(): BelongsToMany
     {
-        return $query->where('published', true);
+        return $this->belongsToMany(Report::class);
     }
 
-    // Validate index status
-    public static function validIndexStatuses(): array
+    /**
+     * Get the publications associated with the document.
+     */
+    public function publications(): BelongsToMany
     {
-        return [
-            self::INDEX_STATUS_NOT_INDEXED,
-            self::INDEX_STATUS_PENDING,
-            self::INDEX_STATUS_INDEXED,
-            self::INDEX_STATUS_NEEDS_OCR,
-            self::INDEX_STATUS_FAILED,
-        ];
+        return $this->belongsToMany(Publication::class);
     }
 
-    public function isValidIndexStatus($status): bool
+    /**
+     * Get the access requests for the document.
+     */
+    public function accessRequests(): HasMany
     {
-        return in_array($status, self::validIndexStatuses());
+        return $this->hasMany(AccessRequest::class);
+    }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::observe(DocumentObserver::class);
     }
 }

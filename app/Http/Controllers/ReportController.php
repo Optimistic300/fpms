@@ -64,6 +64,8 @@ class ReportController extends Controller
         ]);
     }
 
+    
+
     public function stats(Request $request): JsonResponse
     {
         $this->authorize('review', Report::class);

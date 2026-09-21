@@ -7,6 +7,14 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateReportStatusRequest extends ApiRequest
 {
+    /**
+     * Explicitly authorize request execution.
+     */
+    public function authorize(): bool
+    {
+        return true; // Delegation of authority is handled by ReportPolicy
+    }
+
     public function rules(): array
     {
         return [

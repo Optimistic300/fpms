@@ -28,37 +28,42 @@ export default function AddPublicationModal({ isOpen, onClose, onCreated }) {
 
         setSubmitting(true);
         try {
-            const payload = { ...form };
-            if (payload.linkedProjectId) {
-                payload.linkedProjectId = Number(payload.linkedProjectId);
-            } else {
-                delete payload.linkedProjectId;
+            const data = new FormData();
+
+            // 1. Map fields to snake_case expected by Laravel
+            data.append('title', form.title);
+            data.append('authors', form.authors);
+            data.append('type', form.type);
+            data.append('status', form.status);
+
+            if (form.journalName) {
+                data.append('journal_name', form.journalName);
             }
-            if (payload.status !== 'PUBLISHED') {
-                delete payload.doi;
+            if (form.linkedProjectId) {
+                data.append('linked_project_id', Number(form.linkedProjectId));
             }
-            if (payload.type !== 'STUDENT') {
-                delete payload.studentName;
-                delete payload.supervisor;
-                delete payload.degreeProgramme;
+            if (form.status === 'PUBLISHED' && form.doi) {
+                data.append('doi', form.doi);
+            }
+            if (form.type === 'STUDENT') {
+                if (form.studentName) data.append('student_name', form.studentName);
+                if (form.supervisor) data.append('supervisor', form.supervisor);
+                if (form.degreeProgramme) data.append('degree_programme', form.degreeProgramme);
             }
 
-            const data = new FormData();
-            Object.entries(payload).forEach(([key, val]) => {
-                if (val !== undefined && val !== null && val !== '') {
-                    data.append(key, val);
-                }
-            });
+            // 2. Append file with snake_case key
             if (file) {
-                data.append('manuscriptFile', file);
+                data.append('manuscript_file', file);
             }
 
             const res = await apiClient.post('/publications', data, {
-                headers: file ? { 'Content-Type': 'multipart/form-data' } : {},
+                headers: { 'Content-Type': 'multipart/form-data' },
             });
+
             const created = res.data?.data || res.data;
             onCreated(created);
             onClose();
+            
             setForm({
                 title: '', authors: '', type: 'PAPER', status: 'DRAFT',
                 journalName: '', linkedProjectId: '', doi: '',
