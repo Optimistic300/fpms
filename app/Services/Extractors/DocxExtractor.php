@@ -2,7 +2,7 @@
 
 namespace App\Services\Extractors;
 
-use App\Services\TextExtractor;
+use App\Contracts\TextExtractor;
 use PhpOffice\PhpWord\TemplateProcessor;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Exception\Exception;

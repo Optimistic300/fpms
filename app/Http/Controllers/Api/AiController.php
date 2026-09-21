@@ -65,13 +65,12 @@ class AiController extends Controller
 
             // Check if we have results
             if ($results->isEmpty()) {
-                // No results found - return canAnswer: false
                 Log::info('AI Controller: No results found, returning canAnswer: false');
                 return response()->json([
                     'query' => $request->input('query'),
-                    'standalone_query' => $request->input('query'), // In passages mode, no rewriting
+                    'standalone_query' => $request->input('query'),
                     'can_answer' => false,
-                    'answer' => null,
+                    'answer' => 'I could not find any relevant documents for your query.',
                     'citations' => [],
                     'notice' => config('ai.notice', 'This is an AI-powered feature. Responses may be inaccurate or incomplete.'),
                 ]);
@@ -82,9 +81,7 @@ class AiController extends Controller
             Log::info('AI Controller: AI mode is '.$mode);
 
             if ($mode === 'generative') {
-                // For now, we'll just return the passages since we don't have the LLM client implemented yet
-                // In a full implementation, we would call the LLM client to synthesize an answer
-                // For this implementation, we'll fall back to passages mode
+                // Fallback to passages mode until LLM integration is ready
                 Log::warning('AI Controller: Generative mode requested but falling back to passages (LLM not implemented)');
                 $mode = 'passages';
             }
@@ -92,7 +89,7 @@ class AiController extends Controller
             if ($mode === 'passages') {
                 // Format the results as passages with citations
                 Log::info('AI Controller: Formatting results as passages');
-                $citations = $results->map(function ($chunk, $key) {
+                $citations = $results->map(function ($chunk) {
                     return [
                         'id' => $chunk->id,
                         'document_id' => $chunk->document_id,
@@ -106,46 +103,40 @@ class AiController extends Controller
                         'document_type' => $chunk->file_type ?? null,
                         'score' => round((float) $chunk->combined_score, 4),
                     ];
-                });
+                })->values();
 
-                // Apply citation verification if enabled
-                if (config('ai.verify_quotes', true)) {
-                    // For now, we'll just return the citations as-is
-                    // In a full implementation, we would verify that the answer is supported by the citations
-                    // Since we're in passages mode and not generating an answer, verification is less critical
-                }
+                // Formulate answer from the top passage excerpt instead of returning null
+                $topCitation = $citations->first();
+                $answer = $topCitation['content'] ?? 'Found relevant legal citations in the library database.';
 
-                // Format the response according to the API spec
                 Log::info('AI Controller: Returning passages response with '.$citations->count().' citations');
                 return response()->json([
                     'query' => $request->input('query'),
-                    'standalone_query' => $request->input('query'), // No rewriting in passages mode
+                    'standalone_query' => $request->input('query'),
                     'can_answer' => true,
-                    'answer' => null, // In passages mode, we don't generate an answer
-                    'citations' => $citations->values()->all(),
+                    'answer' => $answer,
+                    'citations' => $citations->all(),
                     'notice' => config('ai.notice', 'This is an AI-powered feature. Responses may be inaccurate or incomplete.'),
                 ]);
             }
 
-            // Fallback (should not reach here)
+            // Fallback
             Log::warning('AI Controller: Reached fallback case, mode was: '.$mode);
             return response()->json([
                 'query' => $request->input('query'),
                 'standalone_query' => $request->input('query'),
                 'can_answer' => false,
-                'answer' => null,
+                'answer' => 'Unable to process the query mode.',
                 'citations' => [],
                 'notice' => config('ai.notice', 'This is an AI-powered feature. Responses may be inaccurate or incomplete.'),
             ], 500);
+
         } catch (\Throwable $e) {
-            // Log the error (in a real app, we'd use Laravel's logging)
             Log::error('AI Controller: Exception occurred', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
             
-            // For now, we'll return a 503 Service Unavailable as per the spec
-            // which indicates a temporary inability to process the request
             return response()->json([
                 'error' => 'AI service temporarily unavailable',
             ], 503);

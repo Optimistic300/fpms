@@ -135,6 +135,7 @@ class GeminiEmbedder implements EmbedderInterface
                     ]
                 ],
                 'taskType' => $taskType,
+                'outputDimensionality' => $this->dimension,
             ];
         }, $texts);
 
@@ -165,6 +166,34 @@ class GeminiEmbedder implements EmbedderInterface
             throw new \RuntimeException('Unexpected response format from Gemini API: ' . $response->body());
         }
 
-        return array_map(fn($emb) => $emb['values'] ?? [], $data['embeddings']);
+        
+        return array_map(fn ($emb) => $this->fit($emb['values'] ?? []), $data['embeddings']);
+    }
+
+
+    /**
+ * Ensure a vector matches the configured dimension.
+ *
+ * Gemini embeddings are truncatable, so if the API returns more values than we
+ * asked for, keep the first N and re-normalize to unit length.
+ */
+    protected function fit(array $v): array
+    {
+        $n = count($v);
+
+        if ($n < $this->dimension) {
+            throw new \RuntimeException(
+                "Gemini returned {$n} dimensions, expected {$this->dimension}"
+            );
+        }
+
+        if ($n === $this->dimension) {
+            return $v;
+        }
+
+        $v = array_slice($v, 0, $this->dimension);
+        $norm = sqrt(array_sum(array_map(fn ($x) => $x * $x, $v)));
+
+        return $norm > 0 ? array_map(fn ($x) => $x / $norm, $v) : $v;
     }
 }

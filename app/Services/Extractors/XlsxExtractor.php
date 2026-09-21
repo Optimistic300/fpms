@@ -2,7 +2,7 @@
 
 namespace App\Services\Extractors;
 
-use App\Services\TextExtractor;
+use App\Contracts\TextExtractor;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Exception\Exception as PhpSpreadsheetException;
 

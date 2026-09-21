@@ -2,7 +2,9 @@
 
 namespace App\Services\Extractors;
 
-use App\Services\TextExtractor;
+use App\Contracts\TextExtractor;
+use App\Models\Document;
+use Illuminate\Support\Facades\Storage;
 use Spatie\PdfToText\Pdf;
 
 /**
@@ -15,12 +17,15 @@ class PdfExtractor implements TextExtractor
     /**
      * Extract text from a PDF document, returning pages.
      * 
-     * @param \App\Models\Document $document
+     * @param Document $document
      * @return array<int, array{page: int|null, locator: string|null, text: string}>
      */
-    public function pages(\App\Models\Document $document): array
+    public function pages(Document $document): array
     {
-        $filePath = storage_path('app/' . $document->file_path);
+        // Resolve path via Storage facade or fallback to storage_path
+        $filePath = Storage::disk('public')->exists($document->file_path)
+            ? Storage::disk('public')->path($document->file_path)
+            : storage_path('app/' . $document->file_path);
 
         // Check if file exists
         if (! file_exists($filePath)) {
@@ -47,7 +52,6 @@ class PdfExtractor implements TextExtractor
             return $pages;
         } catch (\Throwable $e) {
             // If extraction fails, return an empty array (the calling job should handle this)
-            // In a production system, we might want to log the error and set a failed status
             return [];
         }
     }
