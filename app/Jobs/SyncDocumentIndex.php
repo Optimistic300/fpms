@@ -36,8 +36,7 @@ class SyncDocumentIndex implements ShouldQueue
             return;
         }
 
-        // Order matters: remove from search BEFORE deleting rows
-        $doc->chunks()->unsearchable();
+        // Scout isn't installed - just clear existing chunks, no search index to update.
         $doc->chunks()->delete();
 
         if (! $doc->published) {
@@ -82,7 +81,6 @@ class SyncDocumentIndex implements ShouldQueue
 
         DB::transaction(function () use ($rows, $doc) {
             DocumentChunk::insert($rows);
-            $doc->chunks()->searchable(); // Scout queues the sync to pgvector
             $doc->update([
                 'index_status' => 'indexed',
                 'indexed_at' => now(),

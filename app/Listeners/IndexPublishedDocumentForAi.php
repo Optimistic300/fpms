@@ -24,7 +24,7 @@ class IndexPublishedDocumentForAi implements ShouldQueue
                 'index_status' => 'pending'
             ], ['quiet' => true]); // Avoid re-triggering
 
-            SyncDocumentIndex::dispatch($document);
+            SyncDocumentIndex::dispatchSync($document);
         }
     }
 }

@@ -81,15 +81,18 @@ class PgVectorAiRetrievalService implements AiRetrievalInterface
         $vector = '[' . implode(',', $this->llmClient->embed($query)) . ']';
 
         $rows = DB::select(
-            "SELECT d.id as document_id, dt.content as content, d.filename, d.type,
-                    u.full_name as author_name, dv.name as division_name
+            "SELECT d.id as document_id,
+                    string_agg(dc.content, ' ' ORDER BY dc.chunk_index) as content,
+                    d.filename, d.type, u.full_name as author_name, dv.name as division_name,
+                    de.embedding as embedding
              FROM document_embeddings de
              JOIN documents d ON d.id = de.document_id
-             JOIN document_texts dt ON dt.document_id = d.id
+             JOIN document_chunks dc ON dc.document_id = d.id
              LEFT JOIN users u ON u.id = d.uploaded_by
              LEFT JOIN projects p ON p.id = d.project_id
              LEFT JOIN divisions dv ON dv.id = p.division_id
              WHERE d.published = true
+             GROUP BY d.id, d.filename, d.type, u.full_name, dv.name, de.embedding
              ORDER BY de.embedding <=> ?::vector
              LIMIT 6",
             [$vector]
