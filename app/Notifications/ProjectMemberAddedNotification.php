@@ -33,7 +33,7 @@ class ProjectMemberAddedNotification extends Notification
         return (new MailMessage)
             ->subject("You've been added to \"{$this->project->title}\"")
             ->line("You have been added as {$roleText} to the project \"{$this->project->title}\".")
-            ->line("Division: {$this->project->division->name}")
+            ->line("Division: " . ($this->project->division?->name ?? 'N/A'))
             ->action('View Project', url("/projects/{$this->project->id}"));
     }
 
