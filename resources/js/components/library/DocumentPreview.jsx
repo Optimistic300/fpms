@@ -1,3 +1,7 @@
+import { useState, useEffect } from 'react';
+import apiClient from '../../api/axios';
+import CommentsSection from '../shared/CommentsSection';
+
 export default function DocumentPreview({ document, onClose }) {
     const isPdf = document?.type === 'PDF' || document?.fileName?.endsWith('.pdf');
     const previewUrl = `/api/documents/${document.id}/preview`;
@@ -106,7 +110,32 @@ export default function DocumentPreview({ document, onClose }) {
                         </div>
                     )}
                 </div>
+                <div style={{ padding: '0 20px 20px' }}>
+                    <DocumentComments documentId={document.id} />
+                </div>
             </div>
         </div>
     );
+}
+
+function DocumentComments({ documentId }) {
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        apiClient
+            .get(`/documents/${documentId}/comments`)
+            .then((res) => setComments(res.data.data || []))
+            .catch(() => setComments([]))
+            .finally(() => setLoading(false));
+    }, [documentId]);
+
+    async function handleSubmitComment(body) {
+        const res = await apiClient.post(`/documents/${documentId}/comments`, { body });
+        setComments((prev) => [...prev, res.data.data]);
+    }
+
+    if (loading) return null;
+
+    return <CommentsSection comments={comments} onSubmitComment={handleSubmitComment} />;
 }

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from '../api/axios';
 import ReviewActions from '../components/reports/ReviewActions';
-import CommentsSection from '../components/reports/CommentsSection';
+import CommentsSection from '../components/shared/CommentsSection';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ReportReview() {

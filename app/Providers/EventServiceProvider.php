@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\AccessRequestCreated;
 use App\Events\ActivityLogged;
+use App\Events\CommentAdded;
 use App\Events\DocumentForwarded;
 use App\Events\DocumentPublished;
 use App\Events\ProjectMemberAdded;
@@ -11,9 +12,11 @@ use App\Events\ReportApproved;
 use App\Events\ReportEscalated;
 use App\Events\ReportReturned;
 use App\Events\ReportSubmitted;
+use App\Models\Document;
 use App\Observers\DocumentObserver;
 use App\Listeners\NotifyProjectMembersOnActivity;
 use App\Listeners\SendAccessRequestNotification;
+use App\Listeners\SendCommentNotification;
 use App\Listeners\SendDocumentForwardedNotification;
 use App\Listeners\SendProjectMemberNotification;
 use App\Listeners\SendReportSubmittedNotification;
@@ -46,6 +49,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ActivityLogged::class => [
             NotifyProjectMembersOnActivity::class,
+        ],
+        CommentAdded::class => [
+            SendCommentNotification::class,
         ],
     ];
 

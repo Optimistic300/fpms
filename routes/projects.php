@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AccessRequestController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -14,4 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/projects/{project}/members', [ProjectController::class, 'addMember']);
     Route::post('/projects/{project}/access-requests', [ProjectController::class, 'requestAccess']);
     Route::patch('/access-requests/{accessRequest}', [AccessRequestController::class, 'update']);
+
+    Route::get('/projects/{project}/comments', [CommentController::class, 'projectIndex']);
+    Route::post('/projects/{project}/comments', [CommentController::class, 'projectStore']);
 });

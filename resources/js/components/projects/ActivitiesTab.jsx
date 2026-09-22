@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import apiClient from '../../api/axios';
 import DocumentActions from '../documents/DocumentActions';
+import CommentsSection from '../shared/CommentsSection';
 
 export default function ActivitiesTab({ projectId, selected }) {
     const [activities, setActivities] = useState([]);
@@ -175,10 +176,35 @@ export default function ActivitiesTab({ projectId, selected }) {
                                         : ''}
                                 </p>
                             )}
+                            <div style={{ marginTop: '12px' }}>
+                                <ActivityComments activityId={act.id} />
+                            </div>
                         </div>
                     )}
                 </div>
             ))}
         </div>
     );
+}
+
+function ActivityComments({ activityId }) {
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        apiClient
+            .get(`/activities/${activityId}/comments`)
+            .then((res) => setComments(res.data.data || []))
+            .catch(() => setComments([]))
+            .finally(() => setLoading(false));
+    }, [activityId]);
+
+    async function handleSubmitComment(body) {
+        const res = await apiClient.post(`/activities/${activityId}/comments`, { body });
+        setComments((prev) => [...prev, res.data.data]);
+    }
+
+    if (loading) return null;
+
+    return <CommentsSection comments={comments} onSubmitComment={handleSubmitComment} />;
 }

@@ -5,6 +5,7 @@ import ActivitiesTab from '../components/projects/ActivitiesTab';
 import DocumentsTab from '../components/projects/DocumentsTab';
 import ReportsTab from '../components/projects/ReportsTab';
 import TeamTab from '../components/projects/TeamTab';
+import DiscussionTab from '../components/projects/DiscussionTab';
 import EditProjectModal from '../components/projects/EditProjectModal';
 import AddMemberModal from '../components/projects/AddMemberModal';
 
@@ -20,6 +21,7 @@ const TABS = [
     { key: 'documents', label: 'Documents' },
     { key: 'reports', label: 'Reports' },
     { key: 'team', label: 'Team' },
+    { key: 'discussion', label: 'Discussion' },
 ];
 
 export default function ProjectDetail() {
@@ -375,6 +377,12 @@ export default function ProjectDetail() {
                                 <TeamTab
                                     projectId={id}
                                     selected={activeTab === 'team'}
+                                />
+                            )}
+                            {activeTab === 'discussion' && (
+                                <DiscussionTab
+                                    projectId={id}
+                                    selected={activeTab === 'discussion'}
                                 />
                             )}
                         </div>

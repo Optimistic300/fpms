@@ -1,4 +1,9 @@
+import { useState, useEffect } from 'react';
+import apiClient from '../../api/axios';
+import CommentsSection from '../shared/CommentsSection';
+
 export default function PublicationCard({ publication, onEdit, onDelete, user }) {
+    const [showComments, setShowComments] = useState(false);
     const statusConfig = {
         DRAFT: { label: 'Draft', color: '#94a3b8', bg: '#f1f5f9' },
         SUBMITTED: { label: 'Submitted', color: '#b45309', bg: '#fffbeb' },
@@ -187,7 +192,41 @@ export default function PublicationCard({ publication, onEdit, onDelete, user })
                         Delete
                     </button>
                 )}
+                <button
+                    type="button"
+                    onClick={() => setShowComments((v) => !v)}
+                    style={btnStyle('#64748b', '#f1f5f9')}
+                >
+                    {showComments ? 'Hide Comments' : 'Comments'}
+                </button>
             </div>
+            {showComments && <PublicationComments publicationId={publication.id} />}
+        </div>
+    );
+}
+
+function PublicationComments({ publicationId }) {
+    const [comments, setComments] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        apiClient
+            .get(`/publications/${publicationId}/comments`)
+            .then((res) => setComments(res.data.data || []))
+            .catch(() => setComments([]))
+            .finally(() => setLoading(false));
+    }, [publicationId]);
+
+    async function handleSubmitComment(body) {
+        const res = await apiClient.post(`/publications/${publicationId}/comments`, { body });
+        setComments((prev) => [...prev, res.data.data]);
+    }
+
+    if (loading) return null;
+
+    return (
+        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #f1f5f9' }}>
+            <CommentsSection comments={comments} onSubmitComment={handleSubmitComment} />
         </div>
     );
 }
