@@ -26,7 +26,7 @@ class SyncDocumentIndex implements ShouldQueue
     public function middleware(): array
     {
         // Never two jobs for the same document at once
-        return [(new \App\Jobs\Middleware\WithoutOverlapping($this->document->id))->releaseAfter(30)];
+        return [(new \Illuminate\Queue\Middleware\WithoutOverlapping($this->document->id))->releaseAfter(30)];
     }
 
     public function handle(): void
