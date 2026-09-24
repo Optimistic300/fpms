@@ -22,7 +22,7 @@ class CreateProjectAction
                 'location' => $data['location'] ?? null,
                 'start_date' => $data['start_date'],
                 'end_date' => $data['end_date'] ?? null,
-                'status' => 'PROPOSED',
+                'status' => 'ACTIVE',
                 'progress' => 0,
             ]);
 

@@ -1,5 +1,9 @@
 # FPMS Handoff — Session Summary
 
+> **Historical / outdated.** This describes an earlier development session's state (file
+> structure, feature status) that no longer matches the current codebase. Kept for history;
+> see `docs/12-changelog-and-future-notes.md` for a current, maintained record.
+
 ## What Was Done in This Session
 
 ### 1. Email Notification Support (Notification System)
